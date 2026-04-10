@@ -58,5 +58,17 @@
     "data_planejamento": "2026-04-10",
     "data_publicacao": null,
     "origem": "ideia_propria"
+  },
+  {
+    "sugestao_id": null,
+    "titulo_planejado": "Por que eu parei de sentir culpa por jogar videogame",
+    "titulo_publicado": null,
+    "video_id_youtube": null,
+    "rpm_previsto": 90,
+    "funil": "topo",
+    "status": "planejado",
+    "data_planejamento": "2026-04-10",
+    "data_publicacao": null,
+    "origem": "ideia_propria"
   }
 ]
