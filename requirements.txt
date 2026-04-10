@@ -1,0 +1,11 @@
+# App Streamlit
+streamlit>=1.28
+requests>=2.31
+
+# Recurso opcional no app (criptografia de secrets GitHub)
+PyNaCl>=1.5
+
+# Script coletar.py (YouTube / Google APIs)
+google-api-python-client>=2.100
+google-auth-oauthlib>=1.1
+google-auth-httplib2>=0.2
