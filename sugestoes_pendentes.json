@@ -35,5 +35,21 @@
     "video_id": null,
     "titulo_real": null,
     "rpm_previsto": null
+  },
+  {
+    "id": "SUG-20260410-01",
+    "numero": 1,
+    "texto": "Sugestão 1 — 20260410",
+    "data": "10/04",
+    "status": "pendente",
+    "rpm_previsto": 0
+  },
+  {
+    "id": "SUG-20260410-02",
+    "numero": 2,
+    "texto": "Sugestão 2 — 20260410",
+    "data": "10/04",
+    "status": "pendente",
+    "rpm_previsto": 0
   }
 ]
