@@ -1,13 +1,6 @@
 {
   "topo": [
     {
-      "video_id": "WUFTIoDPPHM",
-      "titulo": "O PS4 DESBLOQUEADO é MUITO MELHOR do que imaginava...",
-      "rpm": 1.83,
-      "views": 14234,
-      "receita": 26.1
-    },
-    {
       "video_id": "WHxNLXOqoAQ",
       "titulo": "Usei O XBOX SERIES S como um PC GAMER!",
       "rpm": 1.01,
@@ -62,6 +55,13 @@
       "rpm": 0.54,
       "views": 448,
       "receita": 0.24
+    },
+    {
+      "video_id": "oweNkfNkviA",
+      "titulo": "Troquei o Instagram por Zelda… e foi a melhor coisa que fiz",
+      "rpm": 0.62,
+      "views": 23769,
+      "receita": 14.77
     }
   ],
   "meio": [
@@ -71,6 +71,13 @@
       "rpm": 2.55,
       "views": 10302,
       "receita": 26.25
+    },
+    {
+      "video_id": "WUFTIoDPPHM",
+      "titulo": "O PS4 DESBLOQUEADO é MUITO MELHOR do que imaginava...",
+      "rpm": 1.83,
+      "views": 14234,
+      "receita": 26.1
     },
     {
       "video_id": "Y0a06BJRlxA",
@@ -106,13 +113,6 @@
       "rpm": 3.12,
       "views": 949,
       "receita": 2.96
-    },
-    {
-      "video_id": "smt1yN6R7gs",
-      "titulo": "O STEAM DECK é capaz de substituir o NINTENDO SWITCH?",
-      "rpm": 3.56,
-      "views": 752,
-      "receita": 2.67
     },
     {
       "video_id": "AeZU6MYLwcc",
@@ -194,6 +194,13 @@
       "receita": 3.72
     },
     {
+      "video_id": "smt1yN6R7gs",
+      "titulo": "O STEAM DECK é capaz de substituir o NINTENDO SWITCH?",
+      "rpm": 3.56,
+      "views": 752,
+      "receita": 2.67
+    },
+    {
       "video_id": "IeTXSjHBkvg",
       "titulo": "PS5 depois de 1 mês: vale MESMO a experiência?",
       "rpm": 4.31,
@@ -209,20 +216,20 @@
     }
   ],
   "thresholds": {
-    "p33": 1.89,
-    "p66": 3.76
+    "p33": 1.83,
+    "p66": 3.56
   },
   "topo_count": 9,
-  "topo_rpm_medio": 1.1,
-  "topo_receita_total": 65.26,
+  "topo_rpm_medio": 1.0,
+  "topo_receita_total": 53.93,
   "meio_count": 10,
-  "meio_rpm_medio": 2.8,
-  "meio_receita_total": 57.72,
-  "fundo_count": 10,
-  "fundo_rpm_medio": 62.4,
-  "fundo_receita_total": 6700.88,
-  "gerado_em": "2026-04-09 10:51",
-  "total_videos": 29,
+  "meio_rpm_medio": 2.6,
+  "meio_receita_total": 81.15,
+  "fundo_count": 11,
+  "fundo_rpm_medio": 57.1,
+  "fundo_receita_total": 6703.55,
+  "gerado_em": "2026-04-10 19:24",
+  "total_videos": 30,
   "lacuna": "nenhuma",
   "lacuna_descricao": "Funil equilibrado"
 }
