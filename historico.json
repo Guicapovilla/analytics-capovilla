@@ -375,5 +375,18 @@
     "receita_real": 0.24,
     "resultado": "retroativo",
     "atualizado_em": "2026-04-09"
+  },
+  {
+    "video_id": "oweNkfNkviA",
+    "titulo": "Troquei o Instagram por Zelda… e foi a melhor coisa que fiz",
+    "data_registro": "2026-03-31",
+    "origem": "retroativo",
+    "raciocinio": "Registrado automaticamente pelo sistema com dados reais do YouTube Analytics.",
+    "rpm_previsto": 0,
+    "rpm_real": 0.62,
+    "views_real": 23769,
+    "receita_real": 14.77,
+    "resultado": "retroativo",
+    "atualizado_em": "2026-04-10"
   }
 ]
