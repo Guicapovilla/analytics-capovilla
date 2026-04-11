@@ -1,66 +1,65 @@
 === DADOS DO CANAL ===
-Atualizado em: 10/04/2026 19:23
+Atualizado em: 11/04/2026 10:21
 Canal: Guilherme Capovilla 
-Inscritos: 2290
-Views totais: 298050
+Inscritos: 2310
+Views totais: 299793
 Total de videos: 103
-Cotacao USD/BRL: 5.080657
+Cotacao USD/BRL: 5.044206
 
 === ANALYTICS 28 DIAS ===
-Views totais: 65704
-Horas assistidas: 2416
-Novos inscritos: 590
-Receita total (BRL): R$ 2226.83
+Views totais: 65066
+Horas assistidas: 2386
+Novos inscritos: 586
+Receita total (BRL): R$ 2207.56
 
 === TOP 10 VIDEOS POR VIEWS ===
-1. O Switch Lite Desbloqueado é SIMPLESMENTE a Melhor escolha | Views: 37577 | Likes: 2175 | Comentarios: 214 | Publicado: 2025-07-19
-2. Troquei o Instagram por Zelda… e foi a melhor coisa que fiz | Views: 24963 | Likes: 2625 | Comentarios: 188 | Publicado: 2026-03-31
-3. Usei O XBOX SERIES S como um PC GAMER! | Views: 22361 | Likes: 1233 | Comentarios: 157 | Publicado: 2025-07-03
-4. Comprei um SWITCH LITE DESTRAVADO na SHOPEE | Views: 17310 | Likes: 1087 | Comentarios: 85 | Publicado: 2026-02-13
-5. O PS4 DESBLOQUEADO é MUITO MELHOR do que imaginava... | Views: 14258 | Likes: 610 | Comentarios: 141 | Publicado: 2025-10-20
+1. O Switch Lite Desbloqueado é SIMPLESMENTE a Melhor escolha | Views: 37619 | Likes: 2178 | Comentarios: 214 | Publicado: 2025-07-19
+2. Troquei o Instagram por Zelda… e foi a melhor coisa que fiz | Views: 25415 | Likes: 2649 | Comentarios: 213 | Publicado: 2026-03-31
+3. Usei O XBOX SERIES S como um PC GAMER! | Views: 22377 | Likes: 1233 | Comentarios: 157 | Publicado: 2025-07-03
+4. Comprei um SWITCH LITE DESTRAVADO na SHOPEE | Views: 17476 | Likes: 1098 | Comentarios: 85 | Publicado: 2026-02-13
+5. O PS4 DESBLOQUEADO é MUITO MELHOR do que imaginava... | Views: 14264 | Likes: 610 | Comentarios: 141 | Publicado: 2025-10-20
 6. Como o Steam Deck Pode Mudar a Sua Vida | Views: 11407 | Likes: 970 | Comentarios: 143 | Publicado: 2025-07-09
-7. Como Configurar o MOONLIGHT para jogar FORA DE CASA | Views: 10484 | Likes: 436 | Comentarios: 64 | Publicado: 2025-07-25
-8. 7 jogos IMPRESSIONANTES disponíveis no NINTENDO SWITCH | Views: 9539 | Likes: 756 | Comentarios: 45 | Publicado: 2026-03-21
-9. Posso dar DOWNGRADE de versão no meu PS4? #ps4 #games #desbloqueado #dicas | Views: 8024 | Likes: 153 | Comentarios: 5 | Publicado: 2026-01-12
-10. Como é ter um XBOX SERIES S em 2025? | Views: 5971 | Likes: 372 | Comentarios: 80 | Publicado: 2025-06-25
+7. Como Configurar o MOONLIGHT para jogar FORA DE CASA | Views: 10519 | Likes: 437 | Comentarios: 64 | Publicado: 2025-07-25
+8. 7 jogos IMPRESSIONANTES disponíveis no NINTENDO SWITCH | Views: 9613 | Likes: 760 | Comentarios: 45 | Publicado: 2026-03-21
+9. Posso dar DOWNGRADE de versão no meu PS4? #ps4 #games #desbloqueado #dicas | Views: 8073 | Likes: 154 | Comentarios: 5 | Publicado: 2026-01-12
+10. Como é ter um XBOX SERIES S em 2025? | Views: 5974 | Likes: 372 | Comentarios: 80 | Publicado: 2025-06-25
 
 === TOP 10 VIDEOS POR RECEITA ===
-1. Comprei um SWITCH LITE DESTRAVADO na SHOPEE | BRL: R$4818.90 | Views: 16886 | RPM: R$285.38
-2. Switch Lite DESBLOQUEADO em 2026… ainda vale a pena? | BRL: R$1366.95 | Views: 5000 | RPM: R$273.39
-3. O Switch Lite Desbloqueado é SIMPLESMENTE a Melhor escolha | BRL: R$422.27 | Views: 37515 | RPM: R$11.26
-4. 7 jogos IMPRESSIONANTES disponíveis no NINTENDO SWITCH | BRL: R$35.41 | Views: 9448 | RPM: R$3.75
-5. Como Configurar o MOONLIGHT para jogar FORA DE CASA | BRL: R$26.65 | Views: 10401 | RPM: R$2.56
-6. O PS4 DESBLOQUEADO é MUITO MELHOR do que imaginava... | BRL: R$26.03 | Views: 14251 | RPM: R$1.83
-7. Usei O XBOX SERIES S como um PC GAMER! | BRL: R$22.73 | Views: 22341 | RPM: R$1.02
-8. Troquei o Instagram por Zelda… e foi a melhor coisa que fiz | BRL: R$14.77 | Views: 23769 | RPM: R$0.62
-9. É por isso que escolhi o PS4 e não o PS5 | BRL: R$10.92 | Views: 1948 | RPM: R$5.61
-10. QUAL O MELHOR? Steam Deck ou ROG Ally | BRL: R$9.16 | Views: 3168 | RPM: R$2.89
+1. Comprei um SWITCH LITE DESTRAVADO na SHOPEE | BRL: R$4784.33 | Views: 16886 | RPM: R$283.33
+2. Switch Lite DESBLOQUEADO em 2026… ainda vale a pena? | BRL: R$1357.14 | Views: 5000 | RPM: R$271.43
+3. O Switch Lite Desbloqueado é SIMPLESMENTE a Melhor escolha | BRL: R$419.24 | Views: 37515 | RPM: R$11.18
+4. 7 jogos IMPRESSIONANTES disponíveis no NINTENDO SWITCH | BRL: R$35.15 | Views: 9448 | RPM: R$3.72
+5. Como Configurar o MOONLIGHT para jogar FORA DE CASA | BRL: R$26.46 | Views: 10401 | RPM: R$2.54
+6. O PS4 DESBLOQUEADO é MUITO MELHOR do que imaginava... | BRL: R$25.84 | Views: 14251 | RPM: R$1.81
+7. Usei O XBOX SERIES S como um PC GAMER! | BRL: R$22.57 | Views: 22341 | RPM: R$1.01
+8. Troquei o Instagram por Zelda… e foi a melhor coisa que fiz | BRL: R$14.67 | Views: 23763 | RPM: R$0.62
+9. É por isso que escolhi o PS4 e não o PS5 | BRL: R$10.85 | Views: 1948 | RPM: R$5.57
+10. QUAL O MELHOR? Steam Deck ou ROG Ally | BRL: R$9.09 | Views: 3168 | RPM: R$2.87
 
 === RECEITA DIARIA (ultimos 28 dias) ===
-2026-03-13 | Views: 638 | BRL: R$3.32 | CPM: $1.48
-2026-03-14 | Views: 696 | BRL: R$253.61 | CPM: $0.91
-2026-03-15 | Views: 660 | BRL: R$1.97 | CPM: $1.03
-2026-03-16 | Views: 602 | BRL: R$133.62 | CPM: $1.11
-2026-03-17 | Views: 559 | BRL: R$224.34 | CPM: $1.07
-2026-03-18 | Views: 487 | BRL: R$1.51 | CPM: $0.98
-2026-03-19 | Views: 526 | BRL: R$251.53 | CPM: $0.84
-2026-03-20 | Views: 595 | BRL: R$238.94 | CPM: $1.16
-2026-03-21 | Views: 1644 | BRL: R$10.03 | CPM: $0.89
-2026-03-22 | Views: 2065 | BRL: R$273.33 | CPM: $1.05
-2026-03-23 | Views: 1730 | BRL: R$11.21 | CPM: $1.12
-2026-03-24 | Views: 8759 | BRL: R$255.36 | CPM: $1.12
-2026-03-25 | Views: 2231 | BRL: R$25.91 | CPM: $1.15
-2026-03-26 | Views: 1200 | BRL: R$7.16 | CPM: $0.88
-2026-03-27 | Views: 1020 | BRL: R$3.83 | CPM: $1.17
-2026-03-28 | Views: 1034 | BRL: R$4.78 | CPM: $1.60
-2026-03-29 | Views: 1041 | BRL: R$3.20 | CPM: $0.88
-2026-03-30 | Views: 1264 | BRL: R$260.89 | CPM: $0.95
-2026-03-31 | Views: 1821 | BRL: R$240.76 | CPM: $0.89
+2026-03-14 | Views: 696 | BRL: R$251.79 | CPM: $0.91
+2026-03-15 | Views: 660 | BRL: R$1.95 | CPM: $1.03
+2026-03-16 | Views: 602 | BRL: R$132.66 | CPM: $1.11
+2026-03-17 | Views: 559 | BRL: R$222.73 | CPM: $1.07
+2026-03-18 | Views: 487 | BRL: R$1.50 | CPM: $0.98
+2026-03-19 | Views: 526 | BRL: R$249.73 | CPM: $0.84
+2026-03-20 | Views: 595 | BRL: R$237.23 | CPM: $1.16
+2026-03-21 | Views: 1644 | BRL: R$9.96 | CPM: $0.89
+2026-03-22 | Views: 2065 | BRL: R$271.37 | CPM: $1.05
+2026-03-23 | Views: 1730 | BRL: R$11.13 | CPM: $1.12
+2026-03-24 | Views: 8759 | BRL: R$253.53 | CPM: $1.12
+2026-03-25 | Views: 2231 | BRL: R$25.73 | CPM: $1.15
+2026-03-26 | Views: 1200 | BRL: R$7.11 | CPM: $0.88
+2026-03-27 | Views: 1020 | BRL: R$3.80 | CPM: $1.17
+2026-03-28 | Views: 1034 | BRL: R$4.75 | CPM: $1.60
+2026-03-29 | Views: 1041 | BRL: R$3.17 | CPM: $0.88
+2026-03-30 | Views: 1264 | BRL: R$259.02 | CPM: $0.95
+2026-03-31 | Views: 1821 | BRL: R$239.03 | CPM: $0.89
 2026-04-01 | Views: 4186 | BRL: R$0.00 | CPM: $0.00
 2026-04-02 | Views: 3848 | BRL: R$0.00 | CPM: $0.00
-2026-04-03 | Views: 6502 | BRL: R$2.19 | CPM: $0.00
+2026-04-03 | Views: 6502 | BRL: R$2.17 | CPM: $0.00
 2026-04-04 | Views: 11016 | BRL: R$0.00 | CPM: $0.00
 2026-04-05 | Views: 4808 | BRL: R$0.00 | CPM: $0.00
-2026-04-06 | Views: 3548 | BRL: R$8.87 | CPM: $1.01
-2026-04-07 | Views: 1901 | BRL: R$5.81 | CPM: $1.00
-2026-04-08 | Views: 1323 | BRL: R$4.64 | CPM: $1.08
+2026-04-06 | Views: 3548 | BRL: R$8.81 | CPM: $1.01
+2026-04-07 | Views: 1901 | BRL: R$5.77 | CPM: $1.00
+2026-04-08 | Views: 1323 | BRL: R$4.61 | CPM: $1.08
