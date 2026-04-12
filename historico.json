@@ -388,5 +388,18 @@
     "receita_real": 14.77,
     "resultado": "retroativo",
     "atualizado_em": "2026-04-10"
+  },
+  {
+    "video_id": "80ec1wjgjpQ",
+    "titulo": "Como eu venci a culpa de jogar videogame depois de adulto",
+    "data_registro": "2026-04-09",
+    "origem": "retroativo",
+    "raciocinio": "Registrado automaticamente pelo sistema com dados reais do YouTube Analytics.",
+    "rpm_previsto": 0,
+    "rpm_real": 3.66,
+    "views_real": 833,
+    "receita_real": 3.05,
+    "resultado": "retroativo",
+    "atualizado_em": "2026-04-12"
   }
 ]
