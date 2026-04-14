@@ -21,6 +21,7 @@ GITHUB_REPO    = 'Guicapovilla/analytics-capovilla'
 
 SCOPES = [
     'https://www.googleapis.com/auth/youtube.readonly',
+    'https://www.googleapis.com/auth/youtube.force-ssl',
     'https://www.googleapis.com/auth/yt-analytics.readonly',
     'https://www.googleapis.com/auth/yt-analytics-monetary.readonly',
 ]
@@ -136,6 +137,8 @@ def claude_api(prompt, max_tokens=500, model='claude-sonnet-4-6'):
     if not CLAUDE_API_KEY:
         return None
     try:
+        # Opus needs more time for large context generation
+        timeout = 120 if 'opus' in model else 60
         r = requests.post(
             'https://api.anthropic.com/v1/messages',
             headers={
@@ -148,12 +151,14 @@ def claude_api(prompt, max_tokens=500, model='claude-sonnet-4-6'):
                 'max_tokens': max_tokens,
                 'messages': [{'role': 'user', 'content': prompt}]
             },
-            timeout=60
+            timeout=timeout
         )
         if r.status_code == 200:
             return r.json()['content'][0]['text'].strip()
+        else:
+            print(f'  ⚠️ Claude API [{model}] HTTP {r.status_code}: {r.text[:200]}')
     except Exception as e:
-        print(f'  ⚠️ Claude API: {e}')
+        print(f'  ⚠️ Claude API [{model}]: {e}')
     return None
 
 # ── COLETA DO CANAL PRÓPRIO ───────────────────────────────
@@ -543,7 +548,7 @@ Lacunas editoriais baseadas nos dados — o que ainda não foi feito mas tem alt
 
 Seja cirúrgico. Máximo 120 palavras por seção. Responda em português brasileiro."""
 
-    return claude_api(prompt, max_tokens=2000, model='claude-opus-4-5') or ''
+    return claude_api(prompt, max_tokens=2000) or ''
 
 # ── TRANSCRIÇÕES PRÓPRIAS (Apify) ─────────────────────────
 
