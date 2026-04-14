@@ -655,6 +655,59 @@ def carregar_arquivo(filename, default):
         pass
     return default
 
+
+APRENDIZADOS_CREATOR_FILE = 'aprendizados_criador.json'
+APRENDIZADOS_MAX_ENTRIES = 200
+APRENDIZADOS_MAX_PROMPT_CHARS = 6000
+
+
+def _normalize_title_match(s: str) -> str:
+    if not s:
+        return ''
+    t = s.lower().strip()
+    for ch in '\n\r\t':
+        t = t.replace(ch, ' ')
+    return ' '.join(t.split())
+
+
+def _format_aprendizados_para_prompt(entries: list) -> str:
+    if not entries:
+        return ''
+    lines = []
+    for e in entries[-25:]:
+        if not isinstance(e, dict):
+            continue
+        data = e.get('data', '')[:16]
+        tit = (e.get('titulo_publicado') or e.get('titulo_planejado') or '')[:80]
+        notas = (e.get('notas') or '')[:1200]
+        sid = e.get('sugestao_id') or ''
+        if not notas:
+            continue
+        lines.append(f'[{data}] {tit}' + (f' (sugestão_id: {sid})' if sid else ''))
+        lines.append(notas)
+        if e.get('analise_ia'):
+            lines.append('— Resumo IA: ' + str(e['analise_ia'])[:400])
+        lines.append('')
+    out = '\n'.join(lines).strip()
+    if len(out) > APRENDIZADOS_MAX_PROMPT_CHARS:
+        out = out[-APRENDIZADOS_MAX_PROMPT_CHARS:]
+    return out
+
+
+def contexto_com_aprendizados(contexto_base: str) -> str:
+    """contexto.txt + últimas notas manuais (vínculos) para injetar nos prompts Claude."""
+    raw = carregar_arquivo(APRENDIZADOS_CREATOR_FILE, [])
+    entries = raw if isinstance(raw, list) else []
+    bloco = _format_aprendizados_para_prompt(entries)
+    base = (contexto_base or '').strip()
+    marker = '--- NOTAS MANUAIS DO CRIADOR'
+    if marker in base:
+        base = base.split(marker, 1)[0].strip()
+    if not bloco:
+        return base
+    return base + '\n\n--- NOTAS MANUAIS DO CRIADOR (intenção / vínculos) ---\n' + bloco
+
+
 def salvar_github(filename, content):
     if not GITHUB_TOKEN:
         st.error('GITHUB_TOKEN não configurado nos secrets.')
@@ -1351,8 +1404,8 @@ Monetização: afiliado Shopee + AdSense. RPM Switch Lite destravado = R$295+ (1
 DADOS DO CANAL (28 dias):
 {dados_texto[:1500]}
 
-CONTEXTO EDITORIAL:
-{contexto[:500]}
+CONTEXTO EDITORIAL (inclui notas manuais do criador quando houver):
+{contexto[:3500]}
 
 FUNIL: lacuna em {lacuna.upper()} — {lacuna_desc}
 
@@ -1384,31 +1437,43 @@ Responda em JSON:
     return {}
 
 
-def gerar_sugestao_tema_livre(tema, dados_texto, contexto, funil):
-    """Gera sugestão específica para um tema que o usuário digitou."""
+def gerar_sugestao_tema_livre(tema, dados_texto, contexto, funil, brief=''):
+    """Gera sugestão específica para um tema que o usuário digitou — fiel ao tema, sem pivot forçado."""
     lacuna = funil.get('lacuna', 'fundo') if funil else 'fundo'
+    lacuna_desc = (funil.get('lacuna_descricao', '') if funil else '') or ''
+    brief = (brief or '').strip()
+    brief_sec = ''
+    if brief:
+        brief_sec = f'\nENTREGA DESEJADA PELO CRIADOR (obrigatório respeitar):\n{brief[:2000]}\n'
 
-    prompt = f"""Canal Guilherme Capovilla — videogames, consoles desbloqueados, adulto brasileiro.
-RPM Switch Lite = R$295+. Afiliado Shopee principal.
+    prompt = f"""Canal Guilherme Capovilla (@guilhermecapovilla) — videogames, consoles, lifestyle gamer adulto brasileiro.
+Tom: emocional, nostalgia, merecimento; monetização com afiliado Shopee quando couber no tema.
+
+REGRAS OBRIGATÓRIAS PARA ESTA TAREFA:
+- O usuário definiu o TEMA abaixo. Título, gancho, ângulo do vídeo e produto de afiliado DEVEM ser diretamente sobre ESSE tema.
+- É PROIBIDO mudar o foco para Nintendo Switch, Switch Lite ou outro console/tema que NÃO apareça explicitamente no "TEMA SOLICITADO" ou na "ENTREGA DESEJADA".
+- Não sugira "o vídeo mais rentável do canal" nem substitua o tema pelo que historicamente monetiza mais.
+- Use os dados do canal só para tom, formato e realismo de RPM esperado para ESTE tema — não para trocar o tema.
 
 TEMA SOLICITADO: {tema}
+{brief_sec}
+DADOS DO CANAL (referência): {dados_texto[:900]}
+CONTEXTO EDITORIAL + NOTAS DO CRIADOR: {contexto[:3500]}
+FUNIL: lacuna sugerida em {lacuna.upper()} — {lacuna_desc}
+(Ajuste etapa_funil se fizer sentido para o tema pedido, sem abandonar o tema.)
 
-DADOS DO CANAL: {dados_texto[:800]}
-CONTEXTO: {contexto[:300]}
-FUNIL: próximo vídeo deve ser de {lacuna.upper()}
-
-Gere UMA sugestão de vídeo sobre "{tema}" para o canal. Responda em JSON:
+Gere UMA sugestão de vídeo sobre "{tema}". Responda APENAS em JSON válido:
 {{
   "titulo": "título emocional em português",
   "etapa_funil": "topo|meio|fundo",
   "rpm_esperado": 80,
-  "motivo": "por que este tema + este ângulo funciona para o canal — 2 frases",
-  "afiliado": "produto Shopee específico sobre {tema}",
+  "motivo": "por que este tema + este ângulo — 2 frases",
+  "afiliado": "produto Shopee específico alinhado ao tema (não genérico de outro console)",
   "gancho": "primeira frase do vídeo",
   "score": 75
 }}"""
 
-    texto, _ = claude_api(prompt, max_tokens=300)
+    texto, _ = claude_api(prompt, max_tokens=450)
     if texto:
         import re
         match = re.search(r'\{.*\}', texto, re.DOTALL)
@@ -1696,7 +1761,7 @@ def _config_status() -> dict:
     files_to_check = [
         'dados.txt', 'concorrentes.json', 'historico.json', 'funil.json',
         'transcricoes_canal.json', 'fila_producao.json', 'sugestoes_pendentes.json',
-        'sugestao_semana.json', 'contexto.txt', 'metas.json',
+        'sugestao_semana.json', 'contexto.txt', 'metas.json', APRENDIZADOS_CREATOR_FILE,
     ]
     now_str = datetime.now().strftime('%d/%m %H:%M')
     files_status = []
@@ -1764,7 +1829,7 @@ def _dispatch_action(action_data: dict) -> bool:
     fila    = carregar_arquivo('fila_producao.json', [])
     concs   = carregar_arquivo('concorrentes.json', [])
     hist    = carregar_arquivo('historico.json', [])
-    ctx     = carregar_arquivo('contexto.txt', '')
+    ctx     = contexto_com_aprendizados(carregar_arquivo('contexto.txt', ''))
     concs_j = carregar_arquivo('concorrentes.json', [])
     funil_j = carregar_arquivo('funil.json', {})
     pends   = carregar_arquivo('sugestoes_pendentes.json', [])
@@ -1803,11 +1868,16 @@ def _dispatch_action(action_data: dict) -> bool:
 
     # ── Tema livre ──────────────────────────────────────────────────
     if action == 'generate_tema_livre':
-        tema = action_data.get('tema', '')
+        tema = (action_data.get('tema') or '').strip()
+        brief = (action_data.get('brief') or '').strip()
+        if not tema:
+            return True
         with st.spinner(f'Gerando sugestão para "{tema}"...'):
-            nova = gerar_sugestao_semana(dados_raw or '', f'{ctx}\nTema específico: {tema}', concs_j, funil_j)
+            nova = gerar_sugestao_tema_livre(tema, dados_raw or '', ctx, funil_j, brief=brief)
             if nova:
                 nova['tema'] = tema
+                if brief:
+                    nova['brief'] = brief
                 nova['type'] = 'tema_livre'
                 st.session_state['_result_payload'] = nova
         return True
@@ -1817,7 +1887,8 @@ def _dispatch_action(action_data: dict) -> bool:
         rpm    = action_data.get('rpm_esperado', 50)
         etapa  = action_data.get('etapa_funil', 'topo')
         tema   = action_data.get('tema', '')
-        fila.append({
+        brief_a = (action_data.get('brief') or '').strip()
+        entry = {
             'sugestao_id': None,
             'titulo_planejado': titulo,
             'titulo_publicado': None,
@@ -1828,7 +1899,10 @@ def _dispatch_action(action_data: dict) -> bool:
             'data_planejamento': datetime.now().strftime('%Y-%m-%d'),
             'data_publicacao': None,
             'origem': f'tema_livre:{tema}',
-        })
+        }
+        if brief_a:
+            entry['brief_criador'] = brief_a
+        fila.append(entry)
         salvar_github('fila_producao.json', fila)
         st.session_state.pop('_result_payload', None)
         st.cache_data.clear()
@@ -1898,6 +1972,80 @@ def _dispatch_action(action_data: dict) -> bool:
             fila[idx]['data_publicacao'] = datetime.now().strftime('%Y-%m-%d')
             salvar_github('fila_producao.json', fila)
             st.cache_data.clear()
+        return True
+
+    if action == 'link_video':
+        try:
+            idx = int(action_data.get('idx', -1))
+        except (TypeError, ValueError):
+            idx = -1
+        notas = (action_data.get('notas') or '').strip()
+        sug_id = (action_data.get('sug_id') or '').strip() or None
+        if not notas or idx < 0 or idx >= len(fila):
+            return True
+        item = fila[idx]
+        titulo_pub = (item.get('titulo_publicado') or item.get('titulo_planejado') or '').strip()
+        video_id = (item.get('video_id_youtube') or '').strip()
+
+        sug_texto = ''
+        if sug_id:
+            for p in pends:
+                if p.get('id') == sug_id:
+                    sug_texto = (p.get('texto') or p.get('titulo_real') or '')[:2000]
+                    break
+
+        rpm_real = 0.0
+        rpm_prev = float(item.get('rpm_previsto') or 0)
+        h_match = None
+        if video_id:
+            for h in hist:
+                if (h.get('video_id') or '').strip() == video_id:
+                    h_match = h
+                    rpm_real = float(h.get('rpm_real') or 0)
+                    break
+        if h_match is None and titulo_pub:
+            tn = _normalize_title_match(titulo_pub)
+            for h in hist:
+                if _normalize_title_match(h.get('titulo', '')) == tn:
+                    h_match = h
+                    rpm_real = float(h.get('rpm_real') or 0)
+                    break
+
+        analise_ia = ''
+        if sug_texto and titulo_pub and rpm_real > 0 and CLAUDE_API_KEY:
+            analise_ia = analisar_aprendizado_sugestao(sug_texto, titulo_pub, rpm_real, rpm_prev)
+
+        record = {
+            'data': datetime.now().strftime('%Y-%m-%d %H:%M'),
+            'video_id_youtube': video_id or None,
+            'titulo_planejado': item.get('titulo_planejado'),
+            'titulo_publicado': item.get('titulo_publicado'),
+            'notas': notas,
+            'sugestao_id': sug_id,
+            'rpm_previsto': item.get('rpm_previsto'),
+            'origem_fila': item.get('origem'),
+        }
+        if analise_ia:
+            record['analise_ia'] = analise_ia
+
+        ap_list = carregar_arquivo(APRENDIZADOS_CREATOR_FILE, [])
+        if not isinstance(ap_list, list):
+            ap_list = []
+        ap_list.append(record)
+        if len(ap_list) > APRENDIZADOS_MAX_ENTRIES:
+            ap_list = ap_list[-APRENDIZADOS_MAX_ENTRIES:]
+        salvar_github(APRENDIZADOS_CREATOR_FILE, ap_list)
+
+        hist_changed = False
+        if h_match is not None:
+            h_match['notas_criador'] = notas
+            if sug_id and not h_match.get('sugestao_id'):
+                h_match['sugestao_id'] = sug_id
+            hist_changed = True
+        if hist_changed:
+            salvar_github('historico.json', hist)
+
+        st.cache_data.clear()
         return True
 
     # ── Lote IA ──────────────────────────────────────────────────────

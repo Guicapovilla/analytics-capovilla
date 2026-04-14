@@ -567,6 +567,73 @@ main {
 .input-row input::placeholder { color: var(--text-3); }
 .input-row input:focus, .input-row select:focus { border-color: var(--accent); }
 
+.tema-livre-brief {
+  width: 100%;
+  margin-top: 10px;
+  min-height: 72px;
+  resize: vertical;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 0.72rem;
+  color: var(--text);
+  font-family: var(--font);
+  outline: none;
+  box-sizing: border-box;
+}
+.tema-livre-brief:focus { border-color: var(--accent); }
+.tema-livre-brief::placeholder { color: var(--text-3); }
+
+.link-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.65);
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.link-modal-overlay.is-open { display: flex; }
+.link-modal-dialog {
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+}
+.link-modal-dialog .box-title { margin-bottom: 12px; }
+.link-modal-field {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+}
+.link-modal-dialog select,
+.link-modal-dialog textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 0.72rem;
+  color: var(--text);
+  font-family: var(--font);
+  margin-bottom: 14px;
+}
+.link-modal-dialog textarea { min-height: 120px; resize: vertical; }
+.link-modal-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+
 .btn {
   background: var(--accent-dim);
   border: 1px solid rgba(0, 255, 157, 0.15);
@@ -1110,6 +1177,7 @@ main {
       <input type="text" id="tema-livre-input" placeholder="Ex: PlayStation 2, emulador Android, Switch 2…">
       <button class="btn" id="tema-livre-btn" type="button">Gerar sugestão</button>
     </div>
+    <textarea id="tema-livre-brief" class="tema-livre-brief" placeholder="Intenção / o que quero entregar (opcional) — ângulo, público, tom, produto…"></textarea>
   </div>
   <div id="tema-livre-result" style="display:none;"></div>
 
@@ -1179,6 +1247,22 @@ main {
   <div class="box s" id="files-status-box"></div>
   <div class="box s" id="conc-mgmt-box"></div>
 </section>
+
+<div id="link-video-modal" class="link-modal-overlay" aria-hidden="true" onclick="if(event.target===this)_closeLinkModal()">
+  <div class="link-modal-dialog" role="dialog" aria-labelledby="link-modal-title" onclick="event.stopPropagation()">
+    <div class="box-title" id="link-modal-title">Vínculo e notas do criador</div>
+    <p style="font-size:0.7rem;color:var(--text-3);margin:0 0 12px;line-height:1.45;">Descreva o contexto da ideia para o sistema usar nas próximas sugestões. Opcionalmente associe a uma sugestão pendente da IA.</p>
+    <input type="hidden" id="link-modal-idx" value="">
+    <label class="link-modal-field" for="link-modal-sug">Sugestão da IA (opcional)</label>
+    <select id="link-modal-sug"></select>
+    <label class="link-modal-field" for="link-modal-notas">O que eu quis entregar com este vídeo</label>
+    <textarea id="link-modal-notas" placeholder="Contexto da ideia, ângulo emocional, o que funcionou na sua cabeça…"></textarea>
+    <div class="link-modal-actions">
+      <button type="button" class="btn" onclick="_submitLinkVideo()">Salvar notas</button>
+      <button type="button" class="btn btn-ghost" onclick="_closeLinkModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
 
 </main>
 
@@ -1445,7 +1529,7 @@ function renderProducaoHub(ss, rp) {
       +'<div class="sug-angle">'+esc(rp.motivo||'')+'</div>'
       +'<div class="sug-hook"><label>Gancho</label><p>"'+esc(rp.gancho||'')+'"</p></div>'
       +'<div style="display:flex;gap:8px;margin-top:14px;">'
-      +'<button class="btn" onclick="window._stAction(\'accept_tema_livre\',{titulo:'+JSON.stringify(rp.titulo)+',rpm_esperado:'+(rp.rpm_esperado||0)+',etapa_funil:'+JSON.stringify(rp.etapa_funil||'')+',tema:'+JSON.stringify(rp.tema||'')+'})">'
+      +'<button class="btn" onclick="window._stAction(\'accept_tema_livre\',{titulo:'+JSON.stringify(rp.titulo)+',rpm_esperado:'+(rp.rpm_esperado||0)+',etapa_funil:'+JSON.stringify(rp.etapa_funil||'')+',tema:'+JSON.stringify(rp.tema||'')+',brief:'+JSON.stringify(rp.brief||'')+'})">'
       +'✅ Aceitar → Fila</button>'
       +'<button class="btn btn-ghost" onclick="document.getElementById(\'tema-livre-result\').style.display=\'none\'">✕ Descartar</button>'
       +'</div></div>';
@@ -1564,13 +1648,14 @@ function renderProducaoVideoList(fila) {
   var el=document.getElementById('video-list-box'); if(!el) return;
   var pub=fila.filter(function(f){return f.status==='publicado'||f.status==='concluido';});
   if(!pub.length){el.innerHTML='<div class="box-title">Vídeos publicados</div><div style="color:var(--text-3);font-size:0.72rem;">Nenhum vídeo publicado na fila ainda.</div>';return;}
-  el.innerHTML='<div class="box-title">Vídeos publicados — clique 🔗 para vincular a uma sugestão</div>'
+  el.innerHTML='<div class="box-title">Vídeos publicados — clique 🔗 para registrar intenção / vincular a sugestão</div>'
     +pub.map(function(v){
+      var gi=fila.indexOf(v);
       var tc=v.funil==='fundo'?'tag-fundo':v.funil==='meio'?'tag-meio':'tag-topo';
       return '<div class="vlist-item"><span class="funil-tag '+tc+'">'+esc(v.funil||'')+'</span>'
         +'<span class="vlist-title">'+esc((v.titulo||'').slice(0,55))+'</span>'
         +'<span style="font-size:0.62rem;color:var(--text-3);">RPM R$'+Number(v.rpm||0).toFixed(0)+'</span>'
-        +'<span class="vlist-link" title="Vincular" onclick="window._stAction(\'link_video\',{titulo:'+JSON.stringify(v.titulo||'')+',rpm:'+(v.rpm||0)+'})">🔗</span></div>';
+        +'<span class="vlist-link" title="Notas do criador" onclick="_openLinkModal('+gi+')">🔗</span></div>';
     }).join('');
 }
 
@@ -1593,9 +1678,50 @@ function _wireTemaLivre() {
   var btn=document.getElementById('tema-livre-btn'); if(!btn||btn._w) return; btn._w=true;
   btn.addEventListener('click',function(){
     var t=((document.getElementById('tema-livre-input')||{}).value||'').trim();
+    var brief=((document.getElementById('tema-livre-brief')||{}).value||'').trim();
     if(!t){alert('Digite um tema.');return;}
-    window._stAction('generate_tema_livre',{tema:t});
+    window._stAction('generate_tema_livre',{tema:t,brief:brief});
   });
+}
+
+function _fillLinkModalSug() {
+  var sel=document.getElementById('link-modal-sug'); if(!sel) return;
+  var p=_STATE.sugestoes_pendentes||[];
+  var opts='<option value="">— Manual / sem sugestão da IA —</option>';
+  for(var i=0;i<p.length;i++){
+    var s=p[i];
+    var id=String(s.id==null?'':s.id).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    var lab=esc(String((s.texto||s.id||'')).slice(0,80));
+    opts+='<option value="'+id+'">'+lab+'</option>';
+  }
+  sel.innerHTML=opts;
+}
+
+function _openLinkModal(idx) {
+  var m=document.getElementById('link-video-modal'); if(!m) return;
+  document.getElementById('link-modal-idx').value=String(idx);
+  document.getElementById('link-modal-notas').value='';
+  _fillLinkModalSug();
+  m.classList.add('is-open');
+  m.setAttribute('aria-hidden','false');
+}
+
+function _closeLinkModal() {
+  var m=document.getElementById('link-video-modal'); if(!m) return;
+  m.classList.remove('is-open');
+  m.setAttribute('aria-hidden','true');
+}
+
+function _submitLinkVideo() {
+  var idx=parseInt((document.getElementById('link-modal-idx')||{}).value,10);
+  var notas=((document.getElementById('link-modal-notas')||{}).value||'').trim();
+  var sug=((document.getElementById('link-modal-sug')||{}).value||'').trim();
+  if(isNaN(idx)||idx<0){_closeLinkModal();return;}
+  if(!notas){alert('Descreva o que você quis entregar com este vídeo.');return;}
+  var payload={idx:idx,notas:notas};
+  if(sug) payload.sug_id=sug;
+  window._stAction('link_video',payload);
+  _closeLinkModal();
 }
 
 function _wireGenLote() {

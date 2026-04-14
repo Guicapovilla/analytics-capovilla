@@ -93,6 +93,32 @@ def carregar_github_txt(filename):
         pass
     return ''
 
+
+def _aprendizados_criador_para_anexo_contexto():
+    """Anexa notas manuais do dashboard ao contexto.txt gerado automaticamente."""
+    data = carregar_github_json('aprendizados_criador.json')
+    if not data or not isinstance(data, list):
+        return ''
+    lines = []
+    for e in data[-25:]:
+        if not isinstance(e, dict):
+            continue
+        data_s = (e.get('data', '') or '')[:16]
+        tit = (e.get('titulo_publicado') or e.get('titulo_planejado') or '')[:80]
+        notas = (e.get('notas') or '').strip()
+        sid = e.get('sugestao_id') or ''
+        if not notas:
+            continue
+        lines.append(f'[{data_s}] {tit}' + (f' (sugestão_id: {sid})' if sid else ''))
+        lines.append(notas)
+        if e.get('analise_ia'):
+            lines.append('— Resumo IA: ' + str(e['analise_ia'])[:500])
+        lines.append('')
+    body = '\n'.join(lines).strip()
+    if not body:
+        return ''
+    return '--- NOTAS MANUAIS DO CRIADOR (intenção / vínculos) ---\n' + body
+
 def cotacao_usd():
     try:
         r = requests.get('https://economia.awesomeapi.com.br/json/last/USD-BRL', timeout=5)
@@ -1038,6 +1064,9 @@ if __name__ == '__main__':
     print('\n🧠 Gerando contexto automático...')
     contexto = gerar_contexto_automatico(historico, transcricoes)
     if contexto:
+        anexo = _aprendizados_criador_para_anexo_contexto()
+        if anexo:
+            contexto = contexto.rstrip() + '\n\n' + anexo
         salvar_github('contexto.txt', contexto)
         print('✅ Contexto editorial atualizado automaticamente!')
 
