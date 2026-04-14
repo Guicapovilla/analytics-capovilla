@@ -668,7 +668,18 @@ main {
 .kanban-4 { grid-template-columns: repeat(4, 1fr); }
 .kanban-3 { grid-template-columns: repeat(3, 1fr); }
 
-.k-col { background: var(--surface); padding: 16px; min-height: 180px; }
+.k-col { background: var(--surface); padding: 16px; min-height: 180px; transition: box-shadow 0.15s; }
+.k-col.k-drag-over { box-shadow: inset 0 0 0 2px var(--accent); background: var(--surface-2); }
+
+.k-card[draggable="true"] { cursor: grab; }
+.k-card[draggable="true"]:active { cursor: grabbing; }
+.k-card.k-card-busy { opacity: 0.5; pointer-events: none; position: relative; }
+.k-card.k-card-busy::after {
+  content: '';
+  position: absolute; inset: 0; border-radius: 8px;
+  background: rgba(0,0,0,0.2);
+}
+.k-sug-link { font-size: 0.58rem; color: var(--text-3); margin-top: 4px; line-height: 1.35; }
 
 .k-col-head {
   font-size: 0.58rem;
@@ -1275,7 +1286,9 @@ main {
     window.parent.postMessage(Object.assign({ isStreamlitMessage: true, type: type }, extra || {}), '*');
   }
   window._stAction = function (action, payload) {
-    _post('streamlit:setComponentValue', { value: Object.assign({ action: action }, payload || {}) });
+    var p = Object.assign({}, payload || {});
+    p.request_id = Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+    _post('streamlit:setComponentValue', { value: Object.assign({ action: action }, p) });
   };
   window._stHeight = function (h) {
     _post('streamlit:setFrameHeight', { height: h });
@@ -1288,7 +1301,7 @@ main {
   });
   document.addEventListener('DOMContentLoaded', function () {
     _post('streamlit:componentReady', { apiVersion: 1 });
-    window._stHeight(document.documentElement.scrollHeight || 900);
+    window._stHeight(Math.max(document.documentElement.scrollHeight, 2400));
   });
 }());
 
@@ -1311,7 +1324,22 @@ function hideLoading() {
   var el = document.getElementById('loading-overlay'); if (el) el.style.display = 'none';
 }
 function updateHeight() {
-  window._stHeight(Math.max(document.documentElement.scrollHeight, 900));
+  var h = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight, 2400);
+  window._stHeight(h);
+}
+
+function _wireLayoutObservers() {
+  if (window._layoutObsWired) return;
+  window._layoutObsWired = true;
+  try {
+    var ro = new ResizeObserver(function () { updateHeight(); });
+    ro.observe(document.documentElement);
+    if (document.body) ro.observe(document.body);
+  } catch (e) {}
+  window.addEventListener('resize', function () { updateHeight(); });
+  document.querySelectorAll('details').forEach(function (d) {
+    d.addEventListener('toggle', function () { setTimeout(updateHeight, 80); });
+  });
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1382,6 +1410,8 @@ function _renderAll() {
   _wireAddToQueue();
   _wireTemaLivre();
   _wireGenLote();
+  _wireLayoutObservers();
+  _wireKanbanDnD();
   setTimeout(updateHeight, 200);
 }
 
@@ -1417,15 +1447,21 @@ function renderMetrics(d) {
 }
 
 function renderFunil(f) {
+  var el=document.getElementById('funil-box'); if(!el) return;
+  if (!f || typeof f.topo === 'undefined') {
+    el.innerHTML='<div class="box-title">Funil editorial</div>'
+      +'<div style="color:var(--text-3);font-size:0.72rem;line-height:1.5;">Sem dados de funil ainda. Rode a coleta (<code>coletar.py</code>) ou confira se <code>funil.json</code> está no repositório.</div>';
+    return;
+  }
   var topo=f.topo||{}, meio=f.meio||{}, fundo=f.fundo||{};
+  var totalVids = f.total != null ? f.total : ((topo.count||0)+(meio.count||0)+(fundo.count||0));
   var total_rec=(topo.receita||0)+(meio.receita||0)+(fundo.receita||0)||1;
   var rows=[
     {label:'Topo', count:topo.count||0, rpm:topo.rpm_medio||0, rec:topo.receita||0, color:'var(--red)', pct:(topo.receita||0)/total_rec*100},
     {label:'Meio', count:meio.count||0, rpm:meio.rpm_medio||0, rec:meio.receita||0, color:'var(--yellow)', pct:(meio.receita||0)/total_rec*100},
     {label:'Fundo', count:fundo.count||0, rpm:fundo.rpm_medio||0, rec:fundo.receita||0, color:'var(--green)', pct:(fundo.receita||0)/total_rec*100}
   ];
-  var el=document.getElementById('funil-box'); if(!el) return;
-  el.innerHTML='<div class="box-title">Funil editorial · '+(f.total||0)+' vídeos</div>'
+  el.innerHTML='<div class="box-title">Funil editorial · '+totalVids+' vídeos</div>'
     +rows.map(function(r){
       return '<div class="funil-row"><span class="funil-label">'+r.label+'</span>'
         +'<div class="funil-bar-track"><div class="funil-bar-fill" style="width:'+Math.max(r.pct,2)+'%;background:'+r.color+'"></div></div>'
@@ -1528,10 +1564,11 @@ function renderProducaoHub(ss, rp) {
       +'<h2>"'+esc(rp.titulo)+'"</h2>'
       +'<div class="sug-angle">'+esc(rp.motivo||'')+'</div>'
       +'<div class="sug-hook"><label>Gancho</label><p>"'+esc(rp.gancho||'')+'"</p></div>'
-      +'<div style="display:flex;gap:8px;margin-top:14px;">'
+      +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;">'
       +'<button class="btn" onclick="window._stAction(\'accept_tema_livre\',{titulo:'+JSON.stringify(rp.titulo)+',rpm_esperado:'+(rp.rpm_esperado||0)+',etapa_funil:'+JSON.stringify(rp.etapa_funil||'')+',tema:'+JSON.stringify(rp.tema||'')+',brief:'+JSON.stringify(rp.brief||'')+'})">'
       +'✅ Aceitar → Fila</button>'
-      +'<button class="btn btn-ghost" onclick="document.getElementById(\'tema-livre-result\').style.display=\'none\'">✕ Descartar</button>'
+      +'<button class="btn btn-ghost" onclick="window._stAction(\'dismiss_tema_livre\',{})">✕ Descartar</button>'
+      +'<button class="btn btn-ghost" onclick="window._stAction(\'generate_tema_livre\',{tema:'+JSON.stringify(rp.tema||'')+',brief:'+JSON.stringify(rp.brief||'')+'})">🔄 Gerar outra variação</button>'
       +'</div></div>';
   } else {
     resEl.style.display='none'; resEl.innerHTML='';
@@ -1541,6 +1578,18 @@ function renderProducaoHub(ss, rp) {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // RENDER — KANBAN (interactive)
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function _pendingSnippetForId(sugId) {
+  if (!sugId) return '';
+  var arr = _STATE.sugestoes_pendentes || [];
+  for (var i = 0; i < arr.length; i++) {
+    if (arr[i].id === sugId) {
+      var t = arr[i].texto || arr[i].id;
+      return t ? String(t).slice(0, 120) : '';
+    }
+  }
+  return '';
+}
+
 function renderKanban(fila) {
   var el=document.getElementById('kanban'); if(!el) return;
   var cols=[
@@ -1550,19 +1599,19 @@ function renderKanban(fila) {
     {key:'concluido',label:'Concluído',color:'var(--green)'}
   ];
   function tclass(f){return f==='fundo'?'tag-fundo':f==='meio'?'tag-meio':'tag-topo';}
-  function oclass(o){return (o==='sugestao_semana'||(o||'').indexOf('tema_livre')===0||(o||'').indexOf('batch')===0||(o||'').indexOf('SUG')===0)?'origin-ia':'origin-manual';}
-  function olabel(o){return o==='sugestao_semana'?'semana':(o||'').indexOf('tema_livre')===0?'tema':o==='ideia_propria'?'manual':'ia';}
+  function oclass(o){return (o==='sugestao_semana'||o==='sugestao_pendente'||(o||'').indexOf('tema_livre')===0||(o||'').indexOf('batch')===0||(o||'').indexOf('SUG')===0)?'origin-ia':'origin-manual';}
+  function olabel(o){return o==='sugestao_semana'?'semana':o==='sugestao_pendente'?'SUG':(o||'').indexOf('tema_livre')===0?'tema':o==='ideia_propria'?'manual':'ia';}
   el.innerHTML=cols.map(function(col){
     var items=fila.filter(function(f){return (f.status||'planejado')===col.key;});
-    return '<div class="k-col"><div class="k-col-head" style="color:'+col.color+'">'+col.label+' <span class="cnt">'+items.length+'</span></div>'
-      +(items.length===0?'<div style="border:1px dashed var(--border);border-radius:8px;padding:20px 12px;text-align:center;"><span style="color:var(--text-3);font-size:0.78rem;">—</span></div>'
+    return '<div class="k-col" data-k-status="'+col.key+'"><div class="k-col-head" style="color:'+col.color+'">'+col.label+' <span class="cnt">'+items.length+'</span></div>'
+      +(items.length===0?'<div class="k-drop-empty" style="border:1px dashed var(--border);border-radius:8px;padding:20px 12px;text-align:center;min-height:56px;"><span style="color:var(--text-3);font-size:0.78rem;">Arraste cards aqui</span></div>'
         :items.map(function(item){
           var gi=fila.indexOf(item);
           var actions='';
           if(col.key==='planejado'){
             actions='<div style="display:flex;gap:6px;margin-top:8px;">'
               +'<button class="btn btn-sm" style="flex:1" onclick="window._stAction(\'kanban_advance\',{idx:'+gi+'})">▶ Gravar</button>'
-              +'<button class="btn btn-sm btn-ghost" onclick="window._stAction(\'kanban_delete\',{idx:'+gi+'})">🗑</button></div>';
+              +'<button type="button" class="btn btn-sm btn-ghost" data-k-del="'+gi+'">🗑</button></div>';
           } else if(col.key==='gravando'){
             actions='<div style="display:flex;gap:6px;margin-top:8px;">'
               +'<button class="btn btn-sm" style="flex:1" onclick="window._stAction(\'kanban_advance\',{idx:'+gi+'})">📤 Publicar</button>'
@@ -1573,10 +1622,16 @@ function renderKanban(fila) {
               +'<input type="text" id="tpub-'+gi+'" placeholder="Título final (opcional)" style="width:100%;background:var(--surface-3);border:1px solid var(--border);border-radius:5px;padding:6px 8px;font-size:0.65rem;color:var(--text);font-family:var(--font);margin-bottom:4px;">'
               +'<button class="btn btn-sm" style="width:100%" onclick="_confirmPublish('+gi+')">✅ Confirmar publicação</button></div>';
           }
-          return '<div class="k-card">'
+          var sid = item.sugestao_id || '';
+          var snip = sid ? _pendingSnippetForId(sid) : '';
+          var sugLine = sid
+            ? '<div class="k-sug-link" title="'+esc(snip)+'">🔗 IA: <code style="font-size:0.55rem;">'+esc(sid)+'</code>'+(snip?' — '+esc(snip.slice(0,50))+(snip.length>50?'…':'') : '')+'</div>'
+            : '<div class="k-sug-link">Origem: '+esc(item.origem||'manual')+'</div>';
+          return '<div class="k-card" draggable="true" data-k-idx="'+gi+'">'
             +'<div style="display:flex;justify-content:space-between;align-items:start;gap:6px;">'
             +'<div class="k-card-title">'+esc((item.titulo||'').slice(0,55))+'</div>'
             +'<span class="k-card-origin '+oclass(item.origem)+'">'+olabel(item.origem)+'</span></div>'
+            +sugLine
             +'<div class="k-card-meta"><span class="funil-tag '+tclass(item.funil)+'">'+esc(item.funil||'')+'</span>'
             +'<span>R$'+Number(item.rpm||0).toFixed(0)+'</span>'
             +'<span>'+esc((item.data||'').slice(0,10))+'</span>'
@@ -1585,6 +1640,60 @@ function renderKanban(fila) {
         }).join(''))
       +'</div>';
   }).join('');
+}
+
+function _wireKanbanDnD() {
+  var el = document.getElementById('kanban');
+  if (!el || el._kdnd) return;
+  el._kdnd = true;
+  el.addEventListener('dragstart', function (e) {
+    if (e.target.closest('button') || e.target.closest('input')) {
+      e.preventDefault();
+      return;
+    }
+    var card = e.target.closest('.k-card');
+    if (!card || !card.getAttribute('draggable')) return;
+    e.dataTransfer.setData('text/kidx', card.getAttribute('data-k-idx') || '');
+    e.dataTransfer.effectAllowed = 'move';
+    card.style.opacity = '0.6';
+  });
+  el.addEventListener('dragend', function (e) {
+    var card = e.target.closest('.k-card');
+    if (card) card.style.opacity = '';
+    el.querySelectorAll('.k-col.k-drag-over').forEach(function (c) { c.classList.remove('k-drag-over'); });
+  });
+  el.addEventListener('dragover', function (e) {
+    var col = e.target.closest('.k-col');
+    if (!col) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  });
+  el.addEventListener('dragenter', function (e) {
+    var col = e.target.closest('.k-col');
+    if (col) col.classList.add('k-drag-over');
+  });
+  el.addEventListener('dragleave', function (e) {
+    var col = e.target.closest('.k-col');
+    if (col && !col.contains(e.relatedTarget)) col.classList.remove('k-drag-over');
+  });
+  el.addEventListener('drop', function (e) {
+    var col = e.target.closest('.k-col');
+    if (!col) return;
+    e.preventDefault();
+    col.classList.remove('k-drag-over');
+    var idx = parseInt(e.dataTransfer.getData('text/kidx'), 10);
+    var st = col.getAttribute('data-k-status');
+    if (isNaN(idx) || !st) return;
+    window._stAction('kanban_set_status', { idx: idx, status: st });
+  });
+  el.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-k-del]');
+    if (!btn) return;
+    var gi = btn.getAttribute('data-k-del');
+    var card = btn.closest('.k-card');
+    if (card) card.classList.add('k-card-busy');
+    window._stAction('kanban_delete', { idx: parseInt(gi, 10) });
+  });
 }
 
 function _confirmPublish(idx) {
@@ -1676,11 +1785,16 @@ function _wireAddToQueue() {
 
 function _wireTemaLivre() {
   var btn=document.getElementById('tema-livre-btn'); if(!btn||btn._w) return; btn._w=true;
+  var debMs = 750;
   btn.addEventListener('click',function(){
+    if (btn._temaBusy) return;
     var t=((document.getElementById('tema-livre-input')||{}).value||'').trim();
     var brief=((document.getElementById('tema-livre-brief')||{}).value||'').trim();
     if(!t){alert('Digite um tema.');return;}
+    btn._temaBusy = true;
+    btn.disabled = true;
     window._stAction('generate_tema_livre',{tema:t,brief:brief});
+    setTimeout(function(){ btn._temaBusy = false; btn.disabled = false; }, debMs);
   });
 }
 
@@ -1876,7 +1990,7 @@ function _saveComp() {
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 document.addEventListener('DOMContentLoaded', function() {
   // Render empty state placeholders while waiting for Streamlit data
-  ['metrics','funil-box','top-rpm-box','receita-console-box','receita-chart-box',
+  ['metrics','top-rpm-box','receita-console-box','receita-chart-box',
    'insights-box','producao-hero-area','kanban','pending-box','video-list-box',
    'meta-anual-box','meta-tri-box','accuracy-box','patterns-box','links-box',
    'token-box','files-status-box','conc-mgmt-box'].forEach(function(id){

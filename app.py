@@ -1561,10 +1561,11 @@ def adicionar_sugestao_a_fila(sug_id, titulo, rpm_prev, funil_etapa=''):
         'titulo_publicado': None,
         'video_id_youtube': None,
         'rpm_previsto': rpm_prev,
-        'funil': funil_etapa,
+        'funil': funil_etapa or 'topo',
         'status': 'planejado',
         'data_planejamento': datetime.now().strftime('%Y-%m-%d'),
         'data_publicacao': None,
+        'origem': 'sugestao_pendente',
     })
     pendentes = carregar_arquivo('sugestoes_pendentes.json', [])
     for p in pendentes:
@@ -1624,6 +1625,7 @@ def _fila_para_componente(fila_json: list) -> list:
         titulo = item.get('titulo_publicado') or item.get('titulo_planejado', '')
         result.append({
             'id':       item.get('sugestao_id') or f'item-{len(result)+1}',
+            'sugestao_id': item.get('sugestao_id'),
             'titulo':   titulo,
             'rpm':      item.get('rpm_previsto', 0),
             'funil':    item.get('funil', 'topo'),
@@ -1825,6 +1827,15 @@ def _prepare_component_props(loading=False, loading_msg='', result_payload=None)
 
 def _dispatch_action(action_data: dict) -> bool:
     """Handle actions from the HTML component. Returns True if st.rerun() should be called."""
+    rid = action_data.get('request_id') if isinstance(action_data, dict) else None
+    if rid and st.session_state.get('_dashboard_processed_request_id') == rid:
+        return False
+
+    def _mark_done() -> bool:
+        if rid:
+            st.session_state['_dashboard_processed_request_id'] = rid
+        return True
+
     action  = action_data.get('action', '')
     fila    = carregar_arquivo('fila_producao.json', [])
     concs   = carregar_arquivo('concorrentes.json', [])
@@ -1855,7 +1866,7 @@ def _dispatch_action(action_data: dict) -> bool:
         })
         salvar_github('fila_producao.json', fila)
         st.cache_data.clear()
-        return True
+        return _mark_done()
 
     if action == 'generate_suggestion':
         with st.spinner('Gerando sugestão...'):
@@ -1864,14 +1875,18 @@ def _dispatch_action(action_data: dict) -> bool:
                 nova['gerado_em'] = datetime.now().strftime('%Y-%m-%d %H:%M')
                 salvar_github('sugestao_semana.json', nova)
                 st.cache_data.clear()
-        return True
+        return _mark_done()
 
     # ── Tema livre ──────────────────────────────────────────────────
+    if action == 'dismiss_tema_livre':
+        st.session_state.pop('_result_payload', None)
+        return _mark_done()
+
     if action == 'generate_tema_livre':
         tema = (action_data.get('tema') or '').strip()
         brief = (action_data.get('brief') or '').strip()
         if not tema:
-            return True
+            return _mark_done()
         with st.spinner(f'Gerando sugestão para "{tema}"...'):
             nova = gerar_sugestao_tema_livre(tema, dados_raw or '', ctx, funil_j, brief=brief)
             if nova:
@@ -1880,7 +1895,7 @@ def _dispatch_action(action_data: dict) -> bool:
                     nova['brief'] = brief
                 nova['type'] = 'tema_livre'
                 st.session_state['_result_payload'] = nova
-        return True
+        return _mark_done()
 
     if action == 'accept_tema_livre':
         titulo = action_data.get('titulo', '')
@@ -1906,7 +1921,7 @@ def _dispatch_action(action_data: dict) -> bool:
         salvar_github('fila_producao.json', fila)
         st.session_state.pop('_result_payload', None)
         st.cache_data.clear()
-        return True
+        return _mark_done()
 
     # ── Adicionar à fila (manual) ────────────────────────────────────
     if action == 'add_to_queue':
@@ -1928,11 +1943,13 @@ def _dispatch_action(action_data: dict) -> bool:
             })
             salvar_github('fila_producao.json', fila)
             st.cache_data.clear()
-        return True
+        return _mark_done()
 
     # ── Kanban actions ───────────────────────────────────────────────
     STATUS_NEXT = {'planejado': 'gravando', 'gravando': 'publicado', 'publicado': 'concluido'}
     STATUS_PREV = {'gravando': 'planejado', 'publicado': 'gravando', 'concluido': 'publicado'}
+
+    KANBAN_STATUSES = ('planejado', 'gravando', 'publicado', 'concluido')
 
     if action == 'kanban_advance':
         idx = action_data.get('idx', -1)
@@ -1941,7 +1958,7 @@ def _dispatch_action(action_data: dict) -> bool:
             fila[idx]['status'] = STATUS_NEXT.get(curr, curr)
             salvar_github('fila_producao.json', fila)
             st.cache_data.clear()
-        return True
+        return _mark_done()
 
     if action == 'kanban_back':
         idx = action_data.get('idx', -1)
@@ -1950,7 +1967,19 @@ def _dispatch_action(action_data: dict) -> bool:
             fila[idx]['status'] = STATUS_PREV.get(curr, curr)
             salvar_github('fila_producao.json', fila)
             st.cache_data.clear()
-        return True
+        return _mark_done()
+
+    if action == 'kanban_set_status':
+        try:
+            idx = int(action_data.get('idx', -1))
+        except (TypeError, ValueError):
+            idx = -1
+        new_st = (action_data.get('status') or '').strip()
+        if 0 <= idx < len(fila) and new_st in KANBAN_STATUSES:
+            fila[idx]['status'] = new_st
+            salvar_github('fila_producao.json', fila)
+            st.cache_data.clear()
+        return _mark_done()
 
     if action == 'kanban_delete':
         idx = action_data.get('idx', -1)
@@ -1958,7 +1987,7 @@ def _dispatch_action(action_data: dict) -> bool:
             fila.pop(idx)
             salvar_github('fila_producao.json', fila)
             st.cache_data.clear()
-        return True
+        return _mark_done()
 
     if action == 'kanban_publish':
         idx              = action_data.get('idx', -1)
@@ -1972,7 +2001,7 @@ def _dispatch_action(action_data: dict) -> bool:
             fila[idx]['data_publicacao'] = datetime.now().strftime('%Y-%m-%d')
             salvar_github('fila_producao.json', fila)
             st.cache_data.clear()
-        return True
+        return _mark_done()
 
     if action == 'link_video':
         try:
@@ -1982,7 +2011,7 @@ def _dispatch_action(action_data: dict) -> bool:
         notas = (action_data.get('notas') or '').strip()
         sug_id = (action_data.get('sug_id') or '').strip() or None
         if not notas or idx < 0 or idx >= len(fila):
-            return True
+            return _mark_done()
         item = fila[idx]
         titulo_pub = (item.get('titulo_publicado') or item.get('titulo_planejado') or '').strip()
         video_id = (item.get('video_id_youtube') or '').strip()
@@ -2046,7 +2075,7 @@ def _dispatch_action(action_data: dict) -> bool:
             salvar_github('historico.json', hist)
 
         st.cache_data.clear()
-        return True
+        return _mark_done()
 
     # ── Lote IA ──────────────────────────────────────────────────────
     if action == 'generate_batch':
@@ -2078,7 +2107,7 @@ def _dispatch_action(action_data: dict) -> bool:
                     'id2': id2,
                 }
                 st.cache_data.clear()
-        return True
+        return _mark_done()
 
     if action == 'use_suggestion':
         sug_id = action_data.get('sug_id', '')
@@ -2086,7 +2115,7 @@ def _dispatch_action(action_data: dict) -> bool:
         rpm    = action_data.get('rpm_previsto', 150)
         adicionar_sugestao_a_fila(sug_id, titulo, rpm)
         st.cache_data.clear()
-        return True
+        return _mark_done()
 
     if action == 'generate_script':
         tema = action_data.get('tema', '')
@@ -2095,7 +2124,7 @@ def _dispatch_action(action_data: dict) -> bool:
             rp = st.session_state.get('_result_payload', {})
             rp['script'] = script
             st.session_state['_result_payload'] = rp
-        return True
+        return _mark_done()
 
     # ── Concorrentes ─────────────────────────────────────────────────
     if action == 'add_competitor':
@@ -2118,7 +2147,7 @@ def _dispatch_action(action_data: dict) -> bool:
             concs.append(novo)
             salvar_github('concorrentes.json', concs)
             st.cache_data.clear()
-        return True
+        return _mark_done()
 
     if action == 'delete_competitor':
         idx = action_data.get('idx', -1)
@@ -2126,7 +2155,7 @@ def _dispatch_action(action_data: dict) -> bool:
             concs.pop(idx)
             salvar_github('concorrentes.json', concs)
             st.cache_data.clear()
-        return True
+        return _mark_done()
 
     # ── Metas ────────────────────────────────────────────────────────
     if action == 'save_meta':
@@ -2134,12 +2163,12 @@ def _dispatch_action(action_data: dict) -> bool:
         metas_json.update(action_data.get('metas', {}))
         salvar_github('metas.json', metas_json)
         st.cache_data.clear()
-        return True
+        return _mark_done()
 
     # ── Token renewal (fallback to session state flag) ───────────────
     if action == 'open_token_renewal':
         st.session_state['_show_token_renewal'] = True
-        return True
+        return _mark_done()
 
     return False
 
