@@ -1,10 +1,19 @@
-﻿import streamlit as st
+import streamlit as st
 import requests
 import json
 import os
 from html import escape as html_escape
 from datetime import datetime
 import base64
+import hashlib
+
+# ── ID GENERATOR ──
+def _gerar_sugestao_id(prefix='SUG'):
+    """Gera ID único rastreável: SUG-20260413-A3F2"""
+    now = datetime.now()
+    date_part = now.strftime('%Y%m%d')
+    hash_part = hashlib.md5(f'{now.isoformat()}{id(now)}'.encode()).hexdigest()[:4].upper()
+    return f'{prefix}-{date_part}-{hash_part}'
 
 # ── CONFIG ──
 REPO = 'Guicapovilla/analytics-capovilla'
@@ -782,6 +791,7 @@ def renovar_token_google():
 
     SCOPES = [
         'https://www.googleapis.com/auth/youtube.readonly',
+        'https://www.googleapis.com/auth/youtube.force-ssl',
         'https://www.googleapis.com/auth/yt-analytics.readonly',
         'https://www.googleapis.com/auth/yt-analytics-monetary.readonly',
     ]
@@ -1851,7 +1861,7 @@ def _dispatch_action(action_data: dict) -> bool:
         titulo      = action_data.get('titulo', ss.get('titulo', ''))
         rpm         = action_data.get('rpm_esperado', ss.get('rpm_esperado', 0))
         etapa       = action_data.get('etapa_funil', ss.get('etapa_funil', 'topo'))
-        sug_id      = action_data.get('sugestao_id') or f'semana_{datetime.now().strftime("%Y%m%d")}'
+        sug_id      = action_data.get('sugestao_id') or _gerar_sugestao_id('SEM')
         fila.append({
             'sugestao_id': sug_id,
             'titulo_planejado': titulo,
@@ -1873,6 +1883,7 @@ def _dispatch_action(action_data: dict) -> bool:
             nova = gerar_sugestao_semana(dados_raw or '', ctx, concs_j, funil_j)
             if nova:
                 nova['gerado_em'] = datetime.now().strftime('%Y-%m-%d %H:%M')
+                nova['sugestao_id'] = _gerar_sugestao_id('SEM')
                 salvar_github('sugestao_semana.json', nova)
                 st.cache_data.clear()
         return _mark_done()
@@ -1904,7 +1915,7 @@ def _dispatch_action(action_data: dict) -> bool:
         tema   = action_data.get('tema', '')
         brief_a = (action_data.get('brief') or '').strip()
         entry = {
-            'sugestao_id': None,
+            'sugestao_id': _gerar_sugestao_id('TML'),
             'titulo_planejado': titulo,
             'titulo_publicado': None,
             'video_id_youtube': None,
@@ -1929,20 +1940,28 @@ def _dispatch_action(action_data: dict) -> bool:
         rpm    = action_data.get('rpm_previsto', 50)
         etapa  = action_data.get('funil', 'topo')
         if titulo.strip():
-            fila.append({
-                'sugestao_id': None,
-                'titulo_planejado': titulo.strip(),
-                'titulo_publicado': None,
-                'video_id_youtube': None,
-                'rpm_previsto': rpm,
-                'funil': etapa,
-                'status': 'planejado',
-                'data_planejamento': datetime.now().strftime('%Y-%m-%d'),
-                'data_publicacao': None,
-                'origem': 'ideia_propria',
-            })
-            salvar_github('fila_producao.json', fila)
-            st.cache_data.clear()
+            # Dedup: não adicionar se já existe item planejado com mesmo título
+            titulo_norm = titulo.strip().lower()
+            duplicado = any(
+                f.get('status') == 'planejado'
+                and (f.get('titulo_planejado') or '').strip().lower() == titulo_norm
+                for f in fila
+            )
+            if not duplicado:
+                fila.append({
+                    'sugestao_id': _gerar_sugestao_id('MAN'),
+                    'titulo_planejado': titulo.strip(),
+                    'titulo_publicado': None,
+                    'video_id_youtube': None,
+                    'rpm_previsto': rpm,
+                    'funil': etapa,
+                    'status': 'planejado',
+                    'data_planejamento': datetime.now().strftime('%Y-%m-%d'),
+                    'data_publicacao': None,
+                    'origem': 'ideia_propria',
+                })
+                salvar_github('fila_producao.json', fila)
+                st.cache_data.clear()
         return _mark_done()
 
     # ── Kanban actions ───────────────────────────────────────────────
