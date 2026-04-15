@@ -1,0 +1,46 @@
+---
+description: Organização Python, camadas e boas práticas para youtube-analytics (Streamlit, coleta, GitHub)
+alwaysApply: true
+---
+
+# Estrutura e boas práticas (youtube-analytics)
+
+## Organização e módulos
+
+- **Evitar monólitos**: [`app.py`](app.py) e [`coletar.py`](coletar.py) concentram muita lógica. Em **novas** mudanças, extrair para `.py` ou **pacotes por domínio** (`config`, GitHub/raw, parsing de JSONs, agregação, UI). Entrada fina: `app.py` orquestra; coleta em `collector/` ou módulos (OAuth YouTube, GitHub, Apify).
+- **Um módulo = uma responsabilidade**; evite misturar coleta, transformação, I/O e apresentação no mesmo arquivo ao adicionar features.
+- **API pública explícita**: o que outros módulos usam com nomes estáveis; detalhes com prefixo `_` ou submódulos internos. Referência no repo: [`components/dashboard/__init__.py`](components/dashboard/__init__.py) (`render_dashboard` vs `_FRONTEND_DIR`).
+- **Dependências em uma direção**: camadas superiores importam inferiores (UI → serviços → clientes), evitando import circular.
+
+## Funções e legibilidade
+
+- Funções curtas e um propósito; se o nome precisa de “e”, considere dividir.
+- Nomes descritivos (`carregar_metas_github`, não `get_data`). Constantes em `UPPER_SNAKE_CASE` no topo ou em módulo `config`/constantes.
+- Preferir dependências explícitas (argumentos ou injeção simples) a estado global mutável para clientes HTTP e paths.
+
+## Configuração e reprodutibilidade
+
+- Segredos: [.streamlit/secrets.toml.example](.streamlit/secrets.toml.example) + env (como em `coletar.py`). **Nunca** commitar tokens ou `secrets.toml` real.
+- Comportamento determinístico quando possível: ordenação estável, datas em **UTC** e formato explícito (ex.: ISO 8601).
+
+## Erros e robustez
+
+- Não usar `except: pass` ou `except Exception: pass` para “sumir” falhas de rede/JSON. Preferir exceções específicas (ex.: `requests.RequestException`), log com contexto (URL, arquivo) e relançar ou retorno de erro **intencional** (lista vazia só se for contrato documentado).
+
+```python
+# ❌ Evitar: except vazio em rede/JSON
+# ✅ Preferir: timeout, raise_for_status, RequestException + log e raise
+resp = requests.get(url, timeout=30)
+resp.raise_for_status()
+return resp.json()  # em try/except requests.RequestException com logger.exception
+```
+
+- Timeouts em HTTP; retries com backoff só onde fizer sentido.
+
+## Testes e mudanças seguras
+
+- Lógica pura (parse, agregações) testável; I/O (GitHub, YouTube, arquivo) nas bordas. Mudanças no dashboard ou nos JSONs publicados: contrato estável ou breaking change documentado no PR.
+
+## Direção sugerida (evolução gradual)
+
+`youtube_analytics/` (ou pacotes no root): `config.py`, `github_client.py`, `parsing.py`, `collector/`; `app.py` fino; `coletar.py` como entry que importa `collector.*`.

@@ -1,22 +1,17 @@
-import streamlit as st
+﻿import streamlit as st
 import requests
 import json
 import os
 from html import escape as html_escape
 from datetime import datetime
-import base64
-import hashlib
 
-# ── ID GENERATOR ──
-def _gerar_sugestao_id(prefix='SUG'):
-    """Gera ID único rastreável: SUG-20260413-A3F2"""
-    now = datetime.now()
-    date_part = now.strftime('%Y%m%d')
-    hash_part = hashlib.md5(f'{now.isoformat()}{id(now)}'.encode()).hexdigest()[:4].upper()
-    return f'{prefix}-{date_part}-{hash_part}'
+from youtube_analytics import config
+from youtube_analytics.anthropic import post_messages
+from youtube_analytics.parsing import parsear_dados
+from youtube_analytics.github_client import fetch_raw_json_or, fetch_raw_text_or, put_repository_file
 
 # ── CONFIG ──
-REPO = 'Guicapovilla/analytics-capovilla'
+REPO = config.REPO
 GITHUB_TOKEN = st.secrets.get('TOKEN_PERSONAL_GITHUB', '') or st.secrets.get('GITHUB_TOKEN_PERSONAL', '') or os.environ.get('TOKEN_PERSONAL_GITHUB', '')
 CLAUDE_API_KEY = st.secrets.get('CLAUDE_API_KEY', '') or os.environ.get('CLAUDE_API_KEY', '')
 RAW_BASE = f'https://raw.githubusercontent.com/{REPO}/main'
@@ -646,23 +641,15 @@ hr { border-color: var(--border) !important; margin: 1rem 0 !important; }
 
 @st.cache_data(ttl=300)
 def carregar_dados():
-    try:
-        r = requests.get(f'{RAW_BASE}/dados.txt', timeout=10)
-        return r.text if r.status_code == 200 else None
-    except:
-        return None
+    txt = fetch_raw_text_or(REPO, 'dados.txt', '')
+    return txt if txt else None
+
 
 @st.cache_data(ttl=60)
 def carregar_arquivo(filename, default):
-    try:
-        r = requests.get(f'{RAW_BASE}/{filename}', timeout=10)
-        if r.status_code == 200 and r.text.strip() not in ['', 'null']:
-            if filename.endswith('.json'):
-                return json.loads(r.text)
-            return r.text
-    except:
-        pass
-    return default
+    if filename.endswith('.json'):
+        return fetch_raw_json_or(REPO, filename, default)
+    return fetch_raw_text_or(REPO, filename, default)
 
 
 APRENDIZADOS_CREATOR_FILE = 'aprendizados_criador.json'
@@ -721,20 +708,13 @@ def salvar_github(filename, content):
     if not GITHUB_TOKEN:
         st.error('GITHUB_TOKEN não configurado nos secrets.')
         return False
-    url = f'{API_BASE}/{filename}'
-    headers = {'Authorization': f'token {GITHUB_TOKEN}', 'Accept': 'application/vnd.github.v3+json'}
-    r = requests.get(url, headers=headers)
-    sha = r.json().get('sha', '') if r.status_code == 200 else ''
-    if isinstance(content, str):
-        encoded = base64.b64encode(content.encode('utf-8')).decode('utf-8')
-    else:
-        encoded = base64.b64encode(json.dumps(content, ensure_ascii=False, indent=2).encode('utf-8')).decode('utf-8')
-    payload = {
-        'message': f'Atualização {filename} {datetime.now().strftime("%d/%m/%Y %H:%M")}',
-        'content': encoded, 'sha': sha
-    }
-    r = requests.put(url, headers=headers, json=payload)
-    return r.status_code in (200, 201)
+    return put_repository_file(
+        REPO,
+        GITHUB_TOKEN,
+        filename,
+        content,
+        message=f'Atualização {filename} {datetime.now().strftime("%d/%m/%Y %H:%M")}',
+    )
 
 
 def atualizar_secret_github(secret_name, secret_value):
@@ -791,7 +771,6 @@ def renovar_token_google():
 
     SCOPES = [
         'https://www.googleapis.com/auth/youtube.readonly',
-        'https://www.googleapis.com/auth/youtube.force-ssl',
         'https://www.googleapis.com/auth/yt-analytics.readonly',
         'https://www.googleapis.com/auth/yt-analytics-monetary.readonly',
     ]
@@ -872,78 +851,8 @@ def renovar_token_google():
                 st.info('Alternativa: copie o token abaixo e cole manualmente no Secret GOOGLE_TOKEN_JSON do GitHub Actions.')
                 st.code(token_str, language='json')
 
-def parsear_dados(texto):
-    dados = {}
-    secao = ''
-    videos_views, videos_receita, receita_diaria = [], [], []
-    for linha in texto.split('\n'):
-        linha = linha.strip()
-        if not linha:
-            continue
-        if linha.startswith('==='):
-            secao = linha
-            continue
-        if 'DADOS DO CANAL' in secao or 'ANALYTICS 28 DIAS' in secao:
-            if ':' in linha:
-                k, v = linha.split(':', 1)
-                dados[k.strip()] = v.strip()
-        elif 'TOP 10 VIDEOS POR VIEWS' in secao:
-            if linha and linha[0].isdigit() and '|' in linha:
-                parts = linha.split('|')
-                titulo = parts[0].split('.', 1)[-1].strip()
-                item = {'titulo': titulo}
-                for p in parts[1:]:
-                    p = p.strip()
-                    if 'Views:' in p:
-                        try: item['views'] = int(p.split(':')[1].strip().replace(',',''))
-                        except: pass
-                    elif 'Likes:' in p:
-                        try: item['likes'] = int(p.split(':')[1].strip().replace(',',''))
-                        except: pass
-                    elif 'Comentarios:' in p:
-                        try: item['comentarios'] = int(p.split(':')[1].strip().replace(',',''))
-                        except: pass
-                    elif 'Publicado:' in p:
-                        try: item['publicado'] = p.split(':', 1)[1].strip()
-                        except: pass
-                videos_views.append(item)
-        elif 'TOP 10 VIDEOS POR RECEITA' in secao:
-            if linha and linha[0].isdigit() and '|' in linha:
-                parts = linha.split('|')
-                titulo = parts[0].split('.', 1)[-1].strip()
-                item = {'titulo': titulo}
-                for p in parts[1:]:
-                    p = p.strip()
-                    if 'BRL:' in p and 'R$' in p:
-                        try: item['receita'] = float(p.split('R$')[1].strip())
-                        except: pass
-                    elif 'Views:' in p:
-                        try: item['views'] = int(p.split(':')[1].strip().replace(',',''))
-                        except: pass
-                    elif 'RPM:' in p and 'R$' in p:
-                        try: item['rpm'] = float(p.split('R$')[1].strip())
-                        except: pass
-                videos_receita.append(item)
-        elif 'RECEITA DIARIA' in secao:
-            if '|' in linha:
-                parts = linha.split('|')
-                item = {'data': parts[0].strip()}
-                for p in parts[1:]:
-                    p = p.strip()
-                    if 'BRL:' in p and 'R$' in p:
-                        try: item['brl'] = float(p.split('R$')[1].strip())
-                        except: pass
-                receita_diaria.append(item)
-    dados['videos_views'] = videos_views
-    dados['videos_receita'] = videos_receita
-    dados['receita_diaria'] = receita_diaria
-    return dados
-
-
 def claude_api(prompt, max_tokens=2000, web_search=False):
     """Chamada centralizada à API do Claude com ou sem web search."""
-    if not CLAUDE_API_KEY:
-        return None, "❌ CLAUDE_API_KEY não configurada."
     body = {
         'model': 'claude-opus-4-5',
         'max_tokens': max_tokens,
@@ -951,56 +860,23 @@ def claude_api(prompt, max_tokens=2000, web_search=False):
     }
     if web_search:
         body['tools'] = [{"type": "web_search_20250305", "name": "web_search"}]
-    try:
-        r = requests.post(
-            'https://api.anthropic.com/v1/messages',
-            headers={
-                'x-api-key': CLAUDE_API_KEY,
-                'anthropic-version': '2023-06-01',
-                'content-type': 'application/json'
-            },
-            json=body,
-            timeout=120
-        )
-        if r.status_code == 200:
-            texto = ''
-            for block in r.json().get('content', []):
-                if block.get('type') == 'text':
-                    texto += block.get('text', '')
-            return texto, None
-        return None, f"❌ Erro: {r.status_code} — {r.text[:200]}"
-    except Exception as e:
-        return None, f"❌ Erro: {str(e)}"
+    return post_messages(
+        CLAUDE_API_KEY, body, timeout=120, http_error_detail=True
+    )
 
 
 def claude_api_sonnet(prompt, max_tokens=1500):
     """Versão econômica do Claude API usando Sonnet — para resumos de concorrentes."""
-    if not CLAUDE_API_KEY:
-        return None, "❌ CLAUDE_API_KEY não configurada."
-    try:
-        r = requests.post(
-            'https://api.anthropic.com/v1/messages',
-            headers={
-                'x-api-key': CLAUDE_API_KEY,
-                'anthropic-version': '2023-06-01',
-                'content-type': 'application/json'
-            },
-            json={
-                'model': 'claude-sonnet-4-6',
-                'max_tokens': max_tokens,
-                'messages': [{'role': 'user', 'content': prompt}]
-            },
-            timeout=60
-        )
-        if r.status_code == 200:
-            texto = ''
-            for block in r.json().get('content', []):
-                if block.get('type') == 'text':
-                    texto += block.get('text', '')
-            return texto, None
-        return None, f"❌ Erro: {r.status_code}"
-    except Exception as e:
-        return None, f"❌ Erro: {str(e)}"
+    return post_messages(
+        CLAUDE_API_KEY,
+        {
+            'model': 'claude-sonnet-4-6',
+            'max_tokens': max_tokens,
+            'messages': [{'role': 'user', 'content': prompt}],
+        },
+        timeout=60,
+        http_error_detail=False,
+    )
 
 
 def resumir_transcricao_concorrente(titulo, descricao, transcricao):
@@ -1861,7 +1737,7 @@ def _dispatch_action(action_data: dict) -> bool:
         titulo      = action_data.get('titulo', ss.get('titulo', ''))
         rpm         = action_data.get('rpm_esperado', ss.get('rpm_esperado', 0))
         etapa       = action_data.get('etapa_funil', ss.get('etapa_funil', 'topo'))
-        sug_id      = action_data.get('sugestao_id') or _gerar_sugestao_id('SEM')
+        sug_id      = action_data.get('sugestao_id') or f'semana_{datetime.now().strftime("%Y%m%d")}'
         fila.append({
             'sugestao_id': sug_id,
             'titulo_planejado': titulo,
@@ -1883,7 +1759,6 @@ def _dispatch_action(action_data: dict) -> bool:
             nova = gerar_sugestao_semana(dados_raw or '', ctx, concs_j, funil_j)
             if nova:
                 nova['gerado_em'] = datetime.now().strftime('%Y-%m-%d %H:%M')
-                nova['sugestao_id'] = _gerar_sugestao_id('SEM')
                 salvar_github('sugestao_semana.json', nova)
                 st.cache_data.clear()
         return _mark_done()
@@ -1915,7 +1790,7 @@ def _dispatch_action(action_data: dict) -> bool:
         tema   = action_data.get('tema', '')
         brief_a = (action_data.get('brief') or '').strip()
         entry = {
-            'sugestao_id': _gerar_sugestao_id('TML'),
+            'sugestao_id': None,
             'titulo_planejado': titulo,
             'titulo_publicado': None,
             'video_id_youtube': None,
@@ -1940,28 +1815,20 @@ def _dispatch_action(action_data: dict) -> bool:
         rpm    = action_data.get('rpm_previsto', 50)
         etapa  = action_data.get('funil', 'topo')
         if titulo.strip():
-            # Dedup: não adicionar se já existe item planejado com mesmo título
-            titulo_norm = titulo.strip().lower()
-            duplicado = any(
-                f.get('status') == 'planejado'
-                and (f.get('titulo_planejado') or '').strip().lower() == titulo_norm
-                for f in fila
-            )
-            if not duplicado:
-                fila.append({
-                    'sugestao_id': _gerar_sugestao_id('MAN'),
-                    'titulo_planejado': titulo.strip(),
-                    'titulo_publicado': None,
-                    'video_id_youtube': None,
-                    'rpm_previsto': rpm,
-                    'funil': etapa,
-                    'status': 'planejado',
-                    'data_planejamento': datetime.now().strftime('%Y-%m-%d'),
-                    'data_publicacao': None,
-                    'origem': 'ideia_propria',
-                })
-                salvar_github('fila_producao.json', fila)
-                st.cache_data.clear()
+            fila.append({
+                'sugestao_id': None,
+                'titulo_planejado': titulo.strip(),
+                'titulo_publicado': None,
+                'video_id_youtube': None,
+                'rpm_previsto': rpm,
+                'funil': etapa,
+                'status': 'planejado',
+                'data_planejamento': datetime.now().strftime('%Y-%m-%d'),
+                'data_publicacao': None,
+                'origem': 'ideia_propria',
+            })
+            salvar_github('fila_producao.json', fila)
+            st.cache_data.clear()
         return _mark_done()
 
     # ── Kanban actions ───────────────────────────────────────────────
