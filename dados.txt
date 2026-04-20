@@ -1,5 +1,5 @@
 === DADOS DO CANAL ===
-Atualizado em: 20/04/2026 20:55
+Atualizado em: 20/04/2026 21:31
 Canal: Guilherme Capovilla 
 Inscritos: 2480
 Views totais: 315844
@@ -7,16 +7,16 @@ Total de videos: 104
 Cotacao USD/BRL: 4.979388
 
 === ANALYTICS 28 DIAS ===
-Views totais: 75773
+Views totais: 75768
 Horas assistidas: 2960
 Novos inscritos: 761
 Receita total (BRL): R$ 3571.04
 
 === TOP 10 VIDEOS POR VIEWS ===
 1. O Switch Lite Desbloqueado é SIMPLESMENTE a Melhor escolha | Views: 38190 | Likes: 2212 | Comentarios: 214 | Publicado: 2025-07-19
-2. Troquei o Instagram por Zelda… e foi a melhor coisa que fiz | Views: 30759 | Likes: 3173 | Comentarios: 245 | Publicado: 2026-03-31
+2. Troquei o Instagram por Zelda… e foi a melhor coisa que fiz | Views: 30767 | Likes: 3174 | Comentarios: 245 | Publicado: 2026-03-31
 3. Usei O XBOX SERIES S como um PC GAMER! | Views: 22537 | Likes: 1235 | Comentarios: 157 | Publicado: 2025-07-03
-4. Comprei um SWITCH LITE DESTRAVADO na SHOPEE | Views: 19515 | Likes: 1247 | Comentarios: 97 | Publicado: 2026-02-13
+4. Comprei um SWITCH LITE DESTRAVADO na SHOPEE | Views: 19518 | Likes: 1248 | Comentarios: 97 | Publicado: 2026-02-13
 5. O PS4 DESBLOQUEADO é MUITO MELHOR do que imaginava... | Views: 14345 | Likes: 613 | Comentarios: 141 | Publicado: 2025-10-20
 6. Como o Steam Deck Pode Mudar a Sua Vida | Views: 11417 | Likes: 971 | Comentarios: 143 | Publicado: 2025-07-09
 7. Como Configurar o MOONLIGHT para jogar FORA DE CASA | Views: 11022 | Likes: 443 | Comentarios: 64 | Publicado: 2025-07-25
@@ -60,7 +60,7 @@ Receita total (BRL): R$ 3571.04
 2026-04-12 | Views: 1680 | BRL: R$268.02 | CPM: $1.06
 2026-04-13 | Views: 1963 | BRL: R$517.26 | CPM: $1.15
 2026-04-14 | Views: 2050 | BRL: R$274.82 | CPM: $1.03
-2026-04-15 | Views: 1567 | BRL: R$268.12 | CPM: $0.96
+2026-04-15 | Views: 1562 | BRL: R$268.12 | CPM: $0.96
 2026-04-16 | Views: 1337 | BRL: R$286.36 | CPM: $1.68
 2026-04-17 | Views: 982 | BRL: R$3.28 | CPM: $1.00
 2026-04-18 | Views: 1182 | BRL: R$3.73 | CPM: $0.96
