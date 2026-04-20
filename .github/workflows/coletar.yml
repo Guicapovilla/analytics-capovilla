@@ -8,7 +8,6 @@ on:
 jobs:
   coletar:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repositório
         uses: actions/checkout@v4
@@ -28,11 +27,6 @@ jobs:
             requests \
             youtube-transcript-api
 
-      - name: Salvar token.json do Secret
-        run: |
-          echo '${{ secrets.GOOGLE_TOKEN_JSON }}' > token.json
-          cat token.json
-
       - name: Rodar coleta
         env:
           TOKEN_PERSONAL_GITHUB: ${{ secrets.TOKEN_PERSONAL_GITHUB }}
@@ -40,8 +34,3 @@ jobs:
           CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
           APIFY_API_KEY: ${{ secrets.APIFY_API_KEY }}
         run: python coletar.py
-
-      - name: Se falhar, notificar
-        if: failure()
-        run: |
-          echo "❌ Workflow falhou. Verifique o token.json ou execute manualmente."
