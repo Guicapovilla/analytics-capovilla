@@ -64,11 +64,13 @@ def main():
         salvar_github('contexto.txt', contexto)
         print('✅ Contexto editorial atualizado automaticamente!')
 
-    print('\n💬 Coletando comentários dos top vídeos...')
-    insights_comentarios = coletar_comentarios_insights(youtube, historico)
-    if insights_comentarios:
-        salvar_github('comentarios_insights.json', insights_comentarios)
-        print(f'  ✅ {len(insights_comentarios)} vídeos com insights de comentários')
+# Coleta de comentários desativada — requer scope youtube.force-ssl aplicado ao token.
+    # Reativar quando regenerar o token com scope completo.
+    # print('\n💬 Coletando comentários dos top vídeos...')
+    # insights_comentarios = coletar_comentarios_insights(youtube, historico)
+    # if insights_comentarios:
+    #     salvar_github('comentarios_insights.json', insights_comentarios)
+    #     print(f'  ✅ {len(insights_comentarios)} vídeos com insights de comentários')
 
     print('\n🧹 Limpando sugestões antigas...')
     sugestoes_todas = carregar_github_json('sugestoes_pendentes.json')
