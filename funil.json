@@ -141,6 +141,13 @@
       "rpm": 1.89,
       "views": 238,
       "receita": 0.45
+    },
+    {
+      "video_id": "rQ4_IOOkZYg",
+      "titulo": "COMO COMPRAR seu Switch Lite Desbloqueado PARCELADO e SEM DOR DE CABEÇA",
+      "rpm": 2.23,
+      "views": 239,
+      "receita": 0.53
     }
   ],
   "fundo": [
@@ -229,14 +236,14 @@
   "topo_count": 10,
   "topo_rpm_medio": 1.1,
   "topo_receita_total": 80.03,
-  "meio_count": 10,
-  "meio_rpm_medio": 2.8,
-  "meio_receita_total": 57.72,
+  "meio_count": 11,
+  "meio_rpm_medio": 2.7,
+  "meio_receita_total": 58.25,
   "fundo_count": 11,
   "fundo_rpm_medio": 57.1,
   "fundo_receita_total": 6703.93,
-  "gerado_em": "2026-04-13 11:07",
-  "total_videos": 31,
+  "gerado_em": "2026-04-20 20:56",
+  "total_videos": 32,
   "lacuna": "nenhuma",
   "lacuna_descricao": "Funil equilibrado"
 }
