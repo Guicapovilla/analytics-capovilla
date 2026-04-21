@@ -1,8 +1,8 @@
 === DADOS DO CANAL ===
-Atualizado em: 21/04/2026 01:44
+Atualizado em: 21/04/2026 10:56
 Canal: Guilherme Capovilla 
 Inscritos: 2480
-Views totais: 315844
+Views totais: 316809
 Total de videos: 104
 Cotacao USD/BRL: 4.980259
 
@@ -10,26 +10,26 @@ Cotacao USD/BRL: 4.980259
 Views totais: 74038
 Horas assistidas: 2868
 Novos inscritos: 740
-Receita total (BRL): R$ 3560.44
+Receita total (BRL): R$ 4110.51
 
 === TOP 10 VIDEOS POR VIEWS ===
-1. O Switch Lite Desbloqueado é SIMPLESMENTE a Melhor escolha | Views: 38201 | Likes: 2213 | Comentarios: 214 | Publicado: 2025-07-19
-2. Troquei o Instagram por Zelda… e foi a melhor coisa que fiz | Views: 30846 | Likes: 3181 | Comentarios: 246 | Publicado: 2026-03-31
-3. Usei O XBOX SERIES S como um PC GAMER! | Views: 22544 | Likes: 1237 | Comentarios: 157 | Publicado: 2025-07-03
-4. Comprei um SWITCH LITE DESTRAVADO na SHOPEE | Views: 19548 | Likes: 1251 | Comentarios: 98 | Publicado: 2026-02-13
-5. O PS4 DESBLOQUEADO é MUITO MELHOR do que imaginava... | Views: 14351 | Likes: 613 | Comentarios: 141 | Publicado: 2025-10-20
-6. Como o Steam Deck Pode Mudar a Sua Vida | Views: 11417 | Likes: 971 | Comentarios: 143 | Publicado: 2025-07-09
-7. Como Configurar o MOONLIGHT para jogar FORA DE CASA | Views: 11027 | Likes: 443 | Comentarios: 64 | Publicado: 2025-07-25
-8. 7 jogos IMPRESSIONANTES disponíveis no NINTENDO SWITCH | Views: 10235 | Likes: 808 | Comentarios: 46 | Publicado: 2026-03-21
-9. Posso dar DOWNGRADE de versão no meu PS4? #ps4 #games #desbloqueado #dicas | Views: 8652 | Likes: 165 | Comentarios: 5 | Publicado: 2026-01-12
-10. Switch Lite DESBLOQUEADO em 2026… ainda vale a pena? | Views: 6433 | Likes: 399 | Comentarios: 30 | Publicado: 2026-03-07
+1. O Switch Lite Desbloqueado é SIMPLESMENTE a Melhor escolha | Views: 38216 | Likes: 2215 | Comentarios: 214 | Publicado: 2025-07-19
+2. Troquei o Instagram por Zelda… e foi a melhor coisa que fiz | Views: 30938 | Likes: 3191 | Comentarios: 246 | Publicado: 2026-03-31
+3. Usei O XBOX SERIES S como um PC GAMER! | Views: 22553 | Likes: 1237 | Comentarios: 157 | Publicado: 2025-07-03
+4. Comprei um SWITCH LITE DESTRAVADO na SHOPEE | Views: 19625 | Likes: 1255 | Comentarios: 98 | Publicado: 2026-02-13
+5. O PS4 DESBLOQUEADO é MUITO MELHOR do que imaginava... | Views: 14353 | Likes: 613 | Comentarios: 141 | Publicado: 2025-10-20
+6. Como o Steam Deck Pode Mudar a Sua Vida | Views: 11419 | Likes: 971 | Comentarios: 143 | Publicado: 2025-07-09
+7. Como Configurar o MOONLIGHT para jogar FORA DE CASA | Views: 11048 | Likes: 443 | Comentarios: 64 | Publicado: 2025-07-25
+8. 7 jogos IMPRESSIONANTES disponíveis no NINTENDO SWITCH | Views: 10241 | Likes: 808 | Comentarios: 46 | Publicado: 2026-03-21
+9. Posso dar DOWNGRADE de versão no meu PS4? #ps4 #games #desbloqueado #dicas | Views: 8673 | Likes: 165 | Comentarios: 5 | Publicado: 2026-01-12
+10. Switch Lite DESBLOQUEADO em 2026… ainda vale a pena? | Views: 6476 | Likes: 400 | Comentarios: 30 | Publicado: 2026-03-07
 
 === TOP 10 VIDEOS POR RECEITA ===
-1. Comprei um SWITCH LITE DESTRAVADO na SHOPEE | BRL: R$6153.00 | Views: 19287 | RPM: R$319.02
+1. Comprei um SWITCH LITE DESTRAVADO na SHOPEE | BRL: R$6406.28 | Views: 19283 | RPM: R$332.22
 2. Switch Lite DESBLOQUEADO em 2026… ainda vale a pena? | BRL: R$2465.30 | Views: 6249 | RPM: R$394.51
 3. O Switch Lite Desbloqueado é SIMPLESMENTE a Melhor escolha | BRL: R$416.83 | Views: 38107 | RPM: R$10.94
-4. Troquei o Instagram por Zelda… e foi a melhor coisa que fiz | BRL: R$51.84 | Views: 30380 | RPM: R$1.71
-5. 7 jogos IMPRESSIONANTES disponíveis no NINTENDO SWITCH | BRL: R$37.57 | Views: 10153 | RPM: R$3.70
+4. 7 jogos IMPRESSIONANTES disponíveis no NINTENDO SWITCH | BRL: R$334.36 | Views: 10153 | RPM: R$32.93
+5. Troquei o Instagram por Zelda… e foi a melhor coisa que fiz | BRL: R$51.84 | Views: 30379 | RPM: R$1.71
 6. Como Configurar o MOONLIGHT para jogar FORA DE CASA | BRL: R$28.07 | Views: 10953 | RPM: R$2.56
 7. O PS4 DESBLOQUEADO é MUITO MELHOR do que imaginava... | BRL: R$25.79 | Views: 14326 | RPM: R$1.80
 8. Usei O XBOX SERIES S como um PC GAMER! | BRL: R$22.94 | Views: 22513 | RPM: R$1.02
@@ -61,5 +61,5 @@ Receita total (BRL): R$ 3560.44
 2026-04-14 | Views: 2050 | BRL: R$274.87 | CPM: $1.03
 2026-04-15 | Views: 1562 | BRL: R$268.16 | CPM: $0.96
 2026-04-16 | Views: 1337 | BRL: R$286.41 | CPM: $1.68
-2026-04-17 | Views: 982 | BRL: R$3.28 | CPM: $1.00
+2026-04-17 | Views: 982 | BRL: R$553.35 | CPM: $1.00
 2026-04-18 | Views: 1182 | BRL: R$3.73 | CPM: $0.96
