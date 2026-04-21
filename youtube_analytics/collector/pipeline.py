@@ -61,6 +61,9 @@ def main():
         sync_videos_e_metricas(historico)
     if sugestoes_restantes is not None:
         salvar_github('sugestoes_pendentes.json', sugestoes_restantes)
+        sync_sugestoes(sugestoes_restantes)
+
+    sync_vinculos_video_sugestao(historico)
 
     print('\n📊 Classificando funil editorial...')
     funil = classificar_funil(historico)
