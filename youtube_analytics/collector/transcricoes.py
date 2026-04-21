@@ -91,6 +91,7 @@ def coletar_transcricoes_proprias(youtube):
             'titulo': titulo,
             'publicado': pub,
             'views': views,
+            'texto': transcricao,
             'resumo_ia': resumo_ia,
             'tem_transcricao': bool(transcricao)
         })
