@@ -73,7 +73,7 @@ def insert(tabela: str, registros: list[dict]) -> list[dict]:
 
 
 def upsert(tabela: str, registros: list[dict], on_conflict: str | None = None) -> list[dict]:
-    """UPSERT em lote. on_conflict: nome da coluna unica (ex: 'video_id')."""
+    """UPSERT em lote. on_conflict aceita coluna única ou múltiplas separadas por vírgula."""
     if not registros:
         return []
     _init()
@@ -88,24 +88,9 @@ def upsert(tabela: str, registros: list[dict], on_conflict: str | None = None) -
         headers={"Prefer": prefer},
         timeout=60,
     )
-    resp.raise_for_status()
-    return resp.json()
-
-
-def delete(tabela: str, filtros: dict) -> None:
-    """DELETE com filtros (obrigatorio — nunca delete sem filtro)."""
-    if not filtros:
-        raise ValueError("DELETE sem filtros nao e permitido.")
-    _init()
-    params = {}
-    for k, v in filtros.items():
-        params[k] = f"eq.{v}"
-    resp = _session.delete(f"{_base_url}/{tabela}", params=params, timeout=30)
-    resp.raise_for_status()
-
-
-# Compat: mantem funcao get_client pra nao quebrar imports existentes
-def get_client():
-    """Deprecated: use ping() ou as funcoes diretas (select, insert, upsert, delete)."""
-    _init()
-    return _session
+    if not resp.ok:
+        # Detalhe do erro do PostgREST ajuda muito no debug
+        raise RuntimeError(
+            f"Supabase upsert falhou ({resp.status_code}) em {tabela}: {resp.text[:300]}"
+        )
+    return resp.json() if resp.text else []

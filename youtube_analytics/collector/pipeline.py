@@ -1,5 +1,13 @@
 """Orquestração da coleta diária (YouTube → GitHub)."""
 
+from .sync_supabase import (
+    sync_videos_e_metricas,
+    sync_concorrentes,
+    sync_transcricoes_proprias,
+    sync_sugestoes,
+    sync_vinculos_video_sugestao,
+)
+
 from datetime import datetime
 
 from googleapiclient.discovery import build
@@ -47,6 +55,9 @@ def main():
 
     if historico:
         salvar_github('historico.json', historico)
+# Dual-write Supabase (não derruba a coleta em caso de falha)
+    if historico:
+        sync_videos_e_metricas(historico)
     if sugestoes_restantes is not None:
         salvar_github('sugestoes_pendentes.json', sugestoes_restantes)
 
