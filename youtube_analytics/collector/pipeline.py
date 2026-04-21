@@ -46,6 +46,7 @@ def main():
     transcricoes = coletar_transcricoes_proprias(youtube)
     if transcricoes:
         salvar_github('transcricoes_canal.json', transcricoes)
+        sync_transcricoes_proprias(transcricoes)
 
     print('\n🔁 Loop de aprendizado — atualizando histórico...')
     historico = atualizar_historico_automatico(youtube, analytics, usd, receita_por_video)
@@ -120,6 +121,7 @@ def main():
     if concorrentes:
         concorrentes_atualizados = coletar_concorrentes(youtube, concorrentes)
         salvar_github('concorrentes.json', concorrentes_atualizados)
+        sync_concorrentes(concorrentes_atualizados)
         print(f'\n✅ {len(concorrentes_atualizados)} concorrentes atualizados.')
     else:
         print('⚠️ Nenhum concorrente cadastrado.')
