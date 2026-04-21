@@ -7,7 +7,7 @@ from youtube_analytics import config
 
 from .apify_client import apify_transcrever_video
 from .llm import claude_api
-from .transcricoes import claude_resumir_video
+from .transcricoes import claude_resumir_video, transcrever_via_youtube
 
 
 def claude_classificar_videos(videos):
@@ -107,10 +107,10 @@ def coletar_concorrentes(youtube, concorrentes):
                 if novos:
                     print(f'    🎙️ Transcrevendo {len(novos)} novos ({len(cached_transc)} do cache)...')
                     for v in novos:
-                        transcricao = apify_transcrever_video(v['id'], v['titulo'])
+                        transcricao = transcrever_via_youtube(v['id'])
                         if transcricao:
                             v['transcricao'] = transcricao
-                        time.sleep(3)
+                        time.sleep(0.5)
                 else:
                     print(f'    ♻️ Todas as transcrições em cache ({len(cached_transc)} vídeos)')
 
