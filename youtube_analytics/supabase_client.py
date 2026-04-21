@@ -25,6 +25,9 @@ def _init():
 
     # Remove barra final se veio e monta URL base do REST
     url = url.rstrip("/")
+    # Remove /rest/v1 do final se vier na URL (erro comum de copy-paste do dashboard)
+    if url.endswith("/rest/v1"):
+        url = url[:-len("/rest/v1")]
     _base_url = f"{url}/rest/v1"
 
     _session = requests.Session()
