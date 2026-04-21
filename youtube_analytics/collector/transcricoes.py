@@ -1,9 +1,30 @@
 import re
 import time
 
+from youtube_transcript_api import YouTubeTranscriptApi
+from youtube_transcript_api._errors import TranscriptsDisabled, NoTranscriptFound, VideoUnavailable
+
+
+def transcrever_via_youtube(video_id: str) -> str:
+    """
+    Busca transcrição via API oficial de legendas do YouTube.
+    Retorna string vazia se não houver legenda disponível.
+    """
+    try:
+        # Tenta pt primeiro, depois en como fallback
+        transcript = YouTubeTranscriptApi.get_transcript(
+            video_id,
+            languages=['pt', 'pt-BR', 'en']
+        )
+        return ' '.join(item['text'] for item in transcript)
+    except (TranscriptsDisabled, NoTranscriptFound, VideoUnavailable):
+        return ''
+    except Exception as e:
+        print(f'    ⚠️ Erro transcript para {video_id}: {e}')
+        return ''
+
 from youtube_analytics import config
 
-from .apify_client import apify_transcrever_video
 from .github_sync import carregar_github_json
 from .llm import claude_api
 
@@ -74,8 +95,8 @@ def coletar_transcricoes_proprias(youtube):
             print(f'    ♻️ Transcrição do cache: {titulo[:45]}')
         else:
             print(f'    📝 Transcrevendo: {titulo[:45]}...')
-            transcricao = apify_transcrever_video(vid_id, titulo)
-            time.sleep(3)
+            transcricao = transcrever_via_youtube(vid_id)
+            time.sleep(0.5)
 
         resumo_ia = ''
         if vid_id in cache_resumos and cache_resumos[vid_id]:
