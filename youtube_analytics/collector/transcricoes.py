@@ -9,9 +9,24 @@ def transcrever_via_youtube(video_id: str) -> str:
     """
     Busca transcrição via API oficial de legendas do YouTube.
     Retorna string vazia se não houver legenda disponível.
+    Compatível com youtube-transcript-api >=1.0 (instância .fetch()) e legado (estático).
     """
     try:
-        # Tenta pt primeiro, depois en como fallback
+        # API nova (>= 1.0): instância + fetch()
+        if hasattr(YouTubeTranscriptApi, 'fetch') or not hasattr(YouTubeTranscriptApi, 'get_transcript'):
+            api = YouTubeTranscriptApi()
+            fetched = api.fetch(video_id, languages=['pt', 'pt-BR', 'en'])
+            # fetched pode ser um FetchedTranscript (iterável de snippets com .text) ou lista de dict
+            if hasattr(fetched, '__iter__'):
+                textos = []
+                for item in fetched:
+                    if hasattr(item, 'text'):
+                        textos.append(item.text)
+                    elif isinstance(item, dict) and 'text' in item:
+                        textos.append(item['text'])
+                return ' '.join(textos)
+            return ''
+        # API antiga: método estático get_transcript
         transcript = YouTubeTranscriptApi.get_transcript(
             video_id,
             languages=['pt', 'pt-BR', 'en']
