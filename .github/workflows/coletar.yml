@@ -36,3 +36,5 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: python coletar.py
+
+    SUPADATA_API_KEY: ${{ secrets.SUPADATA_API_KEY }}

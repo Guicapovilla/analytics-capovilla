@@ -1,47 +1,12 @@
 import re
 import time
 
-from youtube_transcript_api import YouTubeTranscriptApi
-from youtube_transcript_api._errors import TranscriptsDisabled, NoTranscriptFound, VideoUnavailable
-
-
-def transcrever_via_youtube(video_id: str) -> str:
-    """
-    Busca transcrição via API oficial de legendas do YouTube.
-    Retorna string vazia se não houver legenda disponível.
-    Compatível com youtube-transcript-api >=1.0 (instância .fetch()) e legado (estático).
-    """
-    try:
-        # API nova (>= 1.0): instância + fetch()
-        if hasattr(YouTubeTranscriptApi, 'fetch') or not hasattr(YouTubeTranscriptApi, 'get_transcript'):
-            api = YouTubeTranscriptApi()
-            fetched = api.fetch(video_id, languages=['pt', 'pt-BR', 'en'])
-            # fetched pode ser um FetchedTranscript (iterável de snippets com .text) ou lista de dict
-            if hasattr(fetched, '__iter__'):
-                textos = []
-                for item in fetched:
-                    if hasattr(item, 'text'):
-                        textos.append(item.text)
-                    elif isinstance(item, dict) and 'text' in item:
-                        textos.append(item['text'])
-                return ' '.join(textos)
-            return ''
-        # API antiga: método estático get_transcript
-        transcript = YouTubeTranscriptApi.get_transcript(
-            video_id,
-            languages=['pt', 'pt-BR', 'en']
-        )
-        return ' '.join(item['text'] for item in transcript)
-    except (TranscriptsDisabled, NoTranscriptFound, VideoUnavailable):
-        return ''
-    except Exception as e:
-        print(f'    ⚠️ Erro transcript para {video_id}: {e}')
-        return ''
-
 from youtube_analytics import config
 
 from .github_sync import carregar_github_json
 from .llm import claude_api
+from .supadata_client import transcrever as supadata_transcrever
+from ..supabase_client import select as sb_select
 
 
 def claude_resumir_video(titulo, descricao, transcricao):
@@ -65,21 +30,73 @@ Máximo 80 palavras por campo. Português brasileiro."""
     return claude_api(prompt, max_tokens=1500) or ''
 
 
+def _get_transcricao_cache_supabase():
+    """Busca videos.transcricao no Supabase. Retorna dict {video_id: transcricao}."""
+    try:
+        videos = sb_select('videos', limite=1000)
+        return {
+            v['video_id']: v['transcricao']
+            for v in videos
+            if v.get('transcricao') and len(v.get('transcricao', '')) > 100
+        }
+    except Exception as e:
+        print(f'  ⚠️ Erro ao buscar cache Supabase: {e}')
+        return {}
+
+
+def _selecionar_videos(videos_longos, top_n_views=5, top_n_recentes=5):
+    """
+    Une top N por views + top N mais recentes, sem duplicata.
+    Retorna lista ordenada por prioridade (views primeiro).
+    """
+    # Top N por views
+    por_views = sorted(
+        videos_longos,
+        key=lambda v: int(v.get('statistics', {}).get('viewCount', 0)),
+        reverse=True
+    )[:top_n_views]
+
+    # Top N mais recentes
+    por_data = sorted(
+        videos_longos,
+        key=lambda v: v.get('snippet', {}).get('publishedAt', ''),
+        reverse=True
+    )[:top_n_recentes]
+
+    # União
+    ids_vistos = set()
+    candidatos = []
+    for v in por_views + por_data:
+        vid = v.get('id')
+        if vid and vid not in ids_vistos:
+            ids_vistos.add(vid)
+            candidatos.append(v)
+    return candidatos
+
+
 def coletar_transcricoes_proprias(youtube):
-    print('  Buscando vídeos recentes para transcrição...')
+    print('  Buscando vídeos para transcrição...')
+
+    # Coleta últimos ~50 vídeos pra ter amostra boa pra selecionar top views
     search = youtube.search().list(
-        part='snippet', forMine=True, type='video', order='date', maxResults=15
+        part='snippet', forMine=True, type='video', order='date', maxResults=50
     ).execute()
     video_ids = [i['id']['videoId'] for i in search.get('items', [])]
     if not video_ids:
         return []
 
-    vstats = youtube.videos().list(
-        part='statistics,snippet,contentDetails', id=','.join(video_ids)
-    ).execute()
+    # Busca stats em lotes de 50
+    vstats_items = []
+    for i in range(0, len(video_ids), 50):
+        lote = video_ids[i:i+50]
+        resp = youtube.videos().list(
+            part='statistics,snippet,contentDetails', id=','.join(lote)
+        ).execute()
+        vstats_items.extend(resp.get('items', []))
 
+    # Filtra longos (>60s) — exclui Shorts
     videos_longos = []
-    for v in vstats.get('items', []):
+    for v in vstats_items:
         duracao = v.get('contentDetails', {}).get('duration', 'PT0S')
         minutos = re.search(r'(\d+)M', duracao)
         segundos = re.search(r'(\d+)S', duracao)
@@ -87,36 +104,53 @@ def coletar_transcricoes_proprias(youtube):
         if total_s > 60:
             videos_longos.append(v)
 
-    print(f'  📹 {len(videos_longos)}/{len(vstats.get("items",[]))} vídeos longos (excluídos Shorts)')
+    print(f'  📹 {len(videos_longos)}/{len(vstats_items)} vídeos longos (excluídos Shorts)')
     if not videos_longos:
         return []
 
-    cache = carregar_github_json('transcricoes_canal.json')
-    if not isinstance(cache, list):
-        cache = []
-    cache_transcrições = {t['id']: t.get('transcricao', '') for t in cache if isinstance(t, dict) and t.get('id')}
-    cache_resumos = {t['id']: t.get('resumo_ia', '') for t in cache if isinstance(t, dict) and t.get('id')}
-    print(f'  📦 Cache: {len(cache_resumos)} resumos existentes')
+    # Seleciona os que devem ser considerados: top 5 views + 5 recentes
+    candidatos = _selecionar_videos(videos_longos, top_n_views=5, top_n_recentes=5)
+    print(f'  🎯 {len(candidatos)} candidatos (top 5 views + top 5 recentes, união sem duplicata)')
+
+    # Cache local do JSON (legado) + cache do Supabase (autoridade)
+    cache_json = carregar_github_json('transcricoes_canal.json')
+    if not isinstance(cache_json, list):
+        cache_json = []
+    cache_resumos_json = {
+        t['id']: t.get('resumo_ia', '')
+        for t in cache_json
+        if isinstance(t, dict) and t.get('id')
+    }
+    cache_texto_supabase = _get_transcricao_cache_supabase()
+    print(f'  📦 Cache Supabase: {len(cache_texto_supabase)} vídeos já transcritos')
 
     transcricoes = []
-    for v in videos_longos[:8]:
+    novos_transcritos = 0
+    for v in candidatos:
+        vid_id = v['id']
         titulo = v['snippet']['title']
         pub    = v['snippet'].get('publishedAt', '')[:10]
         views  = int(v['statistics'].get('viewCount', 0))
-        vid_id = v['id']
 
-        if vid_id in cache_transcrições and cache_transcrições[vid_id]:
-            transcricao = cache_transcrições[vid_id]
-            print(f'    ♻️ Transcrição do cache: {titulo[:45]}')
+        # 1. Tenta texto do cache Supabase (autoridade)
+        if vid_id in cache_texto_supabase:
+            transcricao = cache_texto_supabase[vid_id]
+            print(f'    ♻️ Cache Supabase: {titulo[:45]} ({len(transcricao)} chars)')
         else:
-            print(f'    📝 Transcrevendo: {titulo[:45]}...')
-            transcricao = transcrever_via_youtube(vid_id)
-            time.sleep(0.5)
+            # 2. Chama Supadata
+            print(f'    📝 Supadata: {titulo[:45]}...')
+            transcricao = supadata_transcrever(vid_id)
+            if transcricao:
+                print(f'       ✅ {len(transcricao)} chars obtidos')
+                novos_transcritos += 1
+            else:
+                print(f'       ⚠️ Sem transcrição disponível')
+            time.sleep(1)  # respeitar rate limit
 
+        # Resumo IA: usa do cache JSON se tiver, senão gera
         resumo_ia = ''
-        if vid_id in cache_resumos and cache_resumos[vid_id]:
-            resumo_ia = cache_resumos[vid_id]
-            print(f'    ♻️ Resumo do cache: {titulo[:45]}')
+        if vid_id in cache_resumos_json and cache_resumos_json[vid_id]:
+            resumo_ia = cache_resumos_json[vid_id]
         elif transcricao:
             print(f'    🧠 Resumindo: {titulo[:45]}...')
             resumo_ia = claude_resumir_video(titulo, '', transcricao) or ''
@@ -132,6 +166,6 @@ def coletar_transcricoes_proprias(youtube):
             'tem_transcricao': bool(transcricao)
         })
 
-    total = len([t for t in transcricoes if t['tem_transcricao']])
-    print(f'  ✅ {total}/{len(transcricoes)} vídeos com transcrição')
+    total_com_transc = len([t for t in transcricoes if t['tem_transcricao']])
+    print(f'  ✅ {total_com_transc}/{len(transcricoes)} vídeos com transcrição ({novos_transcritos} novos via Supadata)')
     return transcricoes
