@@ -8,6 +8,7 @@ from youtube_analytics import config
 from .apify_client import apify_transcrever_video
 from .llm import claude_api
 from .transcricoes import claude_resumir_video, transcrever_via_youtube
+from .supadata_client import transcrever as supadata_transcrever
 
 
 def claude_classificar_videos(videos):
