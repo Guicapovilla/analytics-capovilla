@@ -1,4 +1,4 @@
-name: Loop de Aprendizado
+﻿name: Loop de Aprendizado
 
 on:
   schedule:
@@ -9,7 +9,7 @@ jobs:
   aprender:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repositório
+      - name: Checkout repositorio
         uses: actions/checkout@v4
 
       - name: Setup Python
@@ -17,14 +17,9 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Instalar dependências
+      - name: Instalar dependencias
         run: |
-          pip install \
-            google-auth \
-            google-auth-oauthlib \
-            google-auth-httplib2 \
-            google-api-python-client \
-            requests
+          pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client requests
 
       - name: Rodar loop de aprendizado
         env:
