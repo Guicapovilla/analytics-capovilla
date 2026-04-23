@@ -4,11 +4,11 @@ import time
 from datetime import datetime
 
 from youtube_analytics import config
+from youtube_analytics.supabase_client import select as sb_select
 
-from .apify_client import apify_transcrever_video
 from .llm import claude_api
-from .transcricoes import claude_resumir_video, transcrever_via_youtube
 from .supadata_client import transcrever as supadata_transcrever
+from .transcricoes import claude_resumir_video
 
 
 def claude_classificar_videos(videos):
@@ -37,8 +37,38 @@ Responda APENAS com JSON: {{"games": [0, 2, 5]}}"""
     return list(range(len(videos)))
 
 
+def _get_transcricao_cache_concorrentes():
+    try:
+        rows = sb_select('concorrentes_videos', limite=5000)
+        return {
+            r['video_id']: r['transcricao']
+            for r in rows
+            if r.get('transcricao') and len(r.get('transcricao', '')) > 100
+        }
+    except Exception as e:
+        print(f'    ⚠️ Erro ao buscar cache Supabase: {e}')
+        return {}
+
+
+def _selecionar_videos_concorrente(todos_videos, top_views=4, top_recentes=2):
+    por_views = sorted(todos_videos, key=lambda v: int(v.get('views', 0)), reverse=True)[:top_views]
+    por_data  = sorted(todos_videos, key=lambda v: v.get('publicado', ''), reverse=True)[:top_recentes]
+
+    ids = set()
+    candidatos = []
+    for v in por_views + por_data:
+        if v['id'] not in ids:
+            ids.add(v['id'])
+            candidatos.append(v)
+    return candidatos
+
+
 def coletar_concorrentes(youtube, concorrentes):
     resultado = []
+
+    cache_transc_supabase = _get_transcricao_cache_concorrentes()
+    print(f'  📦 Cache Supabase: {len(cache_transc_supabase)} vídeos de concorrentes já transcritos')
+
     for c in concorrentes:
         handle = c.get('handle', '')
         nome   = c.get('nome', '')
@@ -87,51 +117,50 @@ def coletar_concorrentes(youtube, concorrentes):
                 })
 
             comp_existente = next((x for x in concorrentes if x.get('nome') == nome), {})
-            videos_com_transcricao = {
-                v['id']: v.get('transcricao', '')
-                for v in comp_existente.get('videos_recentes', [])
-                if v.get('id')
-            }
             videos_com_resumo = {
                 v['id']: v.get('resumo_ia', '')
                 for v in comp_existente.get('videos_recentes', [])
                 if v.get('resumo_ia') and v.get('id')
             }
 
-            if config.apify_api_key():
-                novos = [v for v in todos_videos[:10] if v['id'] not in videos_com_transcricao or not videos_com_transcricao[v['id']]]
-                cached_transc = [v for v in todos_videos[:10] if v['id'] in videos_com_transcricao and videos_com_transcricao[v['id']]]
+            candidatos_transc = _selecionar_videos_concorrente(todos_videos, top_views=4, top_recentes=2)
 
-                for v in cached_transc:
-                    v['transcricao'] = videos_com_transcricao[v['id']]
-
-                if novos:
-                    print(f'    🎙️ Transcrevendo {len(novos)} novos ({len(cached_transc)} do cache)...')
-                    for v in novos:
-                        transcricao = transcrever_via_youtube(v['id'])
-                        if transcricao:
-                            v['transcricao'] = transcricao
-                        time.sleep(0.5)
+            novos = []
+            for v in candidatos_transc:
+                if v['id'] in cache_transc_supabase:
+                    v['transcricao'] = cache_transc_supabase[v['id']]
                 else:
-                    print(f'    ♻️ Todas as transcrições em cache ({len(cached_transc)} vídeos)')
+                    novos.append(v)
+
+            cached_count = len(candidatos_transc) - len(novos)
+            if novos:
+                print(f'    🎙️ Supadata: transcrevendo {len(novos)} vídeos ({cached_count} já em cache)...')
+                for v in novos:
+                    transc = supadata_transcrever(v['id'])
+                    if transc:
+                        v['transcricao'] = transc
+                        print(f'       ✅ {v["titulo"][:40]}: {len(transc)} chars')
+                    else:
+                        print(f'       ⚠️ {v["titulo"][:40]}: sem transcrição')
+                    time.sleep(1)
+            else:
+                print(f'    ♻️ Todos candidatos já em cache ({cached_count})')
 
             print(f'    🤖 Classificando {len(todos_videos)} vídeos...')
             indices_games = claude_classificar_videos(todos_videos)
             videos_games = [todos_videos[i] for i in indices_games if i < len(todos_videos)]
             print(f'    ✅ {len(videos_games)}/{len(todos_videos)} são sobre games')
 
-            print(f'    🧠 Gerando resumos...')
+            print(f'    🧠 Gerando resumos (apenas dos transcritos)...')
             for v in videos_games[:10]:
                 if v['id'] in videos_com_resumo and videos_com_resumo[v['id']]:
                     v['resumo_ia'] = videos_com_resumo[v['id']]
-                    print(f'    ♻️ Resumo do cache: {v["titulo"][:40]}')
                 elif v.get('transcricao'):
                     print(f'    🧠 Resumindo: {v["titulo"][:40]}...')
                     resumo = claude_resumir_video(v['titulo'], v.get('descricao', ''), v['transcricao'])
                     if resumo:
                         v['resumo_ia'] = resumo
                     time.sleep(2)
-                v['transcricao'] = ''
 
             resultado.append({
                 **c,
