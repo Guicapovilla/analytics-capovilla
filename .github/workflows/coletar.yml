@@ -18,8 +18,7 @@ jobs:
           python-version: '3.11'
 
       - name: Instalar dependencias
-        run: |
-          pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client requests
+        run: pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client requests
 
       - name: Rodar coleta
         env:
@@ -29,4 +28,5 @@ jobs:
           APIFY_API_KEY: ${{ secrets.APIFY_API_KEY }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          SUPADATA_API_KEY: ${{ secrets.SUPADATA
+          SUPADATA_API_KEY: ${{ secrets.SUPADATA_API_KEY }}
+        run: python coletar.py
