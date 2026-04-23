@@ -2,7 +2,7 @@ name: Loop de Aprendizado
 
 on:
   schedule:
-    - cron: '0 12 * * 0'  # Domingo 09h Brasília (UTC-3)
+    - cron: '0 12 * * 0'
   workflow_dispatch:
 
 jobs:
@@ -24,8 +24,7 @@ jobs:
             google-auth-oauthlib \
             google-auth-httplib2 \
             google-api-python-client \
-            requests \
-            youtube-transcript-api
+            requests
 
       - name: Rodar loop de aprendizado
         env:
@@ -34,6 +33,5 @@ jobs:
           CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPADATA_API_KEY: ${{ secrets.SUPADATA_API_KEY }}
         run: python aprender.py
-
-        SUPADATA_API_KEY: ${{ sd_335edda2d03cbf5a1ee5d16de25ff5d4 }}
