@@ -15,3 +15,8 @@ token.json
 
 # Editor
 .vscode/
+
+teste_supadata.py
+__pycache__/
+*.pyc
+.env

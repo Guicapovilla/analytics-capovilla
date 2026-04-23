@@ -36,4 +36,4 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: python aprender.py
 
-        SUPADATA_API_KEY: ${{ secrets.SUPADATA_API_KEY }}
+        SUPADATA_API_KEY: ${{ sd_335edda2d03cbf5a1ee5d16de25ff5d4 }}
