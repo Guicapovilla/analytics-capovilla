@@ -1,94 +1,154 @@
 """
-Cliente Supadata — transcrição de vídeos do YouTube.
-Lê a API key de SUPADATA_API_KEY. Nunca hardcoded.
+Cliente Supadata pra transcrição de vídeos do YouTube.
+
+Plano grátis: 100 créditos/mês. Cada transcrição consome 1-3 créditos.
+Aplicamos rate limit defensivo: máximo SUPADATA_LIMITE_CHAMADAS por execução
+do pipeline. Quando recebe 429 (quota mensal estourada), bloqueia o resto
+imediatamente pra não desperdiçar tempo de execução do Action.
 """
 
 import os
-import re
 import time
+import re
 import requests
 
-ENDPOINT = 'https://api.supadata.ai/v1/transcript'
-JOB_ENDPOINT = 'https://api.supadata.ai/v1/transcript/{job_id}'
+from youtube_analytics import config
 
 
-def _api_key():
-    k = os.getenv('SUPADATA_API_KEY')
-    if not k:
-        raise RuntimeError('SUPADATA_API_KEY não configurado')
-    return k
+# ============================================
+# Rate limit defensivo
+# ============================================
+SUPADATA_LIMITE_CHAMADAS = 30  # max por execução do Action
+
+_chamadas_realizadas = 0
+_quota_estourada = False
 
 
-def _limpar_marcadores(texto: str) -> str:
-    """Remove [música], [aplausos], [risos], etc da transcrição."""
+def _incrementar_contador():
+    global _chamadas_realizadas
+    _chamadas_realizadas += 1
+
+
+def chamadas_realizadas():
+    return _chamadas_realizadas
+
+
+def limite_atingido():
+    return _chamadas_realizadas >= SUPADATA_LIMITE_CHAMADAS or _quota_estourada
+
+
+def chamadas_restantes():
+    if _quota_estourada:
+        return 0
+    return max(0, SUPADATA_LIMITE_CHAMADAS - _chamadas_realizadas)
+
+
+def _marcar_quota_estourada():
+    global _quota_estourada
+    _quota_estourada = True
+
+
+# ============================================
+# Cliente Supadata
+# ============================================
+SUPADATA_BASE = 'https://api.supadata.ai/v1/transcript'
+POLL_INTERVAL = 5
+POLL_MAX_TENTATIVAS = 12
+
+
+def _limpar_marcadores(texto):
+    """Remove [música], [aplausos], [risos] e similares."""
     if not texto:
-        return ''
-    # Remove marcadores entre colchetes comuns
-    texto = re.sub(r'\[[^\]]*\]', '', texto)
-    # Colapsa espaços duplos resultantes
+        return texto
+    texto = re.sub(
+        r'\[(música|musica|aplausos|risos|inaudível|inaudivel|chuckles|laughter)\]',
+        '', texto, flags=re.IGNORECASE,
+    )
     texto = re.sub(r'\s+', ' ', texto).strip()
     return texto
 
 
-def _poll_job(job_id: str, max_tentativas: int = 30, intervalo: int = 2) -> str:
-    """Faz polling de job assíncrono. Retorna texto ou string vazia."""
-    headers = {'x-api-key': _api_key()}
-    url = JOB_ENDPOINT.format(job_id=job_id)
-
-    for i in range(max_tentativas):
-        time.sleep(intervalo)
-        try:
-            r = requests.get(url, headers=headers, timeout=30)
-        except requests.exceptions.RequestException:
-            continue
-        if r.status_code != 200:
-            return ''
-        data = r.json()
-        status = data.get('status')
-        if status == 'completed':
-            result = data.get('result', {})
-            if isinstance(result, dict):
-                return result.get('content', '') or ''
-            return str(result) if result else ''
-        if status == 'failed':
-            return ''
-    return ''
-
-
-def transcrever(video_id: str, lang: str = 'pt') -> str:
+def transcrever(video_id, lang='pt'):
     """
-    Busca transcrição via Supadata. Retorna texto limpo ou ''.
-    Trata sincrônico (200) e assíncrono (202).
+    Transcreve um vídeo via Supadata API.
+    Retorna texto limpo ou None em caso de falha/limite.
     """
-    url_video = f'https://www.youtube.com/watch?v={video_id}'
-    params = {'url': url_video, 'text': 'true', 'lang': lang}
-    headers = {'x-api-key': _api_key()}
+    if limite_atingido():
+        if _quota_estourada:
+            print(f'    🚫 Supadata: quota mensal estourada. Pulando {video_id}.')
+        else:
+            print(f'    ⏸️  Supadata: limite de {SUPADATA_LIMITE_CHAMADAS} chamadas/execução. Pulando {video_id}.')
+        return None
+
+    api_key = os.getenv('SUPADATA_API_KEY')
+    if not api_key:
+        print('    ⚠️ SUPADATA_API_KEY não configurada')
+        return None
+
+    headers = {'x-api-key': api_key}
+    params = {
+        'url': f'https://www.youtube.com/watch?v={video_id}',
+        'lang': lang,
+        'text': 'true',
+    }
+
+    _incrementar_contador()
 
     try:
-        r = requests.get(ENDPOINT, params=params, headers=headers, timeout=60)
-    except requests.exceptions.RequestException as e:
+        resp = requests.get(SUPADATA_BASE, headers=headers, params=params, timeout=60)
+    except requests.exceptions.Timeout:
+        print(f'    ⚠️ Supadata timeout para {video_id}')
+        return None
+    except Exception as e:
         print(f'    ⚠️ Supadata erro de rede para {video_id}: {e}')
-        return ''
+        return None
 
-    if r.status_code == 200:
-        data = r.json()
-        return _limpar_marcadores(data.get('content', ''))
+    if resp.status_code == 429:
+        print(f'    🚫 Supadata: quota mensal excedida (429). Bloqueando próximas chamadas.')
+        _marcar_quota_estourada()
+        return None
 
-    if r.status_code == 202:
-        job_id = r.json().get('jobId')
+    if resp.status_code in (401, 403):
+        print(f'    🚫 Supadata: auth falhou ({resp.status_code}). Verifique SUPADATA_API_KEY.')
+        _marcar_quota_estourada()
+        return None
+
+    if resp.status_code == 200:
+        data = resp.json()
+        texto = data.get('content') or data.get('text') or ''
+        return _limpar_marcadores(texto) or None
+
+    if resp.status_code == 202:
+        data = resp.json()
+        job_id = data.get('jobId') or data.get('job_id')
         if not job_id:
-            return ''
+            print(f'    ⚠️ Supadata 202 sem jobId para {video_id}')
+            return None
+
         print(f'    ⏳ Supadata: vídeo longo, polling job {job_id[:8]}...')
-        texto = _poll_job(job_id)
-        return _limpar_marcadores(texto)
+        for _ in range(POLL_MAX_TENTATIVAS):
+            time.sleep(POLL_INTERVAL)
+            try:
+                poll = requests.get(
+                    f'{SUPADATA_BASE}/{job_id}',
+                    headers=headers, timeout=30,
+                )
+                if poll.status_code == 200:
+                    pdata = poll.json()
+                    if pdata.get('status') == 'completed':
+                        texto = pdata.get('content') or pdata.get('text') or ''
+                        return _limpar_marcadores(texto) or None
+                    if pdata.get('status') == 'failed':
+                        print(f'    ❌ Supadata: job {job_id[:8]} falhou')
+                        return None
+                elif poll.status_code == 429:
+                    _marcar_quota_estourada()
+                    return None
+            except Exception as e:
+                print(f'    ⚠️ Erro no polling: {e}')
 
-    if r.status_code == 402:
-        print(f'    ❌ Supadata: créditos esgotados')
-        return ''
+        print(f'    ⚠️ Supadata: polling timeout para {video_id}')
+        return None
 
-    if r.status_code == 401:
-        print(f'    ❌ Supadata: API key inválida')
-        return ''
-
-    print(f'    ⚠️ Supadata HTTP {r.status_code} para {video_id}: {r.text[:200]}')
-    return ''
+    print(f'    ⚠️ Supadata HTTP {resp.status_code} para {video_id}: {resp.text[:200]}')
+    return None

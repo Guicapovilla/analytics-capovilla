@@ -12,7 +12,6 @@ Filosofia:
 """
 
 from datetime import datetime, date
-import re
 import sys
 
 from youtube_analytics.supabase_client import upsert
@@ -22,12 +21,11 @@ from youtube_analytics.supabase_client import upsert
 # Helpers
 # ============================================================
 
-def _log_erro(contexto: str, erro: Exception):
-    """Log padronizado de erro que não derruba a coleta."""
+def _log_erro(contexto, erro):
     print(f"  ⚠️ Supabase falhou em {contexto}: {erro}", file=sys.stderr)
 
 
-def _detectar_console(titulo: str) -> str:
+def _detectar_console(titulo):
     if not titulo:
         return 'geral'
     t = titulo.lower()
@@ -48,27 +46,110 @@ def _detectar_console(titulo: str) -> str:
     return 'geral'
 
 
-def _data_iso(valor) -> str | None:
+def _data_iso(valor):
     """Normaliza datas pra ISO com timezone. Aceita 'YYYY-MM-DD' ou None."""
     if not valor:
         return None
     try:
-        if len(str(valor)) == 10:  # só data
-            return f"{valor}T00:00:00Z"
-        return str(valor)
+        s = str(valor)
+        if len(s) == 10:
+            return f"{s}T00:00:00Z"
+        return s
     except Exception:
         return None
 
 
+def _eh_short(duracao_iso):
+    """Detecta Short pela duração ISO 8601 (PT45S, PT2M30S, etc)."""
+    if not duracao_iso:
+        return False
+    if 'PT' in duracao_iso and 'M' not in duracao_iso and 'H' not in duracao_iso:
+        try:
+            segundos = int(duracao_iso.replace('PT', '').replace('S', ''))
+            return segundos < 60
+        except Exception:
+            return False
+    return False
+
+
 # ============================================================
-# Sync: videos + métricas diárias
+# Sync: catálogo de vídeos do canal (fonte: YouTube API direto)
 # ============================================================
 
-def sync_videos_e_metricas(historico: list[dict]):
+def sync_videos_do_canal(youtube, channel_id):
+    """
+    Sincroniza catálogo de vídeos do canal lendo direto da API do YouTube.
+    NÃO depende do historico.json — garante que TODO vídeo público entra
+    no Supabase mesmo antes de ter sugestão linkada.
+
+    Roda no início do pipeline pra sempre ter os vídeos disponíveis pra linkar.
+    """
+    if not youtube or not channel_id:
+        return 0
+
+    try:
+        search = youtube.search().list(
+            part='snippet', channelId=channel_id, type='video',
+            order='date', maxResults=50,
+        ).execute()
+    except Exception as e:
+        _log_erro("sync_videos_do_canal:search", e)
+        return 0
+
+    if not search.get('items'):
+        return 0
+
+    video_ids = [i['id']['videoId'] for i in search['items']]
+
+    try:
+        detalhes = youtube.videos().list(
+            part='snippet,contentDetails',
+            id=','.join(video_ids),
+        ).execute()
+    except Exception as e:
+        _log_erro("sync_videos_do_canal:videos", e)
+        return 0
+
+    videos = []
+    for v in detalhes.get('items', []):
+        snip = v.get('snippet', {})
+        duracao = v.get('contentDetails', {}).get('duration', '')
+        publicado = snip.get('publishedAt', '')[:10]
+
+        videos.append({
+            'video_id': v['id'],
+            'titulo': snip.get('title', ''),
+            'data_publicacao': _data_iso(publicado),
+            'console': _detectar_console(snip.get('title', '')),
+            'tipo_video': 'short' if _eh_short(duracao) else 'longo',
+        })
+
+    if not videos:
+        return 0
+
+    try:
+        upsert('videos', videos, on_conflict='video_id')
+        shorts = sum(1 for v in videos if v['tipo_video'] == 'short')
+        longos = len(videos) - shorts
+        print(f"  🗄️ Supabase: {len(videos)} videos do canal sincronizados ({longos} longos, {shorts} shorts)")
+        return len(videos)
+    except Exception as e:
+        _log_erro("sync_videos_do_canal:upsert", e)
+        return 0
+
+
+# ============================================================
+# Sync: videos + métricas diárias (fonte: historico.json)
+# ============================================================
+
+def sync_videos_e_metricas(historico):
     """
     Espelha historico.json no Supabase:
-    - Upsert em `videos` (catálogo)
+    - Atualiza catálogo de `videos` com data_publicacao se ainda não tiver
     - Insert snapshot do dia em `videos_metricas` (série temporal)
+
+    Nota: o catálogo principal já foi sincronizado por sync_videos_do_canal
+    com dados frescos da API. Esse aqui só complementa com info do histórico.
     """
     if not historico:
         return
@@ -90,7 +171,6 @@ def sync_videos_e_metricas(historico: list[dict]):
             'console': _detectar_console(titulo),
         })
 
-        # Só gera snapshot se tem métrica real
         rpm = h.get('rpm_real') or 0
         views = h.get('views_real') or 0
         receita = h.get('receita_real') or 0
@@ -105,12 +185,11 @@ def sync_videos_e_metricas(historico: list[dict]):
 
     try:
         upsert('videos', videos, on_conflict='video_id')
-        print(f"  🗄️ Supabase: {len(videos)} videos espelhados")
+        print(f"  🗄️ Supabase: {len(videos)} videos com info do historico atualizados")
     except Exception as e:
         _log_erro("sync_videos", e)
 
     try:
-        # unique(video_id, data_coleta) — upsert substitui se rodar 2x no mesmo dia
         upsert('videos_metricas', metricas, on_conflict='video_id,data_coleta')
         print(f"  🗄️ Supabase: {len(metricas)} snapshots de métricas")
     except Exception as e:
@@ -121,8 +200,7 @@ def sync_videos_e_metricas(historico: list[dict]):
 # Sync: concorrentes + vídeos deles
 # ============================================================
 
-def sync_concorrentes(concorrentes: list[dict]):
-    """Espelha concorrentes.json no Supabase."""
+def sync_concorrentes(concorrentes):
     if not concorrentes:
         return
 
@@ -157,7 +235,6 @@ def sync_concorrentes(concorrentes: list[dict]):
                 'resumo_ia': v.get('resumo_ia') or None,
             })
 
-    # Dedup (o JSON tem histórico de chaves duplicadas)
     vistos = set()
     videos_conc_limpos = []
     for v in videos_conc:
@@ -183,11 +260,8 @@ def sync_concorrentes(concorrentes: list[dict]):
 # Sync: transcrições próprias
 # ============================================================
 
-def sync_transcricoes_proprias(transcricoes: list[dict]):
-    """
-    Atualiza campo `transcricao` e `contexto_gerado` na tabela videos
-    para os vídeos próprios com conteúdo Apify + resumo Claude.
-    """
+def sync_transcricoes_proprias(transcricoes):
+    """Atualiza transcricao + contexto_gerado nos vídeos próprios."""
     if not transcricoes:
         return
 
@@ -196,10 +270,10 @@ def sync_transcricoes_proprias(transcricoes: list[dict]):
         vid = t.get('id')
         if not vid:
             continue
-        # Só atualiza se tem conteúdo real
         resumo = t.get('resumo_ia') or ''
+        texto = t.get('texto') or ''
         tem_transc = t.get('tem_transcricao')
-        if not resumo and not tem_transc:
+        if not resumo and not texto and not tem_transc:
             continue
 
         reg = {
@@ -208,14 +282,16 @@ def sync_transcricoes_proprias(transcricoes: list[dict]):
         }
         if resumo:
             reg['contexto_gerado'] = resumo
-        # NOTA: texto bruto da transcrição não fica no JSON atual — só o boolean.
-        # Quando o coletor passar a gravar `texto` no transcricoes_canal.json,
-        # extrair aqui em reg['transcricao']
+        if texto:
+            reg['transcricao'] = texto
         registros.append(reg)
+
+    if not registros:
+        return
 
     try:
         upsert('videos', registros, on_conflict='video_id')
-        print(f"  🗄️ Supabase: {len(registros)} videos com resumo atualizado")
+        print(f"  🗄️ Supabase: {len(registros)} videos com transcricao/resumo atualizado")
     except Exception as e:
         _log_erro("sync_transcricoes_proprias", e)
 
@@ -224,16 +300,15 @@ def sync_transcricoes_proprias(transcricoes: list[dict]):
 # Sync: sugestões
 # ============================================================
 
-def sync_sugestoes(sugestoes: list[dict]):
-    """Espelha sugestoes_pendentes.json no Supabase preservando legacy_id."""
+def sync_sugestoes(sugestoes):
     if not sugestoes:
         return
 
     status_map = {
-        'pendente': 'gerada',
-        'em_producao': 'em_producao',
-        'produzido': 'publicada',
-        'publicado': 'publicada',
+        'pendente': 'ideia',
+        'em_producao': 'gravando',
+        'produzido': 'publicado',
+        'publicado': 'publicado',
         'rejeitado': 'rejeitada',
     }
 
@@ -257,7 +332,7 @@ def sync_sugestoes(sugestoes: list[dict]):
             'tema': (s.get('tema_central') or titulo_sugerido)[:200],
             'titulo_sugerido': titulo_sugerido[:200],
             'motivo': texto[:5000] if texto else None,
-            'status': status_map.get(s.get('status', 'pendente'), 'gerada'),
+            'status': status_map.get(s.get('status', 'pendente'), 'ideia'),
             'video_id_vinculado': s.get('video_id'),
         })
 
@@ -269,14 +344,10 @@ def sync_sugestoes(sugestoes: list[dict]):
 
 
 # ============================================================
-# Sync: vínculos sugestão↔vídeo (depois do loop vincular_sugestoes)
+# Sync: vínculos sugestão↔vídeo
 # ============================================================
 
-def sync_vinculos_video_sugestao(historico: list[dict]):
-    """
-    Atualiza videos.slug_sugestao_id quando um histórico tem sugestao_id preenchido.
-    Precisa buscar o UUID da sugestão a partir do legacy_id.
-    """
+def sync_vinculos_video_sugestao(historico):
     from youtube_analytics.supabase_client import select
 
     vinculos = [(h['video_id'], h['sugestao_id'])
@@ -289,25 +360,22 @@ def sync_vinculos_video_sugestao(historico: list[dict]):
     atualizados = 0
     for video_id, legacy_id in vinculos:
         try:
-            # Busca UUID da sugestão pelo legacy_id
             matches = select('sugestoes', filtros={'legacy_id': legacy_id}, limite=1)
             if not matches:
                 continue
             uuid_sugestao = matches[0]['id']
 
-            # Atualiza o vídeo apontando pra sugestão
             upsert('videos', [{
                 'video_id': video_id,
-                'titulo': '',  # será ignorado no upsert pq já existe
+                'titulo': '',
                 'slug_sugestao_id': uuid_sugestao,
             }], on_conflict='video_id')
 
-            # Atualiza a sugestão apontando pro vídeo
             upsert('sugestoes', [{
                 'legacy_id': legacy_id,
                 'tema': '',
                 'titulo_sugerido': '',
-                'status': 'publicada',
+                'status': 'publicado',
                 'video_id_vinculado': video_id,
             }], on_conflict='legacy_id')
 

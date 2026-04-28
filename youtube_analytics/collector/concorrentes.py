@@ -1,3 +1,10 @@
+"""
+Coleta de dados dos canais concorrentes.
+- Top 4 por views + 2 mais recentes por canal
+- Cache via Supabase (concorrentes_videos.transcricao)
+- Respeita rate limit Supadata
+"""
+
 import json
 import re
 import time
@@ -7,7 +14,11 @@ from youtube_analytics import config
 from youtube_analytics.supabase_client import select as sb_select
 
 from .llm import claude_api
-from .supadata_client import transcrever as supadata_transcrever
+from .supadata_client import (
+    transcrever as supadata_transcrever,
+    limite_atingido,
+    chamadas_restantes,
+)
 from .transcricoes import claude_resumir_video
 
 
@@ -69,6 +80,8 @@ def coletar_concorrentes(youtube, concorrentes):
     cache_transc_supabase = _get_transcricao_cache_concorrentes()
     print(f'  📦 Cache Supabase: {len(cache_transc_supabase)} vídeos de concorrentes já transcritos')
 
+    skip_por_limite_total = 0
+
     for c in concorrentes:
         handle = c.get('handle', '')
         nome   = c.get('nome', '')
@@ -126,6 +139,7 @@ def coletar_concorrentes(youtube, concorrentes):
             candidatos_transc = _selecionar_videos_concorrente(todos_videos, top_views=4, top_recentes=2)
 
             novos = []
+            skip_por_limite_canal = 0
             for v in candidatos_transc:
                 if v['id'] in cache_transc_supabase:
                     v['transcricao'] = cache_transc_supabase[v['id']]
@@ -133,16 +147,28 @@ def coletar_concorrentes(youtube, concorrentes):
                     novos.append(v)
 
             cached_count = len(candidatos_transc) - len(novos)
+
             if novos:
-                print(f'    🎙️ Supadata: transcrevendo {len(novos)} vídeos ({cached_count} já em cache)...')
-                for v in novos:
-                    transc = supadata_transcrever(v['id'])
-                    if transc:
-                        v['transcricao'] = transc
-                        print(f'       ✅ {v["titulo"][:40]}: {len(transc)} chars')
-                    else:
-                        print(f'       ⚠️ {v["titulo"][:40]}: sem transcrição')
-                    time.sleep(1)
+                if limite_atingido():
+                    print(f'    ⏸️ Limite Supadata atingido — pulando {len(novos)} novos vídeos')
+                    skip_por_limite_total += len(novos)
+                else:
+                    print(f'    🎙️ Supadata: transcrevendo {len(novos)} vídeos ({cached_count} em cache, {chamadas_restantes()} chamadas restantes)...')
+                    for v in novos:
+                        if limite_atingido():
+                            skip_por_limite_canal += 1
+                            skip_por_limite_total += 1
+                            continue
+                        transc = supadata_transcrever(v['id'])
+                        if transc:
+                            v['transcricao'] = transc
+                            print(f'       ✅ {v["titulo"][:40]}: {len(transc)} chars')
+                        else:
+                            print(f'       ⚠️ {v["titulo"][:40]}: sem transcrição')
+                        time.sleep(1)
+
+                    if skip_por_limite_canal > 0:
+                        print(f'    ⏸️ {skip_por_limite_canal} pulados nesse canal por limite')
             else:
                 print(f'    ♻️ Todos candidatos já em cache ({cached_count})')
 
@@ -175,5 +201,8 @@ def coletar_concorrentes(youtube, concorrentes):
             resultado.append({**c, 'videos_recentes': [], 'erro': str(e)})
 
         time.sleep(2)
+
+    if skip_por_limite_total > 0:
+        print(f'\n  ⚠️ TOTAL: {skip_por_limite_total} vídeos de concorrentes pulados por limite Supadata')
 
     return resultado

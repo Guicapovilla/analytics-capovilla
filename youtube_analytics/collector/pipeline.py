@@ -1,6 +1,7 @@
-"""Orquestração da coleta diária (YouTube → GitHub)."""
+﻿"""Orquestracao da coleta diaria (YouTube -> GitHub)."""
 
 from .sync_supabase import (
+    sync_videos_do_canal,
     sync_videos_e_metricas,
     sync_concorrentes,
     sync_transcricoes_proprias,
@@ -30,33 +31,53 @@ from .vinculos import vincular_sugestoes
 
 
 def main():
-    print('🔐 Autenticando...')
+    print('[AUTH] Autenticando...')
     creds = autenticar()
 
     youtube   = build('youtube', 'v3', credentials=creds)
     analytics = build('youtubeAnalytics', 'v2', credentials=creds)
     usd       = cotacao_usd()
-    print(f'💱 Cotação USD/BRL: R${usd:.4f}')
+    print(f'[FX] Cotacao USD/BRL: R${usd:.4f}')
 
-    print('\n📊 Coletando dados do canal...')
+    # Pega channel_id do usuario autenticado (necessario pro sync_videos_do_canal)
+    try:
+        ch = youtube.channels().list(part='id', mine=True).execute()
+        channel_id = ch['items'][0]['id'] if ch.get('items') else None
+    except Exception as e:
+        print(f'[ERRO] Falha ao obter channel_id: {e}')
+        channel_id = None
+
+    # ============================================
+    # SYNC CATALOGO DE VIDEOS (NOVO - antes de tudo)
+    # Garante que TODO video publico do canal entra no Supabase,
+    # mesmo sem ter sugestao linkada ainda.
+    # ============================================
+    if channel_id:
+        print('\n[SYNC] Sincronizando catalogo de videos do canal...')
+        try:
+            sync_videos_do_canal(youtube, channel_id)
+        except Exception as e:
+            print(f'  [WARN] Falha nao-critica em sync_videos_do_canal: {e}')
+
+    print('\n[CANAL] Coletando dados do canal...')
     dados_txt, receita_por_video = coletar_canal(youtube, analytics, usd)
     salvar_github('dados.txt', dados_txt)
 
-    print('\n🎙️ Coletando transcrições do canal...')
+    print('\n[TRANSCR] Coletando transcricoes do canal...')
     transcricoes = coletar_transcricoes_proprias(youtube)
     if transcricoes:
         salvar_github('transcricoes_canal.json', transcricoes)
         sync_transcricoes_proprias(transcricoes)
 
-    print('\n🔁 Loop de aprendizado — atualizando histórico...')
+    print('\n[LOOP] Loop de aprendizado - atualizando historico...')
     historico = atualizar_historico_automatico(youtube, analytics, usd, receita_por_video)
 
-    print('\n🔗 Vinculando sugestões da IA a vídeos reais...')
+    print('\n[VINCULOS] Vinculando sugestoes da IA a videos reais...')
     historico, sugestoes_restantes = vincular_sugestoes(historico)
 
     if historico:
         salvar_github('historico.json', historico)
-# Dual-write Supabase (não derruba a coleta em caso de falha)
+    # Dual-write Supabase (nao derruba a coleta em caso de falha)
     if historico:
         sync_videos_e_metricas(historico)
     if sugestoes_restantes is not None:
@@ -65,29 +86,24 @@ def main():
 
     sync_vinculos_video_sugestao(historico)
 
-    print('\n📊 Classificando funil editorial...')
+    print('\n[FUNIL] Classificando funil editorial...')
     funil = classificar_funil(historico)
     if funil:
         salvar_github('funil.json', funil)
 
-    print('\n🧠 Gerando contexto automático...')
+    print('\n[CONTEXTO] Gerando contexto automatico...')
     contexto = gerar_contexto_automatico(historico, transcricoes)
     if contexto:
         anexo = _aprendizados_criador_para_anexo_contexto()
         if anexo:
             contexto = contexto.rstrip() + '\n\n' + anexo
         salvar_github('contexto.txt', contexto)
-        print('✅ Contexto editorial atualizado automaticamente!')
+        print('[OK] Contexto editorial atualizado automaticamente!')
 
-# Coleta de comentários desativada — requer scope youtube.force-ssl aplicado ao token.
+    # Coleta de comentarios desativada - requer scope youtube.force-ssl aplicado ao token.
     # Reativar quando regenerar o token com scope completo.
-    # print('\n💬 Coletando comentários dos top vídeos...')
-    # insights_comentarios = coletar_comentarios_insights(youtube, historico)
-    # if insights_comentarios:
-    #     salvar_github('comentarios_insights.json', insights_comentarios)
-    #     print(f'  ✅ {len(insights_comentarios)} vídeos com insights de comentários')
 
-    print('\n🧹 Limpando sugestões antigas...')
+    print('\n[CLEAN] Limpando sugestoes antigas...')
     sugestoes_todas = carregar_github_json('sugestoes_pendentes.json')
     fila = carregar_github_json('fila_producao.json')
     if not isinstance(sugestoes_todas, list):
@@ -115,18 +131,18 @@ def main():
             sugestoes_limpas.append(s)
     if removidas > 0:
         salvar_github('sugestoes_pendentes.json', sugestoes_limpas)
-        print(f'  🗑️ {removidas} sugestões antigas removidas')
+        print(f'  [OK] {removidas} sugestoes antigas removidas')
     else:
-        print('  ✅ Nenhuma sugestão antiga para remover')
+        print('  [OK] Nenhuma sugestao antiga para remover')
 
-    print('\n🔍 Coletando dados dos concorrentes...')
+    print('\n[CONCORRENTES] Coletando dados dos concorrentes...')
     concorrentes = carregar_github_json('concorrentes.json')
     if concorrentes:
         concorrentes_atualizados = coletar_concorrentes(youtube, concorrentes)
         salvar_github('concorrentes.json', concorrentes_atualizados)
         sync_concorrentes(concorrentes_atualizados)
-        print(f'\n✅ {len(concorrentes_atualizados)} concorrentes atualizados.')
+        print(f'\n[OK] {len(concorrentes_atualizados)} concorrentes atualizados.')
     else:
-        print('⚠️ Nenhum concorrente cadastrado.')
+        print('[WARN] Nenhum concorrente cadastrado.')
 
-    print('\n🎉 Coleta completa!')
+    print('\n[FIM] Coleta completa!')
