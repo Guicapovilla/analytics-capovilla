@@ -1,10 +1,10 @@
-"""
-Coleta de transcrições dos vídeos do próprio canal.
+﻿"""
+Coleta de transcricoes dos videos do proprio canal.
 
-Estratégia:
-- Top 5 vídeos por views + 5 mais recentes (união sem duplicata)
-- Cache via Supabase (videos.transcricao) — não re-transcreve
-- Resumo IA via Claude pra cada transcrição nova
+Estrategia:
+- Top 5 videos por views + 5 mais recentes (uniao sem duplicata)
+- Cache via Supabase (videos.transcricao) para nao re-transcrever
+- Resumo IA via Claude para cada transcricao nova
 - Respeita rate limit do Supadata
 """
 
@@ -26,24 +26,24 @@ def claude_resumir_video(titulo, descricao, transcricao):
     if not config.claude_api_key() or not transcricao:
         return None
 
-    prompt = f"""Você está analisando um vídeo do YouTube. Gere uma análise estruturada útil para curadoria editorial.
+    prompt = f"""Voce esta analisando um video do YouTube. Gere uma analise estruturada util para curadoria editorial.
 
-TÍTULO: {titulo}
-DESCRIÇÃO: {descricao[:500]}
-TRANSCRIÇÃO (primeiros 8000 chars): {transcricao[:8000]}
+TITULO: {titulo}
+DESCRICAO: {descricao[:500]}
+TRANSCRICAO (primeiros 8000 chars): {transcricao[:8000]}
 
-Estruture sua análise nas seções abaixo, em português, sendo CONCRETO (cite frases reais quando útil):
+Estruture sua analise nas secoes abaixo, em portugues, sendo CONCRETO (cite frases reais quando util):
 
-TOM E LINGUAGEM — vocabulário, emoção dominante, frases reais citadas
-GANCHO DE ABERTURA — primeiros 30 segundos, promessa criada
-JORNADA NARRATIVA — blocos em ordem, fio condutor
-GATILHOS EMOCIONAIS — nostalgia, culpa, merecimento, status, etc
-OBJETIVO E CTA — o que quer que o espectador faça
-PONTOS FORTES — momentos específicos que funcionam
-LACUNAS E OPORTUNIDADES — o que ficou inexplorado
-MODELO REPLICÁVEL — esqueleto narrativo para adaptar
+TOM E LINGUAGEM - vocabulario, emocao dominante, frases reais citadas
+GANCHO DE ABERTURA - primeiros 30 segundos, promessa criada
+JORNADA NARRATIVA - blocos em ordem, fio condutor
+GATILHOS EMOCIONAIS - nostalgia, culpa, merecimento, status, etc
+OBJETIVO E CTA - o que quer que o espectador faca
+PONTOS FORTES - momentos especificos que funcionam
+LACUNAS E OPORTUNIDADES - o que ficou inexplorado
+MODELO REPLICAVEL - esqueleto narrativo para adaptar
 
-Use no máximo 1500 tokens. Foque em INSIGHTS, não em paráfrase do conteúdo."""
+Use no maximo 1500 tokens. Foque em INSIGHTS, nao em parafrase do conteudo."""
 
     return claude_api(prompt, max_tokens=1500)
 
@@ -57,7 +57,7 @@ def _get_transcricoes_cache_canal():
             if r.get('transcricao') and len(r.get('transcricao', '')) > 100
         }
     except Exception as e:
-        print(f'    ⚠️ Erro ao buscar cache: {e}')
+        print(f'    [WARN] Erro ao buscar cache: {e}')
         return {}
 
 
@@ -74,16 +74,39 @@ def _selecionar_candidatos(videos_longos, top_views=5, top_recentes=5):
     return candidatos
 
 
-def coletar_transcricoes_canal(youtube, channel_id):
-    print('  Buscando vídeos para transcrição...')
+def coletar_transcricoes_proprias(youtube):
+    """
+    Coleta transcricoes dos videos do canal autenticado.
+    Aceita o cliente youtube ja construido. Detecta o channel_id automaticamente.
+    """
+    print('  Buscando videos para transcricao...')
 
+    # Detecta channel_id do usuario autenticado
+    try:
+        ch = youtube.channels().list(part='id', mine=True).execute()
+        if not ch.get('items'):
+            print('  [WARN] Nenhum canal encontrado pra essa conta')
+            return []
+        channel_id = ch['items'][0]['id']
+    except Exception as e:
+        print(f'  [ERRO] Falha ao detectar channel_id: {e}')
+        return []
+
+    return coletar_transcricoes_canal(youtube, channel_id)
+
+
+def coletar_transcricoes_canal(youtube, channel_id):
+    """
+    Coleta transcricoes dos videos do canal especificado por channel_id.
+    Versao explicita - usada quando o channel_id ja foi detectado fora.
+    """
     search = youtube.search().list(
         part='snippet', channelId=channel_id, type='video',
         order='date', maxResults=50,
     ).execute()
 
     if not search.get('items'):
-        print('  ⚠️ Nenhum vídeo encontrado')
+        print('  [WARN] Nenhum video encontrado')
         return []
 
     video_ids = [i['id']['videoId'] for i in search['items']]
@@ -112,13 +135,13 @@ def coletar_transcricoes_canal(youtube, channel_id):
             'publicado': v['snippet'].get('publishedAt', '')[:10],
         })
 
-    print(f'  📹 {len(todos_videos)}/{len(video_ids)} vídeos longos (excluídos Shorts)')
+    print(f'  [INFO] {len(todos_videos)}/{len(video_ids)} videos longos (excluidos Shorts)')
 
     candidatos = _selecionar_candidatos(todos_videos)
-    print(f'  🎯 {len(candidatos)} candidatos (top 5 views + top 5 recentes)')
+    print(f'  [INFO] {len(candidatos)} candidatos (top 5 views + top 5 recentes)')
 
     cache = _get_transcricoes_cache_canal()
-    print(f'  📦 Cache Supabase: {len(cache)} vídeos já transcritos')
+    print(f'  [CACHE] Supabase: {len(cache)} videos ja transcritos')
 
     transcricoes = []
     novos_count = 0
@@ -131,11 +154,11 @@ def coletar_transcricoes_canal(youtube, channel_id):
 
         if vid_id in cache:
             transcricao = cache[vid_id]
-            print(f'    ♻️ Cache: {titulo[:50]}')
+            print(f'    [CACHE] {titulo[:50]}')
         else:
             if limite_atingido():
                 skip_por_limite += 1
-                print(f'    ⏸️ Pulando (limite Supadata): {titulo[:50]}')
+                print(f'    [SKIP] Limite Supadata: {titulo[:50]}')
                 transcricoes.append({
                     'id': vid_id,
                     'titulo': titulo,
@@ -145,18 +168,18 @@ def coletar_transcricoes_canal(youtube, channel_id):
                 })
                 continue
 
-            print(f'    📝 Supadata: {titulo[:50]}')
+            print(f'    [SUPADATA] {titulo[:50]}')
             transcricao = supadata_transcrever(vid_id)
             if transcricao:
                 novos_count += 1
-                print(f'       ✅ {len(transcricao)} chars obtidos')
+                print(f'       [OK] {len(transcricao)} chars obtidos')
             else:
-                print(f'       ⚠️ Sem transcrição')
+                print(f'       [WARN] Sem transcricao')
 
             time.sleep(1)
 
         if transcricao:
-            print(f'    🧠 Resumindo: {titulo[:50]}')
+            print(f'    [RESUMO] {titulo[:50]}')
             resumo_ia = claude_resumir_video(titulo, descricao, transcricao)
         else:
             resumo_ia = None
@@ -170,8 +193,8 @@ def coletar_transcricoes_canal(youtube, channel_id):
         })
 
     com_transcricao = sum(1 for t in transcricoes if t['tem_transcricao'])
-    print(f'  ✅ {com_transcricao}/{len(transcricoes)} vídeos com transcrição ({novos_count} novos via Supadata)')
+    print(f'  [OK] {com_transcricao}/{len(transcricoes)} videos com transcricao ({novos_count} novos via Supadata)')
     if skip_por_limite > 0:
-        print(f'  ⚠️ {skip_por_limite} vídeos pulados por limite Supadata')
+        print(f'  [WARN] {skip_por_limite} videos pulados por limite Supadata')
 
     return transcricoes
