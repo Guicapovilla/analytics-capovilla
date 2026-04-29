@@ -317,7 +317,13 @@ def sync_sugestoes(sugestoes):
         legacy_id = s.get('id')
         texto = s.get('texto', '') or ''
 
-        titulo_sugerido = s.get('titulo_real') or s.get('titulo_sugerido')
+        # Pula entradas placeholder sem conteúdo real (ex: "Sugestão 1 — 20260410")
+        titulo_real = s.get('titulo_real') or s.get('titulo_sugerido')
+        is_placeholder = not titulo_real and '\n' not in texto and len(texto) < 60
+        if is_placeholder:
+            continue
+
+        titulo_sugerido = titulo_real
         if not titulo_sugerido and texto:
             for linha in texto.split('\n'):
                 linha = linha.strip().strip('#').strip('*').strip()

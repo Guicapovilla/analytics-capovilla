@@ -1581,7 +1581,52 @@ def _dados_para_componente(dados_parsed: dict) -> dict:
     }
 
 
-def _metas_para_componente(metas_json: dict, historico: list) -> dict:
+def _parse_receita_day(raw_day: str, ref_year: int):
+    if not raw_day:
+        return None
+    txt = str(raw_day).strip()
+    for fmt in ('%Y-%m-%d', '%d/%m/%Y', '%Y/%m/%d'):
+        try:
+            return datetime.strptime(txt, fmt).date()
+        except ValueError:
+            continue
+    # Some collectors may return day/month without year.
+    try:
+        d = datetime.strptime(txt, '%d/%m').date()
+        return d.replace(year=ref_year)
+    except ValueError:
+        return None
+
+
+def _calcular_receita_trimestre_atual(receita_diaria: list) -> tuple:
+    """Soma receita diária do trimestre atual (UTC)."""
+    now_utc = datetime.utcnow()
+    q_start_month = ((now_utc.month - 1) // 3) * 3 + 1
+    q_end_month = q_start_month + 2
+
+    total = 0.0
+    has_points = False
+    for row in receita_diaria or []:
+        if not isinstance(row, dict):
+            continue
+        day = _parse_receita_day(row.get('d', ''), now_utc.year)
+        if day is None:
+            continue
+        if day.year == now_utc.year and q_start_month <= day.month <= q_end_month:
+            try:
+                total += float(row.get('brl', 0) or 0)
+                has_points = True
+            except (TypeError, ValueError):
+                continue
+    return round(total, 2), has_points
+
+
+def _metas_para_componente(
+    metas_json: dict,
+    historico: list,
+    receita_q2_calculada=None,
+    receita_q2_has_data=False,
+) -> dict:
     """metas.json → HTML metas format (adds accuracy + padroes)"""
     m = metas_json
     # Compute accuracy from historico
@@ -1589,6 +1634,7 @@ def _metas_para_componente(metas_json: dict, historico: list) -> dict:
     acertos = sum(1 for h in vinculados if h.get('rpm_real', 0) >= h.get('rpm_previsto', 1) * 0.7)
     pct_acerto = round(acertos / len(vinculados) * 100) if vinculados else 0
 
+    receita_q2_valor = receita_q2_calculada if receita_q2_calculada is not None else m.get('receita_q2', 0)
     return {
         'anual': {
             'desc':     m.get('meta_anual_desc', m.get('descricao', '—')),
@@ -1608,7 +1654,8 @@ def _metas_para_componente(metas_json: dict, historico: list) -> dict:
             'receita_ytd':  m.get('receita_ytd', 0),
             'inscritos_ytd': m.get('inscritos_ytd', 0),
             'videos_ytd':   m.get('videos_ytd', 0),
-            'receita_q2':   m.get('receita_q2', 0),
+            'receita_q2':   receita_q2_valor,
+            'receita_q2_has_data': bool(receita_q2_has_data),
             'inscritos_q2': m.get('inscritos_q2', 0),
             'videos_q2':    m.get('videos_q2', 0),
         },
@@ -1689,14 +1736,24 @@ def _prepare_component_props(loading=False, loading_msg='', result_payload=None)
             'status': s.get('status', 'pendente'),
         })
 
+    dados_comp = _dados_para_componente(_dados)
+    receita_q2_calculada, receita_q2_has_data = _calcular_receita_trimestre_atual(
+        dados_comp.get('receita_diaria', [])
+    )
+
     return dict(
-        dados              = _dados_para_componente(_dados),
+        dados              = dados_comp,
         fila               = _fila_para_componente(fila_json),
         concorrentes       = concorrentes,
         funil              = _funil_para_componente(funil_json),
         sugestao_semana    = sugestao_semana,
         sugestoes_pendentes= sugestoes_pendentes,
-        metas              = _metas_para_componente(metas_json, historico),
+        metas              = _metas_para_componente(
+            metas_json,
+            historico,
+            receita_q2_calculada=receita_q2_calculada,
+            receita_q2_has_data=receita_q2_has_data,
+        ),
         historico_links    = _historico_links(historico, pend_json),
         historico          = historico,
         contexto           = contexto,
@@ -1981,7 +2038,7 @@ def _dispatch_action(action_data: dict) -> bool:
                             'id': sid,
                             'numero': num,
                             'texto': f'Sugestão {num} — {today}',
-                            'data': datetime.now().strftime('%d/%m'),
+                            'data': datetime.now().strftime('%Y-%m-%d'),
                             'status': 'pendente',
                             'rpm_previsto': 0,
                         })
