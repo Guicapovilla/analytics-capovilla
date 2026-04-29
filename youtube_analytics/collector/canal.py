@@ -1,4 +1,9 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date as _date
+
+
+def _q2_start(hoje):
+    q_start_month = ((hoje.month - 1) // 3) * 3 + 1
+    return _date(hoje.year, q_start_month, 1)
 
 
 def coletar_canal(youtube, analytics, usd):
@@ -24,6 +29,18 @@ def coletar_canal(youtube, analytics, usd):
         total_subs  += int(r[3])
         total_rev   += float(r[4])
         dias.append(f"{r[0]} | Views: {int(r[1])} | BRL: R${float(r[4])*usd:.2f} | CPM: ${float(r[5]):.2f}")
+
+    # Receita Q2: se o início do trimestre está fora da janela de 28 dias, faz query adicional
+    q2_start = _q2_start(hoje)
+    if q2_start < start:
+        an_q2 = analytics.reports().query(
+            ids=f'channel=={cid}',
+            startDate=str(q2_start), endDate=str(hoje),
+            metrics='estimatedRevenue',
+        ).execute()
+        receita_q2_brl = sum(float(r[0]) for r in (an_q2.get('rows') or [])) * usd
+    else:
+        receita_q2_brl = total_rev * usd
 
     ids_recentes = [i['id']['videoId'] for i in youtube.search().list(
         part='snippet', forMine=True, type='video', order='date', maxResults=15
@@ -97,4 +114,4 @@ def coletar_canal(youtube, analytics, usd):
         '=== RECEITA DIARIA (ultimos 28 dias) ===',
         *dias,
     ]
-    return '\n'.join(linhas), receita_por_video
+    return '\n'.join(linhas), receita_por_video, receita_q2_brl

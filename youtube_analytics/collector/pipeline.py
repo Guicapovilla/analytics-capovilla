@@ -7,6 +7,7 @@ from .sync_supabase import (
     sync_transcricoes_proprias,
     sync_sugestoes,
     sync_vinculos_video_sugestao,
+    sync_metas_receita,
 )
 
 from datetime import datetime
@@ -60,8 +61,15 @@ def main():
             print(f'  [WARN] Falha nao-critica em sync_videos_do_canal: {e}')
 
     print('\n[CANAL] Coletando dados do canal...')
-    dados_txt, receita_por_video = coletar_canal(youtube, analytics, usd)
+    dados_txt, receita_por_video, receita_q2_brl = coletar_canal(youtube, analytics, usd)
     salvar_github('dados.txt', dados_txt)
+
+    print(f'[CANAL] Receita Q2 calculada: R${receita_q2_brl:.2f}')
+    metas_json = carregar_github_json('metas.json')
+    if isinstance(metas_json, dict):
+        metas_json['receita_q2'] = round(receita_q2_brl, 2)
+        salvar_github('metas.json', metas_json)
+    sync_metas_receita(receita_q2_brl)
 
     print('\n[TRANSCR] Coletando transcricoes do canal...')
     transcricoes = coletar_transcricoes_proprias(youtube)

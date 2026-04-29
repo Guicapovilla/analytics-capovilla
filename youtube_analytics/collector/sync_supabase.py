@@ -385,3 +385,19 @@ def sync_vinculos_video_sugestao(historico):
 
     if atualizados:
         print(f"  🗄️ Supabase: {atualizados} vínculos video↔sugestão atualizados")
+
+
+# ============================================================
+# Sync: receita Q2 nas metas
+# ============================================================
+
+def sync_metas_receita(receita_q2_brl: float):
+    """Atualiza valor_atual de receita do trimestre corrente na tabela metas."""
+    now = datetime.utcnow()
+    q_start_month = ((now.month - 1) // 3) * 3 + 1
+    quarter = f"{now.year}-Q{(q_start_month - 1) // 3 + 1}"
+    try:
+        upsert('metas', [{'quarter': quarter, 'metrica': 'receita', 'valor_atual': round(receita_q2_brl, 2)}], on_conflict='quarter,metrica')
+        print(f"  🗄️ Supabase: receita {quarter} atualizada → R${receita_q2_brl:.2f}")
+    except Exception as e:
+        _log_erro("sync_metas_receita", e)
