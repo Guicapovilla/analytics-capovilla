@@ -1798,30 +1798,42 @@ function _wireTemaLivre() {
   });
 }
 
+function _byIds(ids) {
+  for (var i = 0; i < ids.length; i++) {
+    var el = document.getElementById(ids[i]);
+    if (el) return el;
+  }
+  return null;
+}
+
 function _fillLinkModalSug() {
-  var sel=document.getElementById('link-modal-sug'); if(!sel) return;
+  var sel=_byIds(['link-modal-sug','link-sugestao-select']); if(!sel) return;
   var p=_STATE.sugestoes_pendentes||[];
   var opts='<option value="">— Manual / sem sugestão da IA —</option>';
   for(var i=0;i<p.length;i++){
     var s=p[i];
+    if(!s || !s.id) continue;
     var id=String(s.id==null?'':s.id).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
-    var lab=esc(String((s.texto||s.id||'')).slice(0,80));
+    var baseLabel = s.texto || s.titulo_real || s.id || '';
+    var lab=esc(String(baseLabel).slice(0,80));
     opts+='<option value="'+id+'">'+lab+'</option>';
   }
   sel.innerHTML=opts;
 }
 
 function _openLinkModal(idx) {
-  var m=document.getElementById('link-video-modal'); if(!m) return;
-  document.getElementById('link-modal-idx').value=String(idx);
-  document.getElementById('link-modal-notas').value='';
+  var m=_byIds(['link-video-modal','modal-link']); if(!m) return;
+  var idxEl = document.getElementById('link-modal-idx');
+  if(idxEl) idxEl.value=String(idx);
+  var notasEl = document.getElementById('link-modal-notas');
+  if(notasEl) notasEl.value='';
   _fillLinkModalSug();
   m.classList.add('is-open');
   m.setAttribute('aria-hidden','false');
 }
 
 function _closeLinkModal() {
-  var m=document.getElementById('link-video-modal'); if(!m) return;
+  var m=_byIds(['link-video-modal','modal-link']); if(!m) return;
   m.classList.remove('is-open');
   m.setAttribute('aria-hidden','true');
 }
@@ -1829,7 +1841,8 @@ function _closeLinkModal() {
 function _submitLinkVideo() {
   var idx=parseInt((document.getElementById('link-modal-idx')||{}).value,10);
   var notas=((document.getElementById('link-modal-notas')||{}).value||'').trim();
-  var sug=((document.getElementById('link-modal-sug')||{}).value||'').trim();
+  var sugEl = _byIds(['link-modal-sug','link-sugestao-select']) || {};
+  var sug=(sugEl.value||'').trim();
   if(isNaN(idx)||idx<0){_closeLinkModal();return;}
   if(!notas){alert('Descreva o que você quis entregar com este vídeo.');return;}
   var payload={idx:idx,notas:notas};
@@ -1873,6 +1886,7 @@ function renderMetas(m, hlinks) {
 
   var el_q2=document.getElementById('meta-tri-box');
   if(el_q2){
+    var hasReceitaQ2 = !!(atual && atual.receita_q2_has_data);
     el_q2.innerHTML='<div class="box-title">Metas Q2 · abr–jun 2026</div>'
       +[{name:'Receita Q2',cur:atual.receita_q2||0,target:q2.receita||1,unit:'R$'},
         {name:'Inscritos Q2',cur:atual.inscritos_q2||0,target:q2.inscritos||1,unit:''},
@@ -1882,7 +1896,10 @@ function renderMetas(m, hlinks) {
         return '<div class="meta-row"><span class="meta-name">'+esc(g.name)+'</span>'
           +'<div class="meta-bar-track"><div class="meta-bar-fill" style="width:'+p+'%;background:'+gc(p)+'"></div></div>'
           +'<span class="meta-nums">'+g.unit+fmt(g.cur)+' / '+g.unit+fmt(g.target)+'</span></div>';
-      }).join('');
+      }).join('')
+      +(!hasReceitaQ2
+        ? '<div style="margin-top:10px;font-size:0.62rem;color:var(--text-3);">Receita Q2 sem série diária disponível para o trimestre atual.</div>'
+        : '');
   }
 
   var el_acc=document.getElementById('accuracy-box');
