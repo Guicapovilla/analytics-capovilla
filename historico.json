@@ -414,5 +414,18 @@
     "receita_real": 0.53,
     "resultado": "retroativo",
     "atualizado_em": "2026-04-20"
+  },
+  {
+    "video_id": "7ME1Yh9DmX8",
+    "titulo": "Essa é a Sensação de ter um SWITCH OLED DESBLOQUEADO",
+    "data_registro": "2026-04-26",
+    "origem": "retroativo",
+    "raciocinio": "Registrado automaticamente pelo sistema com dados reais do YouTube Analytics.",
+    "rpm_previsto": 0,
+    "rpm_real": 3.79,
+    "views_real": 1609,
+    "receita_real": 6.1,
+    "resultado": "retroativo",
+    "atualizado_em": "2026-04-30"
   }
 ]
