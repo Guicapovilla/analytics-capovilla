@@ -666,6 +666,29 @@ def _normalize_title_match(s: str) -> str:
     return ' '.join(t.split())
 
 
+def _find_historico_video_match(historico: list, fila_item: dict):
+    """Find matching historico row for a fila item (video_id first, then title)."""
+    if not isinstance(fila_item, dict):
+        return None
+    video_id = (fila_item.get('video_id_youtube') or '').strip()
+    if video_id:
+        for h in historico:
+            if not isinstance(h, dict):
+                continue
+            if (h.get('video_id') or '').strip() == video_id:
+                return h
+    titulo_pub = (fila_item.get('titulo_publicado') or fila_item.get('titulo_planejado') or '').strip()
+    if titulo_pub:
+        tn = _normalize_title_match(titulo_pub)
+        if tn:
+            for h in historico:
+                if not isinstance(h, dict):
+                    continue
+                if _normalize_title_match(h.get('titulo', '')) == tn:
+                    return h
+    return None
+
+
 def _format_aprendizados_para_prompt(entries: list) -> str:
     if not entries:
         return ''
@@ -1502,13 +1525,21 @@ def _funil_para_componente(funil_json: dict) -> dict:
     return out
 
 
-def _fila_para_componente(fila_json: list) -> list:
+def _fila_para_componente(fila_json: list, historico: list | None = None) -> list:
     """fila_producao.json items → HTML-compatible format"""
     result = []
     status_map = {'planejado': 'planejado', 'gravando': 'gravando',
                   'publicado': 'publicado', 'concluido': 'concluido'}
+    hist = historico if isinstance(historico, list) else []
     for item in fila_json:
         titulo = item.get('titulo_publicado') or item.get('titulo_planejado', '')
+        h_match = _find_historico_video_match(hist, item) if hist else None
+        linked_sug_id = ''
+        has_notas_criador = False
+        if isinstance(h_match, dict):
+            linked_sug_id = str(h_match.get('sugestao_id') or '').strip()
+            has_notas_criador = bool(str(h_match.get('notas_criador') or '').strip())
+        is_linked = bool(linked_sug_id or has_notas_criador)
         result.append({
             'id':       item.get('sugestao_id') or f'item-{len(result)+1}',
             'sugestao_id': item.get('sugestao_id'),
@@ -1520,6 +1551,8 @@ def _fila_para_componente(fila_json: list) -> list:
             'data':     (item.get('data_publicacao') or item.get('data_planejamento', ''))[:10],
             'views':    item.get('views', 0),
             'video_id': item.get('video_id_youtube', ''),
+            'is_linked_real': is_linked,
+            'linked_sugestao_id': linked_sug_id,
         })
     return result
 
@@ -1743,7 +1776,7 @@ def _prepare_component_props(loading=False, loading_msg='', result_payload=None)
 
     return dict(
         dados              = dados_comp,
-        fila               = _fila_para_componente(fila_json),
+        fila               = _fila_para_componente(fila_json, historico),
         concorrentes       = concorrentes,
         funil              = _funil_para_componente(funil_json),
         sugestao_semana    = sugestao_semana,
@@ -1968,20 +2001,18 @@ def _dispatch_action(action_data: dict) -> bool:
 
         rpm_real = 0.0
         rpm_prev = float(item.get('rpm_previsto') or 0)
-        h_match = None
-        if video_id:
-            for h in hist:
-                if (h.get('video_id') or '').strip() == video_id:
-                    h_match = h
-                    rpm_real = float(h.get('rpm_real') or 0)
-                    break
-        if h_match is None and titulo_pub:
-            tn = _normalize_title_match(titulo_pub)
-            for h in hist:
-                if _normalize_title_match(h.get('titulo', '')) == tn:
-                    h_match = h
-                    rpm_real = float(h.get('rpm_real') or 0)
-                    break
+        h_match = _find_historico_video_match(hist, item)
+        if h_match is not None:
+            rpm_real = float(h_match.get('rpm_real') or 0)
+        current_link = (h_match or {}).get('sugestao_id')
+        current_link = str(current_link or '').strip()
+        if h_match is not None and sug_id and current_link and current_link != sug_id:
+            st.session_state['_result_payload'] = {
+                'type': 'link_feedback',
+                'kind': 'warn',
+                'message': 'Este vídeo já está vinculado. Desvincule antes de criar novo vínculo.',
+            }
+            return _mark_done()
 
         analise_ia = ''
         if sug_texto and titulo_pub and rpm_real > 0 and CLAUDE_API_KEY:
@@ -2018,6 +2049,48 @@ def _dispatch_action(action_data: dict) -> bool:
             salvar_github('historico.json', hist)
 
         st.cache_data.clear()
+        return _mark_done()
+
+    if action == 'unlink_video':
+        try:
+            idx = int(action_data.get('idx', -1))
+        except (TypeError, ValueError):
+            idx = -1
+        if idx < 0 or idx >= len(fila):
+            return _mark_done()
+        item = fila[idx]
+        h_match = _find_historico_video_match(hist, item)
+        if not isinstance(h_match, dict):
+            st.session_state['_result_payload'] = {
+                'type': 'link_feedback',
+                'kind': 'warn',
+                'message': 'Vínculo não encontrado no histórico para este vídeo.',
+            }
+            return _mark_done()
+        has_sug = str(h_match.get('sugestao_id') or '').strip()
+        has_notas = str(h_match.get('notas_criador') or '').strip()
+        if not has_sug and not has_notas:
+            st.session_state['_result_payload'] = {
+                'type': 'link_feedback',
+                'kind': 'warn',
+                'message': 'Este vídeo já está sem vínculo ou notas de criador no histórico.',
+            }
+            return _mark_done()
+        h_match['sugestao_id'] = None
+        h_match.pop('notas_criador', None)
+        salvar_github('historico.json', hist)
+        st.session_state['_result_payload'] = {
+            'type': 'link_feedback',
+            'kind': 'ok',
+            'message': 'Vínculo removido com sucesso.',
+        }
+        st.cache_data.clear()
+        return _mark_done()
+
+    if action == 'dismiss_link_feedback':
+        rp = st.session_state.get('_result_payload', {})
+        if isinstance(rp, dict) and rp.get('type') == 'link_feedback':
+            st.session_state.pop('_result_payload', None)
         return _mark_done()
 
     # ── Lote IA ──────────────────────────────────────────────────────

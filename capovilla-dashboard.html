@@ -974,6 +974,17 @@ main {
 
 .vlist-link:hover { opacity: 1; }
 
+.vlist-action {
+  margin-left: 8px;
+  min-width: 86px;
+}
+
+.vlist-action-linked {
+  background: var(--green-dim);
+  border-color: rgba(0, 255, 157, 0.35);
+  color: var(--green);
+}
+
 /* ═══ RESPONSIVE ═══ */
 @media (max-width: 900px) {
   .g-5 { grid-template-columns: repeat(3, 1fr); }
@@ -1118,6 +1129,42 @@ main {
   #s-producao .producao-head-row { flex-direction: column; }
   #s-producao .producao-conc-aside { width: 100%; }
 }
+
+.feedback-toast {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: min(92vw, 480px);
+  z-index: 9999;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+.feedback-toast.is-visible { display: flex; }
+.feedback-toast-warn {
+  border-color: rgba(251, 191, 36, 0.4);
+  color: var(--text);
+}
+.feedback-toast-ok {
+  border-color: rgba(0, 255, 157, 0.35);
+  color: var(--text);
+}
+.feedback-toast-msg { flex: 1; min-width: 0; }
+.feedback-toast .feedback-toast-close {
+  flex-shrink: 0;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 2px 6px;
+  min-height: unset;
+}
 </style>
 </head>
 <body>
@@ -1128,6 +1175,8 @@ main {
   <div id="loading-msg" style="color:#9898a4;font-size:0.72rem;font-family:var(--font);">Processando...</div>
 </div>
 <style>@keyframes spin { to { transform:rotate(360deg); } }</style>
+
+<div id="link-feedback-toast" class="feedback-toast" role="status" aria-live="polite" aria-hidden="true"></div>
 
 <!-- ═══════════════════ NAV ═══════════════════ -->
 <nav>
@@ -1143,6 +1192,8 @@ main {
   </div>
   <div class="nav-clock" id="clock"></div>
 </nav>
+
+<div id="standalone-banner" role="status" style="display:none;text-align:center;padding:8px 14px;font-size:0.68rem;color:var(--yellow);background:var(--yellow-dim);border-bottom:1px solid var(--border);"></div>
 
 <main>
 
@@ -1328,6 +1379,40 @@ function updateHeight() {
   window._stHeight(h);
 }
 
+function _renderLinkFeedback(rp) {
+  var el = document.getElementById('link-feedback-toast');
+  if (!el) return;
+  var clearTimer = '_linkFbTimer';
+  if (window[clearTimer]) {
+    clearTimeout(window[clearTimer]);
+    window[clearTimer] = null;
+  }
+  if (!rp || rp.type !== 'link_feedback' || !rp.message) {
+    el.classList.remove('is-visible');
+    el.innerHTML = '';
+    el.setAttribute('aria-hidden', 'true');
+    return;
+  }
+  var warn = String(rp.kind || '') !== 'ok';
+  el.className = 'feedback-toast feedback-toast-' + (warn ? 'warn' : 'ok');
+  el.classList.add('is-visible');
+  el.setAttribute('aria-hidden', 'false');
+  el.innerHTML = '<span class="feedback-toast-msg">' + esc(rp.message) + '</span>'
+    + '<button type="button" class="btn btn-ghost btn-sm feedback-toast-close" onclick="_dismissLinkFeedback()">Fechar</button>';
+  window[clearTimer] = setTimeout(function () { _dismissLinkFeedback(); }, 9000);
+}
+
+function _dismissLinkFeedback() {
+  var el = document.getElementById('link-feedback-toast');
+  if (el) {
+    el.classList.remove('is-visible');
+    el.innerHTML = '';
+    el.setAttribute('aria-hidden', 'true');
+    el.className = 'feedback-toast';
+  }
+  window._stAction('dismiss_link_feedback', {});
+}
+
 function _wireLayoutObservers() {
   if (window._layoutObsWired) return;
   window._layoutObsWired = true;
@@ -1394,6 +1479,7 @@ function _renderAll() {
   var hlinks = _STATE.historico_links || [];
   var cfg    = _STATE.config || {};
   var rp     = _STATE.result_payload || {};
+  _renderLinkFeedback(rp);
   renderMetrics(d);
   renderFunil(funil);
   renderTopRPM(d);
@@ -1757,14 +1843,18 @@ function renderProducaoVideoList(fila) {
   var el=document.getElementById('video-list-box'); if(!el) return;
   var pub=fila.filter(function(f){return f.status==='publicado'||f.status==='concluido';});
   if(!pub.length){el.innerHTML='<div class="box-title">Vídeos publicados</div><div style="color:var(--text-3);font-size:0.72rem;">Nenhum vídeo publicado na fila ainda.</div>';return;}
-  el.innerHTML='<div class="box-title">Vídeos publicados — clique 🔗 para registrar intenção / vincular a sugestão</div>'
+  el.innerHTML='<div class="box-title">Vídeos publicados — vincule ao conteúdo ou desvincule quando necessário</div>'
     +pub.map(function(v){
       var gi=fila.indexOf(v);
       var tc=v.funil==='fundo'?'tag-fundo':v.funil==='meio'?'tag-meio':'tag-topo';
+      var linked=!!v.is_linked_real;
+      var action=linked
+        ? '<button class="btn btn-sm vlist-action vlist-action-linked" title="Clique para desvincular" onclick="_confirmUnlinkVideo('+gi+')">Vinculado</button>'
+        : '<button class="btn btn-sm btn-ghost vlist-action" title="Vincular conteúdo" onclick="_openLinkModal('+gi+')">Linkar</button>';
       return '<div class="vlist-item"><span class="funil-tag '+tc+'">'+esc(v.funil||'')+'</span>'
         +'<span class="vlist-title">'+esc((v.titulo||'').slice(0,55))+'</span>'
         +'<span style="font-size:0.62rem;color:var(--text-3);">RPM R$'+Number(v.rpm||0).toFixed(0)+'</span>'
-        +'<span class="vlist-link" title="Notas do criador" onclick="_openLinkModal('+gi+')">🔗</span></div>';
+        +action+'</div>';
     }).join('');
 }
 
@@ -1822,6 +1912,11 @@ function _fillLinkModalSug() {
 }
 
 function _openLinkModal(idx) {
+  var item=(_STATE.fila||[])[idx]||{};
+  if(item.is_linked_real){
+    alert('Este vídeo já está vinculado. Desvincule antes de criar um novo vínculo.');
+    return;
+  }
   var m=_byIds(['link-video-modal','modal-link']); if(!m) return;
   var idxEl = document.getElementById('link-modal-idx');
   if(idxEl) idxEl.value=String(idx);
@@ -1830,6 +1925,19 @@ function _openLinkModal(idx) {
   _fillLinkModalSug();
   m.classList.add('is-open');
   m.setAttribute('aria-hidden','false');
+}
+
+function _confirmUnlinkVideo(idx) {
+  var item=(_STATE.fila||[])[idx]||{};
+  if(!item.is_linked_real){
+    alert('Este vídeo já está sem vínculo ativo.');
+    return;
+  }
+  var sid=item.linked_sugestao_id||'';
+  var msg='Confirmar desvínculo deste conteúdo?';
+  if(sid) msg+='\\n\\nSugestão vinculada: '+sid;
+  if(!window.confirm(msg)) return;
+  window._stAction('unlink_video',{idx:idx});
 }
 
 function _closeLinkModal() {
@@ -2003,16 +2111,178 @@ function _saveComp() {
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// INIT — show placeholder state until Python sends real data
+// Standalone preview (ex.: python -m http.server na raiz do repo)
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function _standaloneJsonBase() {
+  var p = String(location.pathname || '').replace(/\\/g, '/');
+  if (p.indexOf('/frontend/index.html') !== -1) return '../../..';
+  return '.';
+}
+
+function _fetchJsonStandalone(base, filename) {
+  var root = String(base || '.').replace(/\/+$/, '');
+  var url = root + '/' + filename;
+  return fetch(url).then(function (r) { return r.ok ? r.json() : []; }).catch(function () { return []; });
+}
+
+function _normalizeTitleMatchStandalone(s) {
+  if (s == null || s === '') return '';
+  var t = String(s).toLowerCase().trim().replace(/\n/g, ' ').replace(/\r/g, ' ').replace(/\t/g, ' ');
+  return t.split(/\s+/).join(' ');
+}
+
+function _findHistoricoVideoMatchStandalone(historico, item) {
+  if (!item || typeof item !== 'object') return null;
+  var hist = Array.isArray(historico) ? historico : [];
+  var videoId = String(item.video_id_youtube || '').trim();
+  var i, h;
+  if (videoId) {
+    for (i = 0; i < hist.length; i++) {
+      h = hist[i];
+      if (h && typeof h === 'object' && String(h.video_id || '').trim() === videoId) return h;
+    }
+  }
+  var tituloPub = String(item.titulo_publicado || item.titulo_planejado || '').trim();
+  if (tituloPub) {
+    var tn = _normalizeTitleMatchStandalone(tituloPub);
+    if (tn) {
+      for (i = 0; i < hist.length; i++) {
+        h = hist[i];
+        if (h && typeof h === 'object' && _normalizeTitleMatchStandalone(h.titulo || '') === tn) return h;
+      }
+    }
+  }
+  return null;
+}
+
+function _buildFilaComponentStandalone(filaRaw, historico) {
+  var status_map = { planejado: 'planejado', gravando: 'gravando', publicado: 'publicado', concluido: 'concluido' };
+  var raw = Array.isArray(filaRaw) ? filaRaw : [];
+  var hist = Array.isArray(historico) ? historico : [];
+  var out = [];
+  for (var i = 0; i < raw.length; i++) {
+    var item = raw[i];
+    if (!item || typeof item !== 'object') continue;
+    var titulo = item.titulo_publicado || item.titulo_planejado || '';
+    var hMatch = _findHistoricoVideoMatchStandalone(hist, item);
+    var linkedSugId = '';
+    var hasNotas = false;
+    if (hMatch && typeof hMatch === 'object') {
+      if (hMatch.sugestao_id != null && String(hMatch.sugestao_id).trim() !== '') linkedSugId = String(hMatch.sugestao_id).trim();
+      hasNotas = !!String(hMatch.notas_criador || '').trim();
+    }
+    out.push({
+      id: item.sugestao_id != null && item.sugestao_id !== '' ? item.sugestao_id : ('item-' + (out.length + 1)),
+      sugestao_id: item.sugestao_id,
+      titulo: titulo,
+      rpm: item.rpm_previsto || 0,
+      funil: item.funil || 'topo',
+      status: status_map[item.status || 'planejado'] || 'planejado',
+      origem: item.origem || 'ideia_propria',
+      data: String(item.data_publicacao || item.data_planejamento || '').slice(0, 10),
+      views: item.views || 0,
+      video_id: item.video_id_youtube || '',
+      is_linked_real: !!(linkedSugId || hasNotas),
+      linked_sugestao_id: linkedSugId
+    });
+  }
+  return out;
+}
+
+function _pendRawToComponentStandalone(pendRaw) {
+  var raw = Array.isArray(pendRaw) ? pendRaw : [];
+  return raw.map(function (s) {
+    return {
+      id: s.id || '',
+      texto: s.texto || s.titulo_real || '',
+      data: s.data || '',
+      status: s.status || 'pendente'
+    };
+  });
+}
+
+function _applyStandaloneDashboardState(filaComp, pendsComp) {
+  var ban = document.getElementById('standalone-banner');
+  if (ban) {
+    ban.style.display = 'block';
+    ban.textContent = 'Pré-visualização local (lê fila_producao.json / historico.json na pasta do servidor). Para gravar: streamlit run app.py';
+  }
+  _STATE = {
+    dados: {
+      canal: { inscritos: 0, views_totais: 0, total_videos: 0, cotacao: 5.15 },
+      analytics28d: { views: 0, horas: 0, novos_inscritos: 0, receita_brl: 0 },
+      top_rpm: [],
+      receita_diaria: [],
+      receita_console: [],
+      comentarios: []
+    },
+    fila: filaComp,
+    concorrentes: [],
+    funil: {},
+    sugestao_semana: {},
+    sugestoes_pendentes: pendsComp,
+    metas: {
+      anual: { desc: '—', atingida: false },
+      ano: { receita: 30000, inscritos: 10000, videos: 52 },
+      q2: { receita: 8000, inscritos: 3000, videos: 13 },
+      atual: { receita_ytd: 0, inscritos_ytd: 0, videos_ytd: 0, receita_q2: 0, receita_q2_has_data: false, inscritos_q2: 0, videos_q2: 0 },
+      accuracy: { overall: 0, trend: '', months: [] },
+      padroes: []
+    },
+    historico_links: [],
+    config: {
+      token: { status: 'err', expira: '—', msg: 'Sem Streamlit — só leitura' },
+      files: []
+    },
+    result_payload: {},
+    loading: false
+  };
+  _renderAll();
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// INIT — placeholders (Streamlit) ou JSON local (página aberta direto)
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 document.addEventListener('DOMContentLoaded', function() {
-  // Render empty state placeholders while waiting for Streamlit data
-  ['metrics','top-rpm-box','receita-console-box','receita-chart-box',
-   'insights-box','producao-hero-area','kanban','pending-box','video-list-box',
-   'meta-anual-box','meta-tri-box','accuracy-box','patterns-box','links-box',
-   'token-box','files-status-box','conc-mgmt-box'].forEach(function(id){
-    var el=document.getElementById(id);
-    if(el&&!el.innerHTML.trim()) el.innerHTML='<div style="color:var(--text-3);font-size:0.72rem;padding:8px 0;">Aguardando dados...</div>';
+  var placeholderIds = ['metrics','top-rpm-box','receita-console-box','receita-chart-box',
+    'insights-box','producao-hero-area','kanban','pending-box','video-list-box',
+    'meta-anual-box','meta-tri-box','accuracy-box','patterns-box','links-box',
+    'token-box','files-status-box','conc-mgmt-box'];
+
+  function placeholders() {
+    placeholderIds.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el && !el.innerHTML.trim()) el.innerHTML = '<div style="color:var(--text-3);font-size:0.72rem;padding:8px 0;">Aguardando dados...</div>';
+    });
+  }
+
+  if (window.parent !== window) {
+    placeholders();
+    return;
+  }
+
+  window._dashboardStandalone = true;
+  window._stAction = function () {
+    alert('Pré-visualização estática: para gravar vínculos e dados, rode na pasta do projeto:\n\nstreamlit run app.py');
+  };
+
+  var base = _standaloneJsonBase();
+  Promise.all([
+    _fetchJsonStandalone(base, 'fila_producao.json'),
+    _fetchJsonStandalone(base, 'historico.json'),
+    _fetchJsonStandalone(base, 'sugestoes_pendentes.json')
+  ]).then(function (rows) {
+    var filaRaw = rows[0];
+    var hist = rows[1];
+    var pends = rows[2];
+    var anyData = (Array.isArray(filaRaw) && filaRaw.length) || (Array.isArray(hist) && hist.length);
+    if (!anyData) {
+      placeholders();
+      return;
+    }
+    var filaComp = _buildFilaComponentStandalone(filaRaw, hist);
+    var pendsComp = _pendRawToComponentStandalone(pends);
+    _applyStandaloneDashboardState(filaComp, pendsComp);
   });
 });
 </script>
