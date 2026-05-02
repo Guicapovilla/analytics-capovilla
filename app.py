@@ -9,6 +9,8 @@ from youtube_analytics import config
 from youtube_analytics.anthropic import post_messages
 from youtube_analytics.parsing import parsear_dados
 from youtube_analytics.github_client import fetch_raw_json_or, fetch_raw_text_or, put_repository_file
+from youtube_analytics.dashboard import adapters as dashboard_adapters
+from youtube_analytics.dashboard import actions as dashboard_actions
 
 # ── CONFIG ──
 REPO = config.REPO
@@ -1769,28 +1771,28 @@ def _prepare_component_props(loading=False, loading_msg='', result_payload=None)
             'status': s.get('status', 'pendente'),
         })
 
-    dados_comp = _dados_para_componente(_dados)
-    receita_q2_calculada, receita_q2_has_data = _calcular_receita_trimestre_atual(
+    dados_comp = dashboard_adapters.dados_para_componente(_dados)
+    receita_q2_calculada, receita_q2_has_data = dashboard_adapters.calcular_receita_trimestre_atual(
         dados_comp.get('receita_diaria', [])
     )
 
     return dict(
         dados              = dados_comp,
-        fila               = _fila_para_componente(fila_json, historico),
+        fila               = dashboard_adapters.normalize_fila(fila_json, historico, _find_historico_video_match),
         concorrentes       = concorrentes,
-        funil              = _funil_para_componente(funil_json),
+        funil              = dashboard_adapters.normalize_funil(funil_json),
         sugestao_semana    = sugestao_semana,
         sugestoes_pendentes= sugestoes_pendentes,
-        metas              = _metas_para_componente(
+        metas              = dashboard_adapters.metas_para_componente(
             metas_json,
             historico,
             receita_q2_calculada=receita_q2_calculada,
             receita_q2_has_data=receita_q2_has_data,
         ),
-        historico_links    = _historico_links(historico, pend_json),
+        historico_links    = dashboard_adapters.historico_links(historico, pend_json),
         historico          = historico,
         contexto           = contexto,
-        config             = _config_status(),
+        config             = dashboard_adapters.config_status(carregar_arquivo, GITHUB_TOKEN, APRENDIZADOS_CREATOR_FILE),
         loading            = loading,
         loading_msg        = loading_msg,
         result_payload     = result_payload or {},
@@ -1922,16 +1924,11 @@ def _dispatch_action(action_data: dict) -> bool:
         return _mark_done()
 
     # ── Kanban actions ───────────────────────────────────────────────
-    STATUS_NEXT = {'planejado': 'gravando', 'gravando': 'publicado', 'publicado': 'concluido'}
-    STATUS_PREV = {'gravando': 'planejado', 'publicado': 'gravando', 'concluido': 'publicado'}
-
-    KANBAN_STATUSES = ('planejado', 'gravando', 'publicado', 'concluido')
-
     if action == 'kanban_advance':
         idx = action_data.get('idx', -1)
         if 0 <= idx < len(fila):
             curr = fila[idx].get('status', 'planejado')
-            fila[idx]['status'] = STATUS_NEXT.get(curr, curr)
+            fila[idx]['status'] = dashboard_actions.advance_status(curr)
             salvar_github('fila_producao.json', fila)
             st.cache_data.clear()
         return _mark_done()
@@ -1940,7 +1937,7 @@ def _dispatch_action(action_data: dict) -> bool:
         idx = action_data.get('idx', -1)
         if 0 <= idx < len(fila):
             curr = fila[idx].get('status', 'planejado')
-            fila[idx]['status'] = STATUS_PREV.get(curr, curr)
+            fila[idx]['status'] = dashboard_actions.back_status(curr)
             salvar_github('fila_producao.json', fila)
             st.cache_data.clear()
         return _mark_done()
@@ -1951,7 +1948,7 @@ def _dispatch_action(action_data: dict) -> bool:
         except (TypeError, ValueError):
             idx = -1
         new_st = (action_data.get('status') or '').strip()
-        if 0 <= idx < len(fila) and new_st in KANBAN_STATUSES:
+        if 0 <= idx < len(fila) and dashboard_actions.is_valid_status(new_st):
             fila[idx]['status'] = new_st
             salvar_github('fila_producao.json', fila)
             st.cache_data.clear()
@@ -2013,6 +2010,17 @@ def _dispatch_action(action_data: dict) -> bool:
                 'message': 'Este vídeo já está vinculado. Desvincule antes de criar novo vínculo.',
             }
             return _mark_done()
+
+        if sug_id:
+            for h in hist:
+                if h is not h_match and str(h.get('sugestao_id') or '').strip() == sug_id:
+                    linked_title = (h.get('titulo_publicado') or h.get('titulo_planejado') or 'outro vídeo')[:80]
+                    st.session_state['_result_payload'] = {
+                        'type': 'link_feedback',
+                        'kind': 'warn',
+                        'message': f'Esta sugestão já está vinculada ao vídeo "{linked_title}". Desvincule aquele vídeo antes de criar novo vínculo.',
+                    }
+                    return _mark_done()
 
         analise_ia = ''
         if sug_texto and titulo_pub and rpm_real > 0 and CLAUDE_API_KEY:

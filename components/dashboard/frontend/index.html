@@ -1997,12 +1997,18 @@ function _wireTemaLivre() {
 function _fillLinkModalSug() {
   var sel=document.getElementById('link-modal-sug'); if(!sel) return;
   var p=_STATE.sugestoes_pendentes||[];
+  var usedSugIds={};
+  (_STATE.fila||[]).forEach(function(f){ if(f.linked_sugestao_id) usedSugIds[String(f.linked_sugestao_id)]=true; });
   var opts='<option value="">— Manual / sem sugestão da IA —</option>';
   for(var i=0;i<p.length;i++){
     var s=p[i];
     var id=String(s.id==null?'':s.id).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
     var lab=esc(String((s.texto||s.id||'')).slice(0,80));
-    opts+='<option value="'+id+'">'+lab+'</option>';
+    if(usedSugIds[String(s.id||'')]){
+      opts+='<option value="'+id+'" disabled style="color:#888">'+lab+' — já vinculada</option>';
+    } else {
+      opts+='<option value="'+id+'">'+lab+'</option>';
+    }
   }
   sel.innerHTML=opts;
 }
