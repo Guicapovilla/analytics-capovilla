@@ -394,16 +394,96 @@ def sync_vinculos_video_sugestao(historico):
 
 
 # ============================================================
-# Sync: receita Q2 nas metas
+# Sync: valores atuais das metas (YTD + trimestre corrente)
 # ============================================================
 
-def sync_metas_receita(receita_q2_brl: float):
-    """Atualiza valor_atual de receita do trimestre corrente na tabela metas."""
+def sync_metas_atual(metricas: dict):
+    """Atualiza valor_atual das 6 linhas (`quarter`, `metrica`) na tabela metas.
+
+    `metricas` deve seguir o contrato de `metas_atuais.computar_metas_atuais`:
+        receita_ytd / inscritos_ytd / videos_ytd
+        receita_q2  / inscritos_q2  / videos_q2
+
+    O ano YTD usa o ano corrente; a coluna `metrica` `videos_publicados` casa
+    com o que `sincronizar_metas.py` ja gravava antes.
+    """
+    if not metricas:
+        return
+
     now = datetime.utcnow()
-    q_start_month = ((now.month - 1) // 3) * 3 + 1
-    quarter = f"{now.year}-Q{(q_start_month - 1) // 3 + 1}"
+    ano = str(now.year)
+    q_idx = (now.month - 1) // 3 + 1
+    trimestre = f"{now.year}-Q{q_idx}"
+
+    registros = [
+        {'quarter': ano,       'metrica': 'receita',           'valor_atual': float(metricas.get('receita_ytd', 0) or 0)},
+        {'quarter': ano,       'metrica': 'inscritos',         'valor_atual': float(metricas.get('inscritos_ytd', 0) or 0)},
+        {'quarter': ano,       'metrica': 'videos_publicados', 'valor_atual': float(metricas.get('videos_ytd', 0) or 0)},
+        {'quarter': trimestre, 'metrica': 'receita',           'valor_atual': float(metricas.get('receita_q2', 0) or 0)},
+        {'quarter': trimestre, 'metrica': 'inscritos',         'valor_atual': float(metricas.get('inscritos_q2', 0) or 0)},
+        {'quarter': trimestre, 'metrica': 'videos_publicados', 'valor_atual': float(metricas.get('videos_q2', 0) or 0)},
+    ]
+
     try:
-        upsert('metas', [{'quarter': quarter, 'metrica': 'receita', 'valor_atual': round(receita_q2_brl, 2)}], on_conflict='quarter,metrica')
-        print(f"  🗄️ Supabase: receita {quarter} atualizada → R${receita_q2_brl:.2f}")
+        upsert('metas', registros, on_conflict='quarter,metrica')
+        receita_ytd = registros[0]['valor_atual']
+        receita_q   = registros[3]['valor_atual']
+        print(
+            f"  🗄️ Supabase metas atualizadas: "
+            f"YTD R${receita_ytd:.2f} / +{int(registros[1]['valor_atual'])} insc / {int(registros[2]['valor_atual'])} vids · "
+            f"{trimestre} R${receita_q:.2f} / +{int(registros[4]['valor_atual'])} insc / {int(registros[5]['valor_atual'])} vids"
+        )
     except Exception as e:
-        _log_erro("sync_metas_receita", e)
+        _log_erro("sync_metas_atual", e)
+
+
+# ============================================================
+# Sync: info do canal (avatar, nome, inscritos)
+# ============================================================
+
+def sync_canal_info(channel_id: str, snippet: dict, inscritos: int = 0):
+    """Salva avatar_url e info básica do canal na tabela `canal`."""
+    if not channel_id or not snippet:
+        return
+    thumbs = snippet.get('thumbnails', {})
+    avatar_url = (
+        (thumbs.get('high') or {}).get('url')
+        or (thumbs.get('medium') or {}).get('url')
+        or (thumbs.get('default') or {}).get('url')
+    )
+    if not avatar_url:
+        return
+    try:
+        upsert('canal', [{
+            'id':           channel_id,
+            'nome':         snippet.get('title', ''),
+            'avatar_url':   avatar_url,
+            'inscritos':    inscritos,
+            'atualizado_em': datetime.now().isoformat(),
+        }], on_conflict='id')
+        print(f"  🗄️ Supabase canal info sincronizada (avatar salvo)")
+    except Exception as e:
+        _log_erro("sync_canal_info", e)
+
+
+# ============================================================
+# Sync: contexto editorial gerado automaticamente pelo pipeline
+# ============================================================
+
+def sync_contexto_editorial(contexto: str):
+    """Salva o contexto.txt gerado pelo pipeline na tabela config_contexto.
+
+    Usa uma linha única (id=1) — sempre sobrescreve com o valor mais recente.
+    O frontend lê esse contexto junto com o briefing antes de gerar sugestões.
+    """
+    if not contexto or not contexto.strip():
+        return
+    try:
+        upsert('config_contexto', [{
+            'id': 1,
+            'contexto': contexto.strip(),
+            'gerado_em': datetime.now().isoformat(),
+        }], on_conflict='id')
+        print(f"  🗄️ Supabase config_contexto sincronizado ({len(contexto)} chars)")
+    except Exception as e:
+        _log_erro("sync_contexto_editorial", e)

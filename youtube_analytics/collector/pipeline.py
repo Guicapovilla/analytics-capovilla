@@ -7,7 +7,9 @@ from .sync_supabase import (
     sync_transcricoes_proprias,
     sync_sugestoes,
     sync_vinculos_video_sugestao,
-    sync_metas_receita,
+    sync_metas_atual,
+    sync_canal_info,
+    sync_contexto_editorial,
 )
 
 from datetime import datetime
@@ -27,6 +29,7 @@ from .github_sync import (
 from .google_auth import autenticar
 from .historico import atualizar_historico_automatico
 from .funil import classificar_funil
+from .metas_atuais import computar_metas_atuais
 from .transcricoes import coletar_transcricoes_proprias
 from .vinculos import vincular_sugestoes
 
@@ -40,13 +43,21 @@ def main():
     usd       = cotacao_usd()
     print(f'[FX] Cotacao USD/BRL: R${usd:.4f}')
 
-    # Pega channel_id do usuario autenticado (necessario pro sync_videos_do_canal)
+    # Pega channel_id + info do canal (snippet para avatar)
+    channel_id = None
     try:
-        ch = youtube.channels().list(part='id', mine=True).execute()
-        channel_id = ch['items'][0]['id'] if ch.get('items') else None
+        ch = youtube.channels().list(part='id,snippet,statistics', mine=True).execute()
+        if ch.get('items'):
+            item = ch['items'][0]
+            channel_id = item['id']
+            snippet = item.get('snippet', {})
+            inscritos = int(item.get('statistics', {}).get('subscriberCount', 0))
+            try:
+                sync_canal_info(channel_id, snippet, inscritos)
+            except Exception as e:
+                print(f'  [WARN] Falha nao-critica em sync_canal_info: {e}')
     except Exception as e:
         print(f'[ERRO] Falha ao obter channel_id: {e}')
-        channel_id = None
 
     # ============================================
     # SYNC CATALOGO DE VIDEOS (NOVO - antes de tudo)
@@ -65,11 +76,25 @@ def main():
     salvar_github('dados.txt', dados_txt)
 
     print(f'[CANAL] Receita Q2 calculada: R${receita_q2_brl:.2f}')
+
+    print('\n[METAS] Calculando valores atuais (YTD + trimestre corrente)...')
+    metricas_atuais = computar_metas_atuais(youtube, analytics, usd)
+    print(
+        f"  YTD: R${metricas_atuais['receita_ytd']:.2f} | "
+        f"+{metricas_atuais['inscritos_ytd']} insc | "
+        f"{metricas_atuais['videos_ytd']} vids"
+    )
+    print(
+        f"  Q  : R${metricas_atuais['receita_q2']:.2f} | "
+        f"+{metricas_atuais['inscritos_q2']} insc | "
+        f"{metricas_atuais['videos_q2']} vids"
+    )
+
     metas_json = carregar_github_json('metas.json')
     if isinstance(metas_json, dict):
-        metas_json['receita_q2'] = round(receita_q2_brl, 2)
+        metas_json.update(metricas_atuais)
         salvar_github('metas.json', metas_json)
-    sync_metas_receita(receita_q2_brl)
+    sync_metas_atual(metricas_atuais)
 
     print('\n[TRANSCR] Coletando transcricoes do canal...')
     transcricoes = coletar_transcricoes_proprias(youtube)
@@ -106,6 +131,10 @@ def main():
         if anexo:
             contexto = contexto.rstrip() + '\n\n' + anexo
         salvar_github('contexto.txt', contexto)
+        try:
+            sync_contexto_editorial(contexto)
+        except Exception as e:
+            print(f'  [WARN] Falha nao-critica em sync_contexto_editorial: {e}')
         print('[OK] Contexto editorial atualizado automaticamente!')
 
     # Coleta de comentarios desativada - requer scope youtube.force-ssl aplicado ao token.
