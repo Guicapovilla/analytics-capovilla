@@ -427,5 +427,18 @@
     "receita_real": 6.1,
     "resultado": "retroativo",
     "atualizado_em": "2026-04-30"
+  },
+  {
+    "video_id": "0xb6py3zdBA",
+    "titulo": "Switch OLED ou Switch LITE... qual escolher?",
+    "data_registro": "2026-05-01",
+    "origem": "retroativo",
+    "raciocinio": "Registrado automaticamente pelo sistema com dados reais do YouTube Analytics.",
+    "rpm_previsto": 0,
+    "rpm_real": 4.17,
+    "views_real": 352,
+    "receita_real": 1.47,
+    "resultado": "retroativo",
+    "atualizado_em": "2026-05-04"
   }
 ]
