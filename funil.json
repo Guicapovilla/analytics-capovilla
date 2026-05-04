@@ -57,6 +57,13 @@
       "receita": 0.6
     },
     {
+      "video_id": "Yy6vL7_H9lY",
+      "titulo": "Por que o Nintendo Switch ainda faz sentido em 2026",
+      "rpm": 1.89,
+      "views": 238,
+      "receita": 0.45
+    },
+    {
       "video_id": "45C0Sc0abDk",
       "titulo": "Joguei CLAIR OBSCURE EXPEDITION 33 no XBOX SERIES S",
       "rpm": 0.54,
@@ -136,11 +143,11 @@
       "receita": 0.62
     },
     {
-      "video_id": "Yy6vL7_H9lY",
-      "titulo": "Por que o Nintendo Switch ainda faz sentido em 2026",
-      "rpm": 1.89,
-      "views": 238,
-      "receita": 0.45
+      "video_id": "80ec1wjgjpQ",
+      "titulo": "Como eu venci a culpa de jogar videogame depois de adulto",
+      "rpm": 3.66,
+      "views": 833,
+      "receita": 3.05
     },
     {
       "video_id": "rQ4_IOOkZYg",
@@ -222,35 +229,35 @@
       "receita": 1.25
     },
     {
-      "video_id": "80ec1wjgjpQ",
-      "titulo": "Como eu venci a culpa de jogar videogame depois de adulto",
-      "rpm": 3.66,
-      "views": 833,
-      "receita": 3.05
-    },
-    {
       "video_id": "7ME1Yh9DmX8",
       "titulo": "Essa é a Sensação de ter um SWITCH OLED DESBLOQUEADO",
       "rpm": 3.79,
       "views": 1609,
       "receita": 6.1
+    },
+    {
+      "video_id": "0xb6py3zdBA",
+      "titulo": "Switch OLED ou Switch LITE... qual escolher?",
+      "rpm": 4.17,
+      "views": 352,
+      "receita": 1.47
     }
   ],
   "thresholds": {
-    "p33": 1.89,
-    "p66": 3.66
+    "p33": 1.93,
+    "p66": 3.76
   },
-  "topo_count": 10,
+  "topo_count": 11,
   "topo_rpm_medio": 1.1,
-  "topo_receita_total": 80.03,
+  "topo_receita_total": 80.48,
   "meio_count": 11,
-  "meio_rpm_medio": 2.7,
-  "meio_receita_total": 58.25,
+  "meio_rpm_medio": 2.9,
+  "meio_receita_total": 60.85,
   "fundo_count": 12,
-  "fundo_rpm_medio": 52.6,
-  "fundo_receita_total": 6710.03,
-  "gerado_em": "2026-05-03 10:52",
-  "total_videos": 33,
+  "fundo_rpm_medio": 52.7,
+  "fundo_receita_total": 6708.45,
+  "gerado_em": "2026-05-04 11:45",
+  "total_videos": 34,
   "lacuna": "nenhuma",
   "lacuna_descricao": "Funil equilibrado"
 }
