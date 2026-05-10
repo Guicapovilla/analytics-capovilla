@@ -1,65 +1,66 @@
 === DADOS DO CANAL ===
-Atualizado em: 10/05/2026 10:58
+Atualizado em: Sun May 10 2026 10:06:00 GMT-0300 (Brasilia Standard Time)
 Canal: Guilherme Capovilla 
 Inscritos: 2650
 Views totais: 337538
-Total de videos: 107
-Cotacao USD/BRL: 4.917495
+Total de vídeos: 107
+ID do canal: UCMwe-ZusRqpeM9CzHUAz_vA
+Cotação USD/BRL: 4.917495
 
 === ANALYTICS 28 DIAS ===
 Views totais: 33144
 Horas assistidas: 1682
 Novos inscritos: 356
-Receita total (BRL): R$ 6704.43
+Receita total (BRL): R$ 6692.39
 
 === TOP 10 VIDEOS POR VIEWS ===
-1. O Switch Lite Desbloqueado é SIMPLESMENTE a Melhor escolha | Views: 38928 | Likes: 2251 | Comentarios: 216 | Publicado: 2025-07-19
-2. Troquei o Instagram por Zelda… e foi a melhor coisa que fiz | Views: 36503 | Likes: 3715 | Comentarios: 274 | Publicado: 2026-03-31
-3. Usei O XBOX SERIES S como um PC GAMER! | Views: 22866 | Likes: 1253 | Comentarios: 159 | Publicado: 2025-07-03
-4. Comprei um SWITCH LITE DESTRAVADO na SHOPEE | Views: 22357 | Likes: 1420 | Comentarios: 105 | Publicado: 2026-02-13
-5. O PS4 DESBLOQUEADO é MUITO MELHOR do que imaginava... | Views: 14636 | Likes: 621 | Comentarios: 139 | Publicado: 2025-10-20
-6. Como Configurar o MOONLIGHT para jogar FORA DE CASA | Views: 12140 | Likes: 475 | Comentarios: 64 | Publicado: 2025-07-25
-7. Como o Steam Deck Pode Mudar a Sua Vida | Views: 11440 | Likes: 974 | Comentarios: 143 | Publicado: 2025-07-09
-8. 7 jogos IMPRESSIONANTES disponíveis no NINTENDO SWITCH | Views: 11194 | Likes: 863 | Comentarios: 47 | Publicado: 2026-03-21
-9. Posso dar DOWNGRADE de versão no meu PS4? #ps4 #games #desbloqueado #dicas | Views: 9620 | Likes: 187 | Comentarios: 8 | Publicado: 2026-01-12
-10. Switch Lite DESBLOQUEADO em 2026… ainda vale a pena? | Views: 7498 | Likes: 464 | Comentarios: 31 | Publicado: 2026-03-07
+1. O Switch Lite Desbloqueado é SIMPLESMENTE a Melhor escolha | Views: 38928 | Likes: 2251 | Comentarios: 216
+2. Troquei o Instagram por Zelda… e foi a melhor coisa que fiz | Views: 36503 | Likes: 3715 | Comentarios: 274
+3. Comprei um SWITCH LITE DESTRAVADO na SHOPEE | Views: 22363 | Likes: 1421 | Comentarios: 105
+4. Usei O XBOX SERIES S como um PC GAMER! | Views: 22866 | Likes: 1253 | Comentarios: 159
+5. O PS4 DESBLOQUEADO é MUITO MELHOR do que imaginava... | Views: 14636 | Likes: 621 | Comentarios: 139
+6. Como o Steam Deck Pode Mudar a Sua Vida | Views: 11440 | Likes: 974 | Comentarios: 143
+7. 7 jogos IMPRESSIONANTES disponíveis no NINTENDO SWITCH | Views: 11194 | Likes: 863 | Comentarios: 47
+8. Como Configurar o MOONLIGHT para jogar FORA DE CASA | Views: 12142 | Likes: 475 | Comentarios: 64
+9. Posso dar DOWNGRADE de versão no meu PS4? #ps4 #games #desbloqueado #dicas | Views: 9625 | Likes: 187 | Comentarios: 8
+10. Switch Lite DESBLOQUEADO em 2026… ainda vale a pena? | Views: 7498 | Likes: 464 | Comentarios: 31
 
 === TOP 10 VIDEOS POR RECEITA ===
-1. Comprei um SWITCH LITE DESTRAVADO na SHOPEE | BRL: R$7309.06 | Views: 22179 | RPM: R$329.55
+1. Comprei um SWITCH LITE DESTRAVADO na SHOPEE | BRL: R$0.00 | Views: 22179 | RPM: R$329.55
 2. Switch Lite DESBLOQUEADO em 2026… ainda vale a pena? | BRL: R$3455.89 | Views: 7460 | RPM: R$463.26
 3. COMO COMPRAR seu Switch Lite Desbloqueado PARCELADO e SEM DOR DE CABEÇA | BRL: R$1190.60 | Views: 2721 | RPM: R$437.56
 4. Essa é a Sensação de ter um SWITCH OLED DESBLOQUEADO | BRL: R$1056.22 | Views: 2339 | RPM: R$451.57
 5. O Switch Lite Desbloqueado é SIMPLESMENTE a Melhor escolha | BRL: R$417.10 | Views: 38852 | RPM: R$10.74
 6. 7 jogos IMPRESSIONANTES disponíveis no NINTENDO SWITCH | BRL: R$333.37 | Views: 11170 | RPM: R$29.84
-7. Troquei o Instagram por Zelda… e foi a melhor coisa que fiz | BRL: R$73.94 | Views: 36044 | RPM: R$2.05
-8. Como Configurar o MOONLIGHT para jogar FORA DE CASA | BRL: R$33.26 | Views: 12039 | RPM: R$2.76
+7. Troquei o Instagram por Zelda… e foi a melhor coisa que fiz | BRL: R$73.94 | Views: 36044 | RPM: R$0.00
+8. Como Configurar o MOONLIGHT para jogar FORA DE CASA | BRL: R$33.26 | Views: 0 | RPM: R$2.76
 9. O PS4 DESBLOQUEADO é MUITO MELHOR do que imaginava... | BRL: R$26.33 | Views: 14594 | RPM: R$1.80
 10. Por que eu parei de sentir culpa por jogar videogame | BRL: R$25.52 | Views: 4326 | RPM: R$5.90
 
 === RECEITA DIARIA (ultimos 28 dias) ===
-2026-04-12 | Views: 1680 | BRL: R$264.69 | CPM: $1.06
-2026-04-13 | Views: 1963 | BRL: R$510.83 | CPM: $1.15
-2026-04-14 | Views: 2050 | BRL: R$12.04 | CPM: $0.99
-2026-04-15 | Views: 1562 | BRL: R$264.78 | CPM: $0.96
-2026-04-16 | Views: 1337 | BRL: R$282.80 | CPM: $1.68
-2026-04-17 | Views: 982 | BRL: R$546.37 | CPM: $1.00
-2026-04-18 | Views: 1181 | BRL: R$10.60 | CPM: $0.96
-2026-04-19 | Views: 1758 | BRL: R$352.45 | CPM: $0.92
-2026-04-20 | Views: 1582 | BRL: R$82.90 | CPM: $0.88
-2026-04-21 | Views: 1257 | BRL: R$257.05 | CPM: $0.88
-2026-04-22 | Views: 1173 | BRL: R$271.29 | CPM: $0.99
-2026-04-23 | Views: 1104 | BRL: R$9.31 | CPM: $0.96
-2026-04-24 | Views: 1055 | BRL: R$520.46 | CPM: $0.88
-2026-04-25 | Views: 1067 | BRL: R$7.64 | CPM: $0.90
-2026-04-26 | Views: 2026 | BRL: R$460.93 | CPM: $0.82
-2026-04-27 | Views: 1707 | BRL: R$754.77 | CPM: $0.93
-2026-04-28 | Views: 1092 | BRL: R$4.44 | CPM: $1.09
-2026-04-29 | Views: 952 | BRL: R$798.39 | CPM: $1.09
-2026-04-30 | Views: 933 | BRL: R$507.88 | CPM: $1.01
-2026-05-01 | Views: 1338 | BRL: R$292.93 | CPM: $0.88
-2026-05-02 | Views: 976 | BRL: R$272.98 | CPM: $1.09
-2026-05-03 | Views: 984 | BRL: R$205.61 | CPM: $1.08
-2026-05-04 | Views: 900 | BRL: R$3.70 | CPM: $1.18
-2026-05-05 | Views: 830 | BRL: R$3.40 | CPM: $1.35
-2026-05-06 | Views: 852 | BRL: R$2.87 | CPM: $0.98
-2026-05-07 | Views: 803 | BRL: R$3.32 | CPM: $1.30
+2026-04-12 | USD: $53.83 | BRL: R$264.69 | CPM: $0.00
+2026-04-13 | USD: $103.88 | BRL: R$510.83 | CPM: $1.15
+2026-04-14 | USD: $2.45 | BRL: R$0.00 | CPM: $0.99
+2026-04-15 | USD: $53.84 | BRL: R$264.78 | CPM: $0.96
+2026-04-16 | USD: $57.51 | BRL: R$282.80 | CPM: $1.68
+2026-04-17 | USD: $111.11 | BRL: R$546.37 | CPM: $1.00
+2026-04-18 | USD: $2.15 | BRL: R$10.60 | CPM: $0.96
+2026-04-19 | USD: $71.67 | BRL: R$352.45 | CPM: $0.92
+2026-04-20 | USD: $16.86 | BRL: R$82.90 | CPM: $0.88
+2026-04-21 | USD: $52.27 | BRL: R$257.05 | CPM: $0.88
+2026-04-22 | USD: $55.17 | BRL: R$271.29 | CPM: $0.99
+2026-04-23 | USD: $1.89 | BRL: R$9.31 | CPM: $0.96
+2026-04-24 | USD: $105.84 | BRL: R$520.46 | CPM: $0.88
+2026-04-25 | USD: $1.55 | BRL: R$7.64 | CPM: $0.90
+2026-04-26 | USD: $93.73 | BRL: R$460.93 | CPM: $0.82
+2026-04-27 | USD: $153.49 | BRL: R$754.77 | CPM: $0.93
+2026-04-28 | USD: $0.90 | BRL: R$4.44 | CPM: $0.00
+2026-04-29 | USD: $162.36 | BRL: R$798.39 | CPM: $0.00
+2026-04-30 | USD: $103.28 | BRL: R$507.88 | CPM: $0.00
+2026-05-01 | USD: $59.57 | BRL: R$292.93 | CPM: $0.88
+2026-05-02 | USD: $55.51 | BRL: R$272.98 | CPM: $0.00
+2026-05-03 | USD: $41.81 | BRL: R$205.61 | CPM: $0.00
+2026-05-04 | USD: $0.75 | BRL: R$3.70 | CPM: $1.18
+2026-05-05 | USD: $0.69 | BRL: R$3.40 | CPM: $1.35
+2026-05-06 | USD: $0.58 | BRL: R$2.87 | CPM: $0.98
+2026-05-07 | USD: $0.68 | BRL: R$3.32 | CPM: $1.30
