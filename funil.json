@@ -155,6 +155,13 @@
       "rpm": 2.23,
       "views": 239,
       "receita": 0.53
+    },
+    {
+      "video_id": "ZMsSYlwVOZc",
+      "titulo": "Qual VIDEO GAME comprar para o seu FILHO? Guia para pais",
+      "rpm": 2.92,
+      "views": 101,
+      "receita": 0.29
     }
   ],
   "fundo": [
@@ -241,6 +248,13 @@
       "rpm": 4.17,
       "views": 352,
       "receita": 1.47
+    },
+    {
+      "video_id": "wgnhf_OBEIw",
+      "titulo": "Switch OLED DESBLOQUEADO em 2026... Vale a pena?",
+      "rpm": 3.92,
+      "views": 494,
+      "receita": 1.94
     }
   ],
   "thresholds": {
@@ -250,14 +264,14 @@
   "topo_count": 11,
   "topo_rpm_medio": 1.1,
   "topo_receita_total": 80.48,
-  "meio_count": 11,
+  "meio_count": 12,
   "meio_rpm_medio": 2.9,
-  "meio_receita_total": 60.85,
-  "fundo_count": 12,
-  "fundo_rpm_medio": 52.7,
-  "fundo_receita_total": 6708.45,
-  "gerado_em": "2026-05-14 11:49",
-  "total_videos": 34,
+  "meio_receita_total": 61.14,
+  "fundo_count": 13,
+  "fundo_rpm_medio": 48.9,
+  "fundo_receita_total": 6710.39,
+  "gerado_em": "2026-05-15 11:52",
+  "total_videos": 36,
   "lacuna": "nenhuma",
   "lacuna_descricao": "Funil equilibrado"
 }
