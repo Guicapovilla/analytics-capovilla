@@ -50,6 +50,13 @@
       "receita": 1.65
     },
     {
+      "video_id": "oUDUc7O5Oyw",
+      "titulo": "SILENT HILL 2 REMAKE rodando lisinho no STEAM DECK!",
+      "rpm": 1.93,
+      "views": 322,
+      "receita": 0.62
+    },
+    {
       "video_id": "fVRc1U0b79s",
       "titulo": "XBOX SERIES S: 10 motivos para VOCÊ comprar HOJE",
       "rpm": 1.59,
@@ -136,11 +143,11 @@
       "receita": 1.45
     },
     {
-      "video_id": "oUDUc7O5Oyw",
-      "titulo": "SILENT HILL 2 REMAKE rodando lisinho no STEAM DECK!",
-      "rpm": 1.93,
-      "views": 322,
-      "receita": 0.62
+      "video_id": "bH4lLh_TRD4",
+      "titulo": "STEAM MACHINE, o novo \"console\" da VALVE: minha opinião sincera",
+      "rpm": 3.76,
+      "views": 331,
+      "receita": 1.25
     },
     {
       "video_id": "80ec1wjgjpQ",
@@ -229,13 +236,6 @@
       "receita": 1.5
     },
     {
-      "video_id": "bH4lLh_TRD4",
-      "titulo": "STEAM MACHINE, o novo \"console\" da VALVE: minha opinião sincera",
-      "rpm": 3.76,
-      "views": 331,
-      "receita": 1.25
-    },
-    {
       "video_id": "7ME1Yh9DmX8",
       "titulo": "Essa é a Sensação de ter um SWITCH OLED DESBLOQUEADO",
       "rpm": 3.79,
@@ -255,23 +255,30 @@
       "rpm": 3.92,
       "views": 494,
       "receita": 1.94
+    },
+    {
+      "video_id": "V7qLpgE62ZY",
+      "titulo": "Por Que Todo Adulto Deveria Ter um Videogame Portátil",
+      "rpm": 4.51,
+      "views": 129,
+      "receita": 0.58
     }
   ],
   "thresholds": {
-    "p33": 1.93,
-    "p66": 3.76
+    "p33": 2.23,
+    "p66": 3.78
   },
-  "topo_count": 11,
-  "topo_rpm_medio": 1.1,
-  "topo_receita_total": 80.48,
+  "topo_count": 12,
+  "topo_rpm_medio": 1.2,
+  "topo_receita_total": 81.1,
   "meio_count": 12,
-  "meio_rpm_medio": 2.9,
-  "meio_receita_total": 61.14,
+  "meio_rpm_medio": 3.0,
+  "meio_receita_total": 61.77,
   "fundo_count": 13,
-  "fundo_rpm_medio": 48.9,
-  "fundo_receita_total": 6710.39,
-  "gerado_em": "2026-05-15 11:52",
-  "total_videos": 36,
+  "fundo_rpm_medio": 49.0,
+  "fundo_receita_total": 6709.72,
+  "gerado_em": "2026-05-16 11:00",
+  "total_videos": 37,
   "lacuna": "nenhuma",
   "lacuna_descricao": "Funil equilibrado"
 }
