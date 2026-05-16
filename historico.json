@@ -466,5 +466,18 @@
     "receita_real": 0.29,
     "resultado": "retroativo",
     "atualizado_em": "2026-05-15"
+  },
+  {
+    "video_id": "V7qLpgE62ZY",
+    "titulo": "Por Que Todo Adulto Deveria Ter um Videogame Portátil",
+    "data_registro": "2026-05-13",
+    "origem": "retroativo",
+    "raciocinio": "Registrado automaticamente pelo sistema com dados reais do YouTube Analytics.",
+    "rpm_previsto": 0,
+    "rpm_real": 4.51,
+    "views_real": 129,
+    "receita_real": 0.58,
+    "resultado": "retroativo",
+    "atualizado_em": "2026-05-16"
   }
 ]
