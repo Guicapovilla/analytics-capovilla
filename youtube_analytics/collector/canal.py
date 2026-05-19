@@ -6,6 +6,44 @@ def _q2_start(hoje):
     return _date(hoje.year, q_start_month, 1)
 
 
+def coletar_channel_metricas_quarter(analytics, channel_id: str, usd: float) -> list[dict]:
+    """Coleta receita e views diários desde o início do quarter corrente até hoje-2d.
+
+    Usa -2d como end para garantir dados consolidados (YouTube Analytics tem ~2d de delay).
+    Retorna lista de { data: str, receita_brl: float, views: int }.
+    """
+    from datetime import timedelta, date
+    hoje    = date.today()
+    end     = hoje - timedelta(days=2)
+    q_month = ((hoje.month - 1) // 3) * 3 + 1
+    q_start = date(hoje.year, q_month, 1)
+
+    if end < q_start:
+        return []
+
+    try:
+        rows = analytics.reports().query(
+            ids=f'channel=={channel_id}',
+            startDate=str(q_start),
+            endDate=str(end),
+            metrics='estimatedRevenue,views',
+            dimensions='day',
+            sort='day',
+        ).execute().get('rows') or []
+    except Exception as e:
+        print(f'  [WARN] coletar_channel_metricas_quarter falhou: {e}')
+        return []
+
+    return [
+        {
+            'data':        str(r[0]),
+            'receita_brl': round(float(r[1] or 0) * usd, 2),
+            'views':       int(r[2] or 0),
+        }
+        for r in rows
+    ]
+
+
 def coletar_canal(youtube, analytics, usd):
     hoje  = datetime.now().date()
     start = hoje - timedelta(days=28)

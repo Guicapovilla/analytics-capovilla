@@ -9,6 +9,7 @@ from .sync_supabase import (
     sync_vinculos_video_sugestao,
     sync_metas_atual,
     sync_canal_info,
+    sync_channel_metricas,
     sync_contexto_editorial,
 )
 
@@ -16,7 +17,7 @@ from datetime import datetime
 
 from googleapiclient.discovery import build
 
-from .canal import coletar_canal
+from .canal import coletar_canal, coletar_channel_metricas_quarter
 from .comentarios import coletar_comentarios_insights
 from .concorrentes import coletar_concorrentes
 from .contexto import gerar_contexto_automatico
@@ -74,6 +75,19 @@ def main():
     print('\n[CANAL] Coletando dados do canal...')
     dados_txt, receita_por_video, receita_q2_brl = coletar_canal(youtube, analytics, usd)
     salvar_github('dados.txt', dados_txt)
+
+    # Métricas diárias do canal → channel_metricas (desde o início do quarter corrente)
+    if channel_id:
+        print('\n[CHANNEL] Sincronizando métricas diárias do canal...')
+        try:
+            daily_records = coletar_channel_metricas_quarter(analytics, channel_id, usd)
+            if daily_records:
+                sync_channel_metricas(daily_records)
+                print(f'  [OK] {len(daily_records)} dias gravados em channel_metricas')
+            else:
+                print('  [WARN] Nenhum dado diário retornado pela API')
+        except Exception as e:
+            print(f'  [WARN] Falha não-crítica em channel_metricas: {e}')
 
     print(f'[CANAL] Receita Q2 calculada: R${receita_q2_brl:.2f}')
 
