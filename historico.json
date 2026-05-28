@@ -479,5 +479,18 @@
     "receita_real": 0.58,
     "resultado": "retroativo",
     "atualizado_em": "2026-05-16"
+  },
+  {
+    "video_id": "4OhawEJaf4U",
+    "titulo": "COMPREI O MACBOOK NEO E ELE ME SURPREENDEU DE UM JEITO QUE EU NÃO ESPERAVA",
+    "data_registro": "2026-05-25",
+    "origem": "retroativo",
+    "raciocinio": "Registrado automaticamente pelo sistema com dados reais do YouTube Analytics.",
+    "rpm_previsto": 0,
+    "rpm_real": 9.63,
+    "views_real": 227,
+    "receita_real": 2.19,
+    "resultado": "retroativo",
+    "atualizado_em": "2026-05-28"
   }
 ]
