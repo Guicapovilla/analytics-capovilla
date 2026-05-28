@@ -87,6 +87,13 @@
   ],
   "meio": [
     {
+      "video_id": "Wd6ISABet0c",
+      "titulo": "7 jogos IMPRESSIONANTES disponíveis no NINTENDO SWITCH",
+      "rpm": 3.78,
+      "views": 9363,
+      "receita": 35.41
+    },
+    {
       "video_id": "up3-UYYpErk",
       "titulo": "Como Configurar o MOONLIGHT para jogar FORA DE CASA",
       "rpm": 2.55,
@@ -194,13 +201,6 @@
       "receita": 423.73
     },
     {
-      "video_id": "Wd6ISABet0c",
-      "titulo": "7 jogos IMPRESSIONANTES disponíveis no NINTENDO SWITCH",
-      "rpm": 3.78,
-      "views": 9363,
-      "receita": 35.41
-    },
-    {
       "video_id": "_3XiY-TPb04",
       "titulo": "É por isso que escolhi o PS4 e não o PS5",
       "rpm": 5.63,
@@ -262,23 +262,30 @@
       "rpm": 4.51,
       "views": 129,
       "receita": 0.58
+    },
+    {
+      "video_id": "4OhawEJaf4U",
+      "titulo": "COMPREI O MACBOOK NEO E ELE ME SURPREENDEU DE UM JEITO QUE EU NÃO ESPERAVA",
+      "rpm": 9.63,
+      "views": 227,
+      "receita": 2.19
     }
   ],
   "thresholds": {
     "p33": 2.23,
-    "p66": 3.78
+    "p66": 3.79
   },
   "topo_count": 12,
   "topo_rpm_medio": 1.2,
   "topo_receita_total": 81.1,
-  "meio_count": 12,
-  "meio_rpm_medio": 3.0,
-  "meio_receita_total": 61.77,
+  "meio_count": 13,
+  "meio_rpm_medio": 3.1,
+  "meio_receita_total": 97.18,
   "fundo_count": 13,
-  "fundo_rpm_medio": 49.0,
-  "fundo_receita_total": 6709.72,
-  "gerado_em": "2026-05-26 12:37",
-  "total_videos": 37,
+  "fundo_rpm_medio": 49.4,
+  "fundo_receita_total": 6676.5,
+  "gerado_em": "2026-05-28 13:44",
+  "total_videos": 38,
   "lacuna": "nenhuma",
   "lacuna_descricao": "Funil equilibrado"
 }
