@@ -492,5 +492,18 @@
     "receita_real": 2.19,
     "resultado": "retroativo",
     "atualizado_em": "2026-05-28"
+  },
+  {
+    "video_id": "LY9k5qMFplg",
+    "titulo": "Talvez você precise jogar mais videogame",
+    "data_registro": "2026-05-27",
+    "origem": "retroativo",
+    "raciocinio": "Registrado automaticamente pelo sistema com dados reais do YouTube Analytics.",
+    "rpm_previsto": 0,
+    "rpm_real": 4.15,
+    "views_real": 130,
+    "receita_real": 0.54,
+    "resultado": "retroativo",
+    "atualizado_em": "2026-05-30"
   }
 ]
