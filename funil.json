@@ -269,6 +269,13 @@
       "rpm": 9.63,
       "views": 227,
       "receita": 2.19
+    },
+    {
+      "video_id": "LY9k5qMFplg",
+      "titulo": "Talvez você precise jogar mais videogame",
+      "rpm": 4.15,
+      "views": 130,
+      "receita": 0.54
     }
   ],
   "thresholds": {
@@ -281,11 +288,11 @@
   "meio_count": 13,
   "meio_rpm_medio": 3.1,
   "meio_receita_total": 97.18,
-  "fundo_count": 13,
-  "fundo_rpm_medio": 49.4,
-  "fundo_receita_total": 6676.5,
-  "gerado_em": "2026-05-29 12:49",
-  "total_videos": 38,
+  "fundo_count": 14,
+  "fundo_rpm_medio": 46.2,
+  "fundo_receita_total": 6677.04,
+  "gerado_em": "2026-05-30 11:17",
+  "total_videos": 39,
   "lacuna": "nenhuma",
   "lacuna_descricao": "Funil equilibrado"
 }
