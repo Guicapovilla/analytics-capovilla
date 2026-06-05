@@ -83,6 +83,13 @@
       "rpm": 0.62,
       "views": 23769,
       "receita": 14.77
+    },
+    {
+      "video_id": "rQ4_IOOkZYg",
+      "titulo": "COMO COMPRAR seu Switch Lite Desbloqueado PARCELADO e SEM DOR DE CABEÇA",
+      "rpm": 2.23,
+      "views": 239,
+      "receita": 0.53
     }
   ],
   "meio": [
@@ -164,11 +171,11 @@
       "receita": 3.05
     },
     {
-      "video_id": "rQ4_IOOkZYg",
-      "titulo": "COMO COMPRAR seu Switch Lite Desbloqueado PARCELADO e SEM DOR DE CABEÇA",
-      "rpm": 2.23,
-      "views": 239,
-      "receita": 0.53
+      "video_id": "7ME1Yh9DmX8",
+      "titulo": "Essa é a Sensação de ter um SWITCH OLED DESBLOQUEADO",
+      "rpm": 3.79,
+      "views": 1609,
+      "receita": 6.1
     },
     {
       "video_id": "ZMsSYlwVOZc",
@@ -236,13 +243,6 @@
       "receita": 1.5
     },
     {
-      "video_id": "7ME1Yh9DmX8",
-      "titulo": "Essa é a Sensação de ter um SWITCH OLED DESBLOQUEADO",
-      "rpm": 3.79,
-      "views": 1609,
-      "receita": 6.1
-    },
-    {
       "video_id": "0xb6py3zdBA",
       "titulo": "Switch OLED ou Switch LITE... qual escolher?",
       "rpm": 4.17,
@@ -276,23 +276,30 @@
       "rpm": 4.15,
       "views": 130,
       "receita": 0.54
+    },
+    {
+      "video_id": "CqiIGIKIEL0",
+      "titulo": "O PS PORTAL É MUITO MELHOR DO QUE VOCÊ IMAGINA",
+      "rpm": 5.45,
+      "views": 340,
+      "receita": 1.85
     }
   ],
   "thresholds": {
-    "p33": 2.23,
-    "p66": 3.79
+    "p33": 2.25,
+    "p66": 3.92
   },
-  "topo_count": 12,
-  "topo_rpm_medio": 1.2,
-  "topo_receita_total": 81.1,
+  "topo_count": 13,
+  "topo_rpm_medio": 1.3,
+  "topo_receita_total": 81.63,
   "meio_count": 13,
-  "meio_rpm_medio": 3.1,
-  "meio_receita_total": 97.18,
+  "meio_rpm_medio": 3.2,
+  "meio_receita_total": 102.75,
   "fundo_count": 14,
-  "fundo_rpm_medio": 46.2,
-  "fundo_receita_total": 6677.04,
-  "gerado_em": "2026-06-04 12:43",
-  "total_videos": 39,
+  "fundo_rpm_medio": 46.3,
+  "fundo_receita_total": 6672.79,
+  "gerado_em": "2026-06-05 12:33",
+  "total_videos": 40,
   "lacuna": "nenhuma",
   "lacuna_descricao": "Funil equilibrado"
 }
