@@ -505,5 +505,18 @@
     "receita_real": 0.54,
     "resultado": "retroativo",
     "atualizado_em": "2026-05-30"
+  },
+  {
+    "video_id": "CqiIGIKIEL0",
+    "titulo": "O PS PORTAL É MUITO MELHOR DO QUE VOCÊ IMAGINA",
+    "data_registro": "2026-06-01",
+    "origem": "retroativo",
+    "raciocinio": "Registrado automaticamente pelo sistema com dados reais do YouTube Analytics.",
+    "rpm_previsto": 0,
+    "rpm_real": 5.45,
+    "views_real": 340,
+    "receita_real": 1.85,
+    "resultado": "retroativo",
+    "atualizado_em": "2026-06-05"
   }
 ]
