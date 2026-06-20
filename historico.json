@@ -531,5 +531,18 @@
     "receita_real": 1.27,
     "resultado": "retroativo",
     "atualizado_em": "2026-06-08"
+  },
+  {
+    "video_id": "jZKTfvf_rCA",
+    "titulo": "Eu acho o nintendo switch lite FRACO",
+    "data_registro": "2026-06-17",
+    "origem": "retroativo",
+    "raciocinio": "Registrado automaticamente pelo sistema com dados reais do YouTube Analytics.",
+    "rpm_previsto": 0,
+    "rpm_real": 3.74,
+    "views_real": 414,
+    "receita_real": 1.55,
+    "resultado": "retroativo",
+    "atualizado_em": "2026-06-20"
   }
 ]
