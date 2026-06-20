@@ -178,18 +178,18 @@
       "receita": 6.1
     },
     {
-      "video_id": "wgnhf_OBEIw",
-      "titulo": "Switch OLED DESBLOQUEADO em 2026... Vale a pena?",
-      "rpm": 3.92,
-      "views": 494,
-      "receita": 1.94
-    },
-    {
       "video_id": "ZMsSYlwVOZc",
       "titulo": "Qual VIDEO GAME comprar para o seu FILHO? Guia para pais",
       "rpm": 2.92,
       "views": 101,
       "receita": 0.29
+    },
+    {
+      "video_id": "jZKTfvf_rCA",
+      "titulo": "Eu acho o nintendo switch lite FRACO",
+      "rpm": 3.74,
+      "views": 414,
+      "receita": 1.55
     }
   ],
   "fundo": [
@@ -257,6 +257,13 @@
       "receita": 1.47
     },
     {
+      "video_id": "wgnhf_OBEIw",
+      "titulo": "Switch OLED DESBLOQUEADO em 2026... Vale a pena?",
+      "rpm": 3.92,
+      "views": 494,
+      "receita": 1.94
+    },
+    {
       "video_id": "V7qLpgE62ZY",
       "titulo": "Por Que Todo Adulto Deveria Ter um Videogame Portátil",
       "rpm": 4.51,
@@ -294,19 +301,19 @@
   ],
   "thresholds": {
     "p33": 2.25,
-    "p66": 4.15
+    "p66": 3.92
   },
   "topo_count": 13,
   "topo_rpm_medio": 1.3,
   "topo_receita_total": 81.63,
   "meio_count": 14,
-  "meio_rpm_medio": 3.3,
-  "meio_receita_total": 104.69,
-  "fundo_count": 14,
-  "fundo_rpm_medio": 46.6,
-  "fundo_receita_total": 6672.12,
-  "gerado_em": "2026-06-19 13:32",
-  "total_videos": 41,
+  "meio_rpm_medio": 3.2,
+  "meio_receita_total": 104.3,
+  "fundo_count": 15,
+  "fundo_rpm_medio": 43.8,
+  "fundo_receita_total": 6674.06,
+  "gerado_em": "2026-06-20 11:54",
+  "total_videos": 42,
   "lacuna": "nenhuma",
   "lacuna_descricao": "Funil equilibrado"
 }
