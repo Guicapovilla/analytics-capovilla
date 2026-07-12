@@ -544,5 +544,18 @@
     "receita_real": 1.55,
     "resultado": "retroativo",
     "atualizado_em": "2026-06-20"
+  },
+  {
+    "video_id": "G6mMSpYYiaY",
+    "titulo": "Meu MACBOOK NEO virou uma MÁQUINA de emulação!",
+    "data_registro": "2026-06-30",
+    "origem": "retroativo",
+    "raciocinio": "Registrado automaticamente pelo sistema com dados reais do YouTube Analytics.",
+    "rpm_previsto": 0,
+    "rpm_real": 3.31,
+    "views_real": 105,
+    "receita_real": 0.35,
+    "resultado": "retroativo",
+    "atualizado_em": "2026-07-12"
   }
 ]
