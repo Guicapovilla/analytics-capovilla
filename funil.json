@@ -197,6 +197,13 @@
       "rpm": 3.31,
       "views": 105,
       "receita": 0.35
+    },
+    {
+      "video_id": "ERL8K53o_3A",
+      "titulo": "2 anos com o STEAM DECK… E Como ele mudou minha vida.",
+      "rpm": 3.33,
+      "views": 132,
+      "receita": 0.44
     }
   ],
   "fundo": [
@@ -313,14 +320,14 @@
   "topo_count": 14,
   "topo_rpm_medio": 1.4,
   "topo_receita_total": 85.89,
-  "meio_count": 14,
+  "meio_count": 15,
   "meio_rpm_medio": 3.3,
-  "meio_receita_total": 100.39,
+  "meio_receita_total": 100.83,
   "fundo_count": 15,
   "fundo_rpm_medio": 43.8,
   "fundo_receita_total": 6674.06,
-  "gerado_em": "2026-07-13 12:28",
-  "total_videos": 43,
+  "gerado_em": "2026-07-14 11:23",
+  "total_videos": 44,
   "lacuna": "nenhuma",
   "lacuna_descricao": "Funil equilibrado"
 }
