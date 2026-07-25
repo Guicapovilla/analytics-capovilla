@@ -583,5 +583,18 @@
     "receita_real": 15.57,
     "resultado": "retroativo",
     "atualizado_em": "2026-07-18"
+  },
+  {
+    "video_id": "19kIGQD6DRI",
+    "titulo": "Como eu fiz para finalmente jogar os jogos parados",
+    "data_registro": "2026-07-21",
+    "origem": "retroativo",
+    "raciocinio": "Registrado automaticamente pelo sistema com dados reais do YouTube Analytics.",
+    "rpm_previsto": 0,
+    "rpm_real": 3.93,
+    "views_real": 163,
+    "receita_real": 0.64,
+    "resultado": "retroativo",
+    "atualizado_em": "2026-07-25"
   }
 ]
