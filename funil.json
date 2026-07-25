@@ -15,6 +15,13 @@
       "receita": 22.61
     },
     {
+      "video_id": "uHr_AmUkIVk",
+      "titulo": "O Rog Ally Z1 Extreme: Minhas Opiniões Sinceras",
+      "rpm": 2.49,
+      "views": 2283,
+      "receita": 5.69
+    },
+    {
       "video_id": "9B0hWrivGeo",
       "titulo": "Steam Deck OLED - Antes de você comprar",
       "rpm": 1.13,
@@ -122,13 +129,6 @@
       "receita": 9.11
     },
     {
-      "video_id": "uHr_AmUkIVk",
-      "titulo": "O Rog Ally Z1 Extreme: Minhas Opiniões Sinceras",
-      "rpm": 2.49,
-      "views": 2283,
-      "receita": 5.69
-    },
-    {
       "video_id": "ZGyIRL59PqA",
       "titulo": "Devo DESBLOQUEAR meu PS4? Respondendo as maiores dúvidas de vocês!",
       "rpm": 3.32,
@@ -176,6 +176,13 @@
       "rpm": 3.79,
       "views": 1609,
       "receita": 6.1
+    },
+    {
+      "video_id": "wgnhf_OBEIw",
+      "titulo": "Switch OLED DESBLOQUEADO em 2026... Vale a pena?",
+      "rpm": 3.92,
+      "views": 494,
+      "receita": 1.94
     },
     {
       "video_id": "ZMsSYlwVOZc",
@@ -271,13 +278,6 @@
       "receita": 1.47
     },
     {
-      "video_id": "wgnhf_OBEIw",
-      "titulo": "Switch OLED DESBLOQUEADO em 2026... Vale a pena?",
-      "rpm": 3.92,
-      "views": 494,
-      "receita": 1.94
-    },
-    {
       "video_id": "V7qLpgE62ZY",
       "titulo": "Por Que Todo Adulto Deveria Ter um Videogame Portátil",
       "rpm": 4.51,
@@ -318,23 +318,30 @@
       "rpm": 4.41,
       "views": 3533,
       "receita": 15.57
+    },
+    {
+      "video_id": "19kIGQD6DRI",
+      "titulo": "Como eu fiz para finalmente jogar os jogos parados",
+      "rpm": 3.93,
+      "views": 163,
+      "receita": 0.64
     }
   ],
   "thresholds": {
-    "p33": 2.49,
-    "p66": 3.92
+    "p33": 2.55,
+    "p66": 3.93
   },
-  "topo_count": 14,
+  "topo_count": 15,
   "topo_rpm_medio": 1.4,
-  "topo_receita_total": 85.89,
+  "topo_receita_total": 91.58,
   "meio_count": 15,
-  "meio_rpm_medio": 3.3,
-  "meio_receita_total": 100.83,
+  "meio_rpm_medio": 3.4,
+  "meio_receita_total": 97.08,
   "fundo_count": 16,
   "fundo_rpm_medio": 41.3,
-  "fundo_receita_total": 6689.63,
-  "gerado_em": "2026-07-24 11:39",
-  "total_videos": 45,
+  "fundo_receita_total": 6688.33,
+  "gerado_em": "2026-07-25 11:06",
+  "total_videos": 46,
   "lacuna": "nenhuma",
   "lacuna_descricao": "Funil equilibrado"
 }
