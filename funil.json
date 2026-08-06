@@ -213,11 +213,11 @@
       "receita": 0.44
     },
     {
-      "video_id": "19kIGQD6DRI",
-      "titulo": "Como eu fiz para finalmente jogar os jogos parados",
-      "rpm": 3.93,
-      "views": 163,
-      "receita": 0.64
+      "video_id": "LyHv8Kae-p4",
+      "titulo": "Switch lite desbloqueado da shopee (5 meses depois)",
+      "rpm": 3.29,
+      "views": 684,
+      "receita": 2.25
     }
   ],
   "fundo": [
@@ -327,6 +327,13 @@
       "receita": 15.57
     },
     {
+      "video_id": "19kIGQD6DRI",
+      "titulo": "Como eu fiz para finalmente jogar os jogos parados",
+      "rpm": 3.93,
+      "views": 163,
+      "receita": 0.64
+    },
+    {
       "video_id": "ZhITjpoqE4o",
       "titulo": "Vou TE CONVENCER a comprar um SWITCH LITE DESBLOQUEADO.",
       "rpm": 6.11,
@@ -336,19 +343,19 @@
   ],
   "thresholds": {
     "p33": 2.55,
-    "p66": 4.15
+    "p66": 3.93
   },
   "topo_count": 15,
   "topo_rpm_medio": 1.4,
   "topo_receita_total": 91.58,
   "meio_count": 16,
   "meio_rpm_medio": 3.4,
-  "meio_receita_total": 97.72,
-  "fundo_count": 16,
-  "fundo_rpm_medio": 41.5,
-  "fundo_receita_total": 6690.93,
-  "gerado_em": "2026-08-05 11:56",
-  "total_videos": 47,
+  "meio_receita_total": 99.33,
+  "fundo_count": 17,
+  "fundo_rpm_medio": 39.3,
+  "fundo_receita_total": 6691.57,
+  "gerado_em": "2026-08-06 12:00",
+  "total_videos": 48,
   "lacuna": "nenhuma",
   "lacuna_descricao": "Funil equilibrado"
 }
