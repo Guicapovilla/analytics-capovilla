@@ -104,6 +104,13 @@
       "rpm": 2.23,
       "views": 239,
       "receita": 0.53
+    },
+    {
+      "video_id": "GwemMSbqlyk",
+      "titulo": "Comprei um switch lite desbloqueado na shopee... Chegou com problema?! #switchlite #desbloqueado",
+      "rpm": 1.92,
+      "views": 1801,
+      "receita": 3.46
     }
   ],
   "meio": [
@@ -345,17 +352,17 @@
     "p33": 2.55,
     "p66": 3.93
   },
-  "topo_count": 15,
-  "topo_rpm_medio": 1.4,
-  "topo_receita_total": 91.58,
+  "topo_count": 16,
+  "topo_rpm_medio": 1.5,
+  "topo_receita_total": 95.04,
   "meio_count": 16,
   "meio_rpm_medio": 3.4,
   "meio_receita_total": 99.33,
   "fundo_count": 17,
   "fundo_rpm_medio": 39.3,
   "fundo_receita_total": 6691.57,
-  "gerado_em": "2026-08-14 10:55",
-  "total_videos": 48,
+  "gerado_em": "2026-08-15 10:17",
+  "total_videos": 49,
   "lacuna": "nenhuma",
   "lacuna_descricao": "Funil equilibrado"
 }
