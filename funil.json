@@ -15,13 +15,6 @@
       "receita": 22.61
     },
     {
-      "video_id": "uHr_AmUkIVk",
-      "titulo": "O Rog Ally Z1 Extreme: Minhas Opiniões Sinceras",
-      "rpm": 2.49,
-      "views": 2283,
-      "receita": 5.69
-    },
-    {
       "video_id": "9B0hWrivGeo",
       "titulo": "Steam Deck OLED - Antes de você comprar",
       "rpm": 1.13,
@@ -111,6 +104,13 @@
       "rpm": 1.92,
       "views": 1801,
       "receita": 3.46
+    },
+    {
+      "video_id": "voQ1fXtbFi0",
+      "titulo": "A emulação no Rog Ally Z1 extreme é insana! #asus #rogally #gaming #emulação",
+      "rpm": 1.99,
+      "views": 1778,
+      "receita": 3.54
     }
   ],
   "meio": [
@@ -134,6 +134,13 @@
       "rpm": 2.89,
       "views": 3152,
       "receita": 9.11
+    },
+    {
+      "video_id": "uHr_AmUkIVk",
+      "titulo": "O Rog Ally Z1 Extreme: Minhas Opiniões Sinceras",
+      "rpm": 2.49,
+      "views": 2283,
+      "receita": 5.69
     },
     {
       "video_id": "ZGyIRL59PqA",
@@ -349,20 +356,20 @@
     }
   ],
   "thresholds": {
-    "p33": 2.55,
+    "p33": 2.49,
     "p66": 3.93
   },
   "topo_count": 16,
-  "topo_rpm_medio": 1.5,
-  "topo_receita_total": 95.04,
-  "meio_count": 16,
-  "meio_rpm_medio": 3.4,
-  "meio_receita_total": 99.33,
+  "topo_rpm_medio": 1.4,
+  "topo_receita_total": 92.89,
+  "meio_count": 17,
+  "meio_rpm_medio": 3.3,
+  "meio_receita_total": 105.02,
   "fundo_count": 17,
   "fundo_rpm_medio": 39.3,
   "fundo_receita_total": 6691.57,
-  "gerado_em": "2026-08-15 10:17",
-  "total_videos": 49,
+  "gerado_em": "2026-08-16 10:18",
+  "total_videos": 50,
   "lacuna": "nenhuma",
   "lacuna_descricao": "Funil equilibrado"
 }
