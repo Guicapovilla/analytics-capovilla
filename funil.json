@@ -22,13 +22,6 @@
       "receita": 4.36
     },
     {
-      "video_id": "XB1KVwrTFtU",
-      "titulo": "Testei FSR 4.0 + Lossless Scaling no Steam Deck (Impressionante)",
-      "rpm": 2.25,
-      "views": 1892,
-      "receita": 4.26
-    },
-    {
       "video_id": "mC0YBqVVEiY",
       "titulo": "Como é ter um PSP em 2025?",
       "rpm": 1.6,
@@ -111,6 +104,20 @@
       "rpm": 1.99,
       "views": 1778,
       "receita": 3.54
+    },
+    {
+      "video_id": "Vl7icIOizj0",
+      "titulo": "Minha tela do switch lite parece a tela do switch OLED 😲 #switchlite #desbloqueado #portátil #gaming",
+      "rpm": 0.95,
+      "views": 2638,
+      "receita": 2.51
+    },
+    {
+      "video_id": "rYRsvXYNzOk",
+      "titulo": "Como os jogos rodam no ROG ALLY Z1 EXTREME? #asus #rogally #gaming #emulação",
+      "rpm": 1.28,
+      "views": 1051,
+      "receita": 1.35
     }
   ],
   "meio": [
@@ -141,6 +148,13 @@
       "rpm": 2.49,
       "views": 2283,
       "receita": 5.69
+    },
+    {
+      "video_id": "XB1KVwrTFtU",
+      "titulo": "Testei FSR 4.0 + Lossless Scaling no Steam Deck (Impressionante)",
+      "rpm": 2.25,
+      "views": 1892,
+      "receita": 4.26
     },
     {
       "video_id": "ZGyIRL59PqA",
@@ -190,13 +204,6 @@
       "rpm": 3.79,
       "views": 1609,
       "receita": 6.1
-    },
-    {
-      "video_id": "wgnhf_OBEIw",
-      "titulo": "Switch OLED DESBLOQUEADO em 2026... Vale a pena?",
-      "rpm": 3.92,
-      "views": 494,
-      "receita": 1.94
     },
     {
       "video_id": "ZMsSYlwVOZc",
@@ -299,6 +306,13 @@
       "receita": 1.47
     },
     {
+      "video_id": "wgnhf_OBEIw",
+      "titulo": "Switch OLED DESBLOQUEADO em 2026... Vale a pena?",
+      "rpm": 3.92,
+      "views": 494,
+      "receita": 1.94
+    },
+    {
       "video_id": "V7qLpgE62ZY",
       "titulo": "Por Que Todo Adulto Deveria Ter um Videogame Portátil",
       "rpm": 4.51,
@@ -353,23 +367,30 @@
       "rpm": 6.11,
       "views": 531,
       "receita": 3.24
+    },
+    {
+      "video_id": "PHI4vpxMKbI",
+      "titulo": "Como eu jogo jogos retrô no meu celular atualmente",
+      "rpm": 19.24,
+      "views": 118,
+      "receita": 2.27
     }
   ],
   "thresholds": {
-    "p33": 2.49,
-    "p66": 3.93
+    "p33": 2.25,
+    "p66": 3.92
   },
-  "topo_count": 16,
-  "topo_rpm_medio": 1.4,
-  "topo_receita_total": 92.89,
+  "topo_count": 17,
+  "topo_rpm_medio": 1.3,
+  "topo_receita_total": 92.49,
   "meio_count": 17,
   "meio_rpm_medio": 3.3,
-  "meio_receita_total": 105.02,
-  "fundo_count": 17,
-  "fundo_rpm_medio": 39.3,
-  "fundo_receita_total": 6691.57,
-  "gerado_em": "2026-08-16 10:18",
-  "total_videos": 50,
+  "meio_receita_total": 107.34,
+  "fundo_count": 19,
+  "fundo_rpm_medio": 36.3,
+  "fundo_receita_total": 6695.78,
+  "gerado_em": "2026-08-17 10:27",
+  "total_videos": 53,
   "lacuna": "nenhuma",
   "lacuna_descricao": "Funil equilibrado"
 }
