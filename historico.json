@@ -648,5 +648,44 @@
     "receita_real": 3.54,
     "resultado": "retroativo",
     "atualizado_em": "2026-08-16"
+  },
+  {
+    "video_id": "Vl7icIOizj0",
+    "titulo": "Minha tela do switch lite parece a tela do switch OLED 😲 #switchlite #desbloqueado #portátil #gaming",
+    "data_registro": "2026-03-24",
+    "origem": "retroativo",
+    "raciocinio": "Registrado automaticamente pelo sistema com dados reais do YouTube Analytics.",
+    "rpm_previsto": 0,
+    "rpm_real": 0.95,
+    "views_real": 2638,
+    "receita_real": 2.51,
+    "resultado": "retroativo",
+    "atualizado_em": "2026-08-17"
+  },
+  {
+    "video_id": "PHI4vpxMKbI",
+    "titulo": "Como eu jogo jogos retrô no meu celular atualmente",
+    "data_registro": "2026-08-10",
+    "origem": "retroativo",
+    "raciocinio": "Registrado automaticamente pelo sistema com dados reais do YouTube Analytics.",
+    "rpm_previsto": 0,
+    "rpm_real": 19.24,
+    "views_real": 118,
+    "receita_real": 2.27,
+    "resultado": "retroativo",
+    "atualizado_em": "2026-08-17"
+  },
+  {
+    "video_id": "rYRsvXYNzOk",
+    "titulo": "Como os jogos rodam no ROG ALLY Z1 EXTREME? #asus #rogally #gaming #emulação",
+    "data_registro": "2026-02-24",
+    "origem": "retroativo",
+    "raciocinio": "Registrado automaticamente pelo sistema com dados reais do YouTube Analytics.",
+    "rpm_previsto": 0,
+    "rpm_real": 1.28,
+    "views_real": 1051,
+    "receita_real": 1.35,
+    "resultado": "retroativo",
+    "atualizado_em": "2026-08-17"
   }
 ]
