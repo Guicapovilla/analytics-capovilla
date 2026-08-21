@@ -85,6 +85,13 @@
       "receita": 14.77
     },
     {
+      "video_id": "rQ4_IOOkZYg",
+      "titulo": "COMO COMPRAR seu Switch Lite Desbloqueado PARCELADO e SEM DOR DE CABEÇA",
+      "rpm": 2.23,
+      "views": 239,
+      "receita": 0.53
+    },
+    {
       "video_id": "GwemMSbqlyk",
       "titulo": "Comprei um switch lite desbloqueado na shopee... Chegou com problema?! #switchlite #desbloqueado",
       "rpm": 1.92,
@@ -199,13 +206,6 @@
       "receita": 3.05
     },
     {
-      "video_id": "rQ4_IOOkZYg",
-      "titulo": "COMO COMPRAR seu Switch Lite Desbloqueado PARCELADO e SEM DOR DE CABEÇA",
-      "rpm": 2.23,
-      "views": 239,
-      "receita": 0.53
-    },
-    {
       "video_id": "7ME1Yh9DmX8",
       "titulo": "Essa é a Sensação de ter um SWITCH OLED DESBLOQUEADO",
       "rpm": 3.79,
@@ -246,6 +246,13 @@
       "rpm": 3.29,
       "views": 684,
       "receita": 2.25
+    },
+    {
+      "video_id": "EBJHekrWpAA",
+      "titulo": "Você deveria comprar um nintendo switch 2? #switch2 #switchlite #desbloqueado #portátil #gaming",
+      "rpm": 2.72,
+      "views": 968,
+      "receita": 2.63
     }
   ],
   "fundo": [
@@ -381,23 +388,30 @@
       "rpm": 19.24,
       "views": 118,
       "receita": 2.27
+    },
+    {
+      "video_id": "oqBPjsmkrXk",
+      "titulo": "O que faz um portátil ser bom de fato? #switchlite #desbloqueado #portátil #gaming",
+      "rpm": 9.49,
+      "views": 615,
+      "receita": 5.83
     }
   ],
   "thresholds": {
-    "p33": 2.23,
+    "p33": 2.25,
     "p66": 3.92
   },
-  "topo_count": 17,
+  "topo_count": 18,
   "topo_rpm_medio": 1.3,
-  "topo_receita_total": 93.81,
+  "topo_receita_total": 94.34,
   "meio_count": 18,
   "meio_rpm_medio": 3.2,
-  "meio_receita_total": 107.87,
-  "fundo_count": 19,
-  "fundo_rpm_medio": 36.3,
-  "fundo_receita_total": 6695.78,
-  "gerado_em": "2026-08-20 10:24",
-  "total_videos": 54,
+  "meio_receita_total": 109.97,
+  "fundo_count": 20,
+  "fundo_rpm_medio": 35.0,
+  "fundo_receita_total": 6701.61,
+  "gerado_em": "2026-08-21 10:25",
+  "total_videos": 56,
   "lacuna": "nenhuma",
   "lacuna_descricao": "Funil equilibrado"
 }
