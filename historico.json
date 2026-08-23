@@ -726,5 +726,31 @@
     "receita_real": 2.63,
     "resultado": "retroativo",
     "atualizado_em": "2026-08-21"
+  },
+  {
+    "video_id": "KDFByCx_pT0",
+    "titulo": "Vive na Correria? O Switch Lite é Perfeito Para Você",
+    "data_registro": "2026-05-14",
+    "origem": "retroativo",
+    "raciocinio": "Registrado automaticamente pelo sistema com dados reais do YouTube Analytics.",
+    "rpm_previsto": 0,
+    "rpm_real": 1.29,
+    "views_real": 3434,
+    "receita_real": 4.43,
+    "resultado": "retroativo",
+    "atualizado_em": "2026-08-23"
+  },
+  {
+    "video_id": "qJbWgLOBQUI",
+    "titulo": "Vamos falar da construção do ROG ALLY... #asus #rogally #gaming #emulação",
+    "data_registro": "2026-02-24",
+    "origem": "retroativo",
+    "raciocinio": "Registrado automaticamente pelo sistema com dados reais do YouTube Analytics.",
+    "rpm_previsto": 0,
+    "rpm_real": 11.23,
+    "views_real": 225,
+    "receita_real": 2.53,
+    "resultado": "retroativo",
+    "atualizado_em": "2026-08-23"
   }
 ]
