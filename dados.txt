@@ -1,65 +1,66 @@
 === DADOS DO CANAL ===
-Atualizado em: 11/09/2026 14:01
+Atualizado em: Sat Sep 12 2026 10:06:00 GMT-0300 (Brasilia Standard Time)
 Canal: Guilherme Capovilla 
-Inscritos: 3530
-Views totais: 569637
-Total de videos: 166
-Cotacao USD/BRL: 5.110992
+Inscritos: 3540
+Views totais: 572198
+Total de vídeos: 166
+ID do canal: UCMwe-ZusRqpeM9CzHUAz_vA
+Cotação USD/BRL: 5.105193
 
 === ANALYTICS 28 DIAS ===
-Views totais: 56560
-Horas assistidas: 1419
-Novos inscritos: 135
-Receita total (BRL): R$ 5545.86
+Views totais: 58868
+Horas assistidas: 1415
+Novos inscritos: 141
+Receita total (BRL): R$ 4381.84
 
 === TOP 10 VIDEOS POR VIEWS ===
-1. Troquei o Instagram por Zelda… e foi a melhor coisa que fiz | Views: 45973 | Likes: 4447 | Comentarios: 307 | Publicado: 2026-03-31
-2. Como É BOM ter um SWITCH LITE DESBLOQUEADO em 2026 | Views: 44113 | Likes: 1818 | Comentarios: 118 | Publicado: 2026-07-14
-3. O Switch Lite Desbloqueado é SIMPLESMENTE a Melhor escolha | Views: 41592 | Likes: 2349 | Comentarios: 216 | Publicado: 2025-07-19
-4. Comprei um SWITCH LITE DESTRAVADO na SHOPEE | Views: 34171 | Likes: 1895 | Comentarios: 130 | Publicado: 2026-02-13
-5. Usei O XBOX SERIES S como um PC GAMER! | Views: 24802 | Likes: 1317 | Comentarios: 162 | Publicado: 2025-07-03
-6. Como Configurar o MOONLIGHT para jogar FORA DE CASA | Views: 20837 | Likes: 726 | Comentarios: 102 | Publicado: 2025-07-25
-7. Posso dar DOWNGRADE de versão no meu PS4? #ps4 #games #desbloqueado #dicas | Views: 18822 | Likes: 341 | Comentarios: 10 | Publicado: 2026-01-12
-8. O PS4 DESBLOQUEADO é MUITO MELHOR do que imaginava... | Views: 15526 | Likes: 648 | Comentarios: 139 | Publicado: 2025-10-20
-9. 7 jogos IMPRESSIONANTES disponíveis no NINTENDO SWITCH | Views: 12434 | Likes: 960 | Comentarios: 54 | Publicado: 2026-03-21
-10. Como o Steam Deck Pode Mudar a Sua Vida | Views: 11567 | Likes: 980 | Comentarios: 143 | Publicado: 2025-07-09
+1. Troquei o Instagram por Zelda… e foi a melhor coisa que fiz | Views: 45993 | Likes: 4449 | Comentarios: 307
+2. Como É BOM ter um SWITCH LITE DESBLOQUEADO em 2026 | Views: 44467 | Likes: 1831 | Comentarios: 119
+3. O Switch Lite Desbloqueado é SIMPLESMENTE a Melhor escolha | Views: 41617 | Likes: 2350 | Comentarios: 216
+4. Comprei um SWITCH LITE DESTRAVADO na SHOPEE | Views: 34206 | Likes: 1897 | Comentarios: 130
+5. Usei O XBOX SERIES S como um PC GAMER! | Views: 24820 | Likes: 1317 | Comentarios: 162
+6. Como Configurar o MOONLIGHT para jogar FORA DE CASA | Views: 20927 | Likes: 727 | Comentarios: 102
+7. Posso dar DOWNGRADE de versão no meu PS4? #ps4 #games #desbloqueado #dicas | Views: 18953 | Likes: 344 | Comentarios: 10
+8. O PS4 DESBLOQUEADO é MUITO MELHOR do que imaginava... | Views: 15528 | Likes: 648 | Comentarios: 139
+9. 7 jogos IMPRESSIONANTES disponíveis no NINTENDO SWITCH | Views: 12439 | Likes: 961 | Comentarios: 54
+10. Como o Steam Deck Pode Mudar a Sua Vida | Views: 11568 | Likes: 980 | Comentarios: 143
 
 === TOP 10 VIDEOS POR RECEITA ===
-1. Comprei um SWITCH LITE DESTRAVADO na SHOPEE | BRL: R$12620.36 | Views: 34109 | RPM: R$370.00
-2. Como É BOM ter um SWITCH LITE DESBLOQUEADO em 2026 | BRL: R$5718.03 | Views: 43263 | RPM: R$132.17
-3. Switch OLED Desbloqueado: Sua melhor escolha para 2026? | BRL: R$4753.32 | Views: 7130 | RPM: R$666.67
-4. Switch lite desbloqueado da shopee (5 meses depois) | BRL: R$4084.42 | Views: 6184 | RPM: R$660.48
-5. COMO COMPRAR seu Switch Lite Desbloqueado PARCELADO e SEM DOR DE CABEÇA | BRL: R$4005.93 | Views: 4399 | RPM: R$910.65
-6. Switch Lite DESBLOQUEADO em 2026… ainda vale a pena? | BRL: R$3870.60 | Views: 11772 | RPM: R$328.80
-7. Essa é a Sensação de ter um SWITCH OLED DESBLOQUEADO | BRL: R$2484.63 | Views: 5247 | RPM: R$473.53
-8. Vou TE CONVENCER a comprar um SWITCH LITE DESBLOQUEADO. | BRL: R$1746.79 | Views: 6872 | RPM: R$254.19
-9. Compre um switch lite desbloqueado (antes que seja tarde demais) | BRL: R$1527.47 | Views: 10291 | RPM: R$148.43
-10. 7 jogos IMPRESSIONANTES disponíveis no NINTENDO SWITCH | BRL: R$625.18 | Views: 12415 | RPM: R$50.36
+1. Comprei um SWITCH LITE DESTRAVADO na SHOPEE | BRL: R$12606.11 | Views: 34133 | RPM: R$369.32
+2. Como É BOM ter um SWITCH LITE DESBLOQUEADO em 2026 | BRL: R$5712.80 | Views: 43730 | RPM: R$130.64
+3. Switch OLED Desbloqueado: Sua melhor escolha para 2026? | BRL: R$4747.94 | Views: 7149 | RPM: R$664.14
+4. Switch lite desbloqueado da shopee (5 meses depois) | BRL: R$4079.88 | Views: 6236 | RPM: R$654.25
+5. COMO COMPRAR seu Switch Lite Desbloqueado PARCELADO e SEM DOR DE CABEÇA | BRL: R$4001.40 | Views: 4403 | RPM: R$908.79
+6. Switch Lite DESBLOQUEADO em 2026… ainda vale a pena? | BRL: R$3866.25 | Views: 11787 | RPM: R$328.01
+7. Essa é a Sensação de ter um SWITCH OLED DESBLOQUEADO | BRL: R$2481.89 | Views: 5274 | RPM: R$470.59
+8. Vou TE CONVENCER a comprar um SWITCH LITE DESBLOQUEADO. | BRL: R$1744.86 | Views: 0 | RPM: R$252.81
+9. Compre um switch lite desbloqueado (antes que seja tarde demais) | BRL: R$1525.77 | Views: 10276 | RPM: R$148.48
+10. 7 jogos IMPRESSIONANTES disponíveis no NINTENDO SWITCH | BRL: R$624.47 | Views: 12423 | RPM: R$50.27
 
 === RECEITA DIARIA (ultimos 28 dias) ===
-2026-08-14 | Views: 1250 | BRL: R$12.76 | CPM: $1.39
-2026-08-15 | Views: 1188 | BRL: R$7.91 | CPM: $0.88
-2026-08-16 | Views: 1445 | BRL: R$529.69 | CPM: $1.24
-2026-08-17 | Views: 1368 | BRL: R$686.67 | CPM: $1.16
-2026-08-18 | Views: 1601 | BRL: R$13.77 | CPM: $1.25
-2026-08-19 | Views: 1374 | BRL: R$1010.27 | CPM: $1.11
-2026-08-20 | Views: 1216 | BRL: R$854.59 | CPM: $1.25
-2026-08-21 | Views: 1030 | BRL: R$6.58 | CPM: $0.95
-2026-08-22 | Views: 1104 | BRL: R$6.31 | CPM: $1.23
-2026-08-23 | Views: 1195 | BRL: R$88.22 | CPM: $1.13
-2026-08-24 | Views: 975 | BRL: R$3.17 | CPM: $1.29
-2026-08-25 | Views: 1034 | BRL: R$571.56 | CPM: $0.96
-2026-08-26 | Views: 1074 | BRL: R$3.09 | CPM: $1.09
-2026-08-27 | Views: 2664 | BRL: R$3.06 | CPM: $1.11
-2026-08-28 | Views: 2193 | BRL: R$2.53 | CPM: $0.98
-2026-08-29 | Views: 2000 | BRL: R$9.00 | CPM: $1.14
-2026-08-30 | Views: 2353 | BRL: R$10.05 | CPM: $1.16
-2026-08-31 | Views: 2880 | BRL: R$7.95 | CPM: $1.18
-2026-09-01 | Views: 3600 | BRL: R$8.72 | CPM: $1.23
-2026-09-02 | Views: 5346 | BRL: R$1135.33 | CPM: $1.08
-2026-09-03 | Views: 4624 | BRL: R$96.22 | CPM: $1.13
-2026-09-04 | Views: 2826 | BRL: R$429.97 | CPM: $1.35
-2026-09-05 | Views: 2050 | BRL: R$3.41 | CPM: $1.20
-2026-09-06 | Views: 1793 | BRL: R$3.25 | CPM: $1.21
-2026-09-07 | Views: 4406 | BRL: R$36.89 | CPM: $1.27
-2026-09-08 | Views: 3971 | BRL: R$4.89 | CPM: $1.43
+2026-08-15 | USD: $1.55 | BRL: R$7.90 | CPM: $0.88
+2026-08-16 | USD: $103.64 | BRL: R$529.09 | CPM: $1.24
+2026-08-17 | USD: $134.35 | BRL: R$685.89 | CPM: $1.16
+2026-08-18 | USD: $2.69 | BRL: R$13.76 | CPM: $1.25
+2026-08-19 | USD: $197.67 | BRL: R$1009.13 | CPM: $0.00
+2026-08-20 | USD: $167.21 | BRL: R$853.62 | CPM: $1.25
+2026-08-21 | USD: $1.29 | BRL: R$6.58 | CPM: $0.95
+2026-08-22 | USD: $1.23 | BRL: R$6.30 | CPM: $1.23
+2026-08-23 | USD: $17.26 | BRL: R$88.12 | CPM: $1.13
+2026-08-24 | USD: $0.62 | BRL: R$3.17 | CPM: $1.29
+2026-08-25 | USD: $111.83 | BRL: R$570.91 | CPM: $0.96
+2026-08-26 | USD: $0.60 | BRL: R$0.00 | CPM: $0.00
+2026-08-27 | USD: $0.60 | BRL: R$0.00 | CPM: $0.00
+2026-08-28 | USD: $0.49 | BRL: R$2.53 | CPM: $0.98
+2026-08-29 | USD: $1.76 | BRL: R$8.99 | CPM: $1.14
+2026-08-30 | USD: $1.97 | BRL: R$0.00 | CPM: $1.16
+2026-08-31 | USD: $1.55 | BRL: R$7.94 | CPM: $1.18
+2026-09-01 | USD: $1.71 | BRL: R$8.71 | CPM: $1.23
+2026-09-02 | USD: $222.13 | BRL: R$0.00 | CPM: $0.00
+2026-09-03 | USD: $18.83 | BRL: R$96.11 | CPM: $1.13
+2026-09-04 | USD: $84.13 | BRL: R$429.48 | CPM: $1.35
+2026-09-05 | USD: $0.67 | BRL: R$3.41 | CPM: $1.20
+2026-09-06 | USD: $0.64 | BRL: R$3.24 | CPM: $1.21
+2026-09-07 | USD: $7.22 | BRL: R$36.85 | CPM: $1.27
+2026-09-08 | USD: $0.96 | BRL: R$4.89 | CPM: $1.43
+2026-09-09 | USD: $0.00 | BRL: R$5.22 | CPM: $1.28
