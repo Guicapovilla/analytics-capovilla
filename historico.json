@@ -791,5 +791,18 @@
     "receita_real": 3.01,
     "resultado": "retroativo",
     "atualizado_em": "2026-09-10"
+  },
+  {
+    "video_id": "_EdwuiQs4CE",
+    "titulo": "O STEAM DECK TRANSFORMOU a minha vida... Por completo",
+    "data_registro": "2026-09-15",
+    "origem": "retroativo",
+    "raciocinio": "Registrado automaticamente pelo sistema com dados reais do YouTube Analytics.",
+    "rpm_previsto": 0,
+    "rpm_real": 1.05,
+    "views_real": 6580,
+    "receita_real": 6.91,
+    "resultado": "retroativo",
+    "atualizado_em": "2026-09-19"
   }
 ]
