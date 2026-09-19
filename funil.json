@@ -92,13 +92,6 @@
       "receita": 3.46
     },
     {
-      "video_id": "voQ1fXtbFi0",
-      "titulo": "A emulação no Rog Ally Z1 extreme é insana! #asus #rogally #gaming #emulação",
-      "rpm": 1.99,
-      "views": 1778,
-      "receita": 3.54
-    },
-    {
       "video_id": "Vl7icIOizj0",
       "titulo": "Minha tela do switch lite parece a tela do switch OLED 😲 #switchlite #desbloqueado #portátil #gaming",
       "rpm": 0.95,
@@ -139,6 +132,13 @@
       "rpm": 1.05,
       "views": 2879,
       "receita": 3.01
+    },
+    {
+      "video_id": "_EdwuiQs4CE",
+      "titulo": "O STEAM DECK TRANSFORMOU a minha vida... Por completo",
+      "rpm": 1.05,
+      "views": 6580,
+      "receita": 6.91
     }
   ],
   "meio": [
@@ -234,13 +234,6 @@
       "receita": 6.1
     },
     {
-      "video_id": "wgnhf_OBEIw",
-      "titulo": "Switch OLED DESBLOQUEADO em 2026... Vale a pena?",
-      "rpm": 3.92,
-      "views": 494,
-      "receita": 1.94
-    },
-    {
       "video_id": "ZMsSYlwVOZc",
       "titulo": "Qual VIDEO GAME comprar para o seu FILHO? Guia para pais",
       "rpm": 2.92,
@@ -274,6 +267,13 @@
       "rpm": 3.29,
       "views": 684,
       "receita": 2.25
+    },
+    {
+      "video_id": "voQ1fXtbFi0",
+      "titulo": "A emulação no Rog Ally Z1 extreme é insana! #asus #rogally #gaming #emulação",
+      "rpm": 1.99,
+      "views": 1778,
+      "receita": 3.54
     },
     {
       "video_id": "EBJHekrWpAA",
@@ -346,6 +346,13 @@
       "rpm": 4.17,
       "views": 352,
       "receita": 1.47
+    },
+    {
+      "video_id": "wgnhf_OBEIw",
+      "titulo": "Switch OLED DESBLOQUEADO em 2026... Vale a pena?",
+      "rpm": 3.92,
+      "views": 494,
+      "receita": 1.94
     },
     {
       "video_id": "V7qLpgE62ZY",
@@ -433,20 +440,20 @@
     }
   ],
   "thresholds": {
-    "p33": 2.23,
-    "p66": 3.93
+    "p33": 1.99,
+    "p66": 3.92
   },
   "topo_count": 20,
-  "topo_rpm_medio": 1.3,
-  "topo_receita_total": 103.99,
+  "topo_rpm_medio": 1.2,
+  "topo_receita_total": 107.36,
   "meio_count": 20,
-  "meio_rpm_medio": 3.2,
-  "meio_receita_total": 112.44,
-  "fundo_count": 21,
-  "fundo_rpm_medio": 33.9,
-  "fundo_receita_total": 6704.86,
-  "gerado_em": "2026-09-18 14:04",
-  "total_videos": 61,
+  "meio_rpm_medio": 3.1,
+  "meio_receita_total": 114.04,
+  "fundo_count": 22,
+  "fundo_rpm_medio": 32.6,
+  "fundo_receita_total": 6706.8,
+  "gerado_em": "2026-09-19 13:39",
+  "total_videos": 62,
   "lacuna": "nenhuma",
   "lacuna_descricao": "Funil equilibrado"
 }
