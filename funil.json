@@ -234,6 +234,13 @@
       "receita": 6.1
     },
     {
+      "video_id": "wgnhf_OBEIw",
+      "titulo": "Switch OLED DESBLOQUEADO em 2026... Vale a pena?",
+      "rpm": 3.92,
+      "views": 494,
+      "receita": 1.94
+    },
+    {
       "video_id": "ZMsSYlwVOZc",
       "titulo": "Qual VIDEO GAME comprar para o seu FILHO? Guia para pais",
       "rpm": 2.92,
@@ -348,13 +355,6 @@
       "receita": 1.47
     },
     {
-      "video_id": "wgnhf_OBEIw",
-      "titulo": "Switch OLED DESBLOQUEADO em 2026... Vale a pena?",
-      "rpm": 3.92,
-      "views": 494,
-      "receita": 1.94
-    },
-    {
       "video_id": "V7qLpgE62ZY",
       "titulo": "Por Que Todo Adulto Deveria Ter um Videogame Portátil",
       "rpm": 4.51,
@@ -437,23 +437,30 @@
       "rpm": 4.9,
       "views": 543,
       "receita": 2.66
+    },
+    {
+      "video_id": "w7dw_1UBIGg",
+      "titulo": "Como rodo jogos no streaming mesmo com Wi-Fi ruim 🤯 #steamdeck #ps5 #playstation5 #steamdeckoled",
+      "rpm": 11.41,
+      "views": 472,
+      "receita": 5.39
     }
   ],
   "thresholds": {
     "p33": 1.99,
-    "p66": 3.92
+    "p66": 3.93
   },
   "topo_count": 20,
   "topo_rpm_medio": 1.2,
   "topo_receita_total": 107.36,
-  "meio_count": 20,
+  "meio_count": 21,
   "meio_rpm_medio": 3.1,
-  "meio_receita_total": 114.04,
+  "meio_receita_total": 115.98,
   "fundo_count": 22,
-  "fundo_rpm_medio": 32.6,
-  "fundo_receita_total": 6706.8,
-  "gerado_em": "2026-09-19 13:39",
-  "total_videos": 62,
+  "fundo_rpm_medio": 32.9,
+  "fundo_receita_total": 6710.25,
+  "gerado_em": "2026-09-20 13:54",
+  "total_videos": 63,
   "lacuna": "nenhuma",
   "lacuna_descricao": "Funil equilibrado"
 }
