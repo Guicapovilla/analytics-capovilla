@@ -14,6 +14,7 @@ Filosofia:
 from datetime import datetime, date
 import sys
 
+from youtube_analytics import supabase_client
 from youtube_analytics.supabase_client import upsert
 
 
@@ -415,13 +416,38 @@ def sync_metas_atual(metricas: dict):
     q_idx = (now.month - 1) // 3 + 1
     trimestre = f"{now.year}-Q{q_idx}"
 
+    # `valor_alvo` e NOT NULL na tabela e so e definido manualmente (nunca pelo
+    # coletor). Se o upsert cair no caminho de INSERT — linha ainda nao existe,
+    # ou por algum motivo o ON CONFLICT nao bateu — mandar so valor_atual
+    # derruba o lote inteiro com violacao de NOT NULL. Busca o valor_alvo ja
+    # cadastrado pra sempre mandar um valor valido (0 se a linha for nova).
+    alvo_existente: dict[tuple[str, str], float] = {}
+    try:
+        supabase_client._init()
+        sess = supabase_client._session
+        base = supabase_client._base_url
+        if sess is not None and base is not None:
+            resp = sess.get(
+                f'{base}/metas',
+                params={'select': 'quarter,metrica,valor_alvo', 'quarter': f'in.({ano},{trimestre})'},
+                timeout=30,
+            )
+            resp.raise_for_status()
+            for row in resp.json():
+                alvo_existente[(row['quarter'], row['metrica'])] = row.get('valor_alvo') or 0
+    except Exception as e:
+        _log_erro("sync_metas_atual:buscar_alvo", e)
+
+    def _alvo(quarter: str, metrica: str) -> float:
+        return alvo_existente.get((quarter, metrica), 0)
+
     registros = [
-        {'quarter': ano,       'metrica': 'receita',           'valor_atual': float(metricas.get('receita_ytd', 0) or 0)},
-        {'quarter': ano,       'metrica': 'inscritos',         'valor_atual': float(metricas.get('inscritos_ytd', 0) or 0)},
-        {'quarter': ano,       'metrica': 'videos_publicados', 'valor_atual': float(metricas.get('videos_ytd', 0) or 0)},
-        {'quarter': trimestre, 'metrica': 'receita',           'valor_atual': float(metricas.get('receita_q2', 0) or 0)},
-        {'quarter': trimestre, 'metrica': 'inscritos',         'valor_atual': float(metricas.get('inscritos_q2', 0) or 0)},
-        {'quarter': trimestre, 'metrica': 'videos_publicados', 'valor_atual': float(metricas.get('videos_q2', 0) or 0)},
+        {'quarter': ano,       'metrica': 'receita',           'valor_alvo': _alvo(ano, 'receita'),                 'valor_atual': float(metricas.get('receita_ytd', 0) or 0)},
+        {'quarter': ano,       'metrica': 'inscritos',         'valor_alvo': _alvo(ano, 'inscritos'),               'valor_atual': float(metricas.get('inscritos_ytd', 0) or 0)},
+        {'quarter': ano,       'metrica': 'videos_publicados', 'valor_alvo': _alvo(ano, 'videos_publicados'),       'valor_atual': float(metricas.get('videos_ytd', 0) or 0)},
+        {'quarter': trimestre, 'metrica': 'receita',           'valor_alvo': _alvo(trimestre, 'receita'),           'valor_atual': float(metricas.get('receita_q2', 0) or 0)},
+        {'quarter': trimestre, 'metrica': 'inscritos',         'valor_alvo': _alvo(trimestre, 'inscritos'),         'valor_atual': float(metricas.get('inscritos_q2', 0) or 0)},
+        {'quarter': trimestre, 'metrica': 'videos_publicados', 'valor_alvo': _alvo(trimestre, 'videos_publicados'), 'valor_atual': float(metricas.get('videos_q2', 0) or 0)},
     ]
 
     try:
