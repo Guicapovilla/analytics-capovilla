@@ -26,18 +26,23 @@ def _y_start(hoje: date) -> date:
     return date(hoje.year, 1, 1)
 
 
-def _consultar_analytics(analytics, channel_id: str, start: date, end: date) -> tuple[float, int]:
-    """Retorna (receita_usd, novos_inscritos) no intervalo [start, end]."""
+def _consultar_metrica(analytics, channel_id: str, start: date, end: date, metrica: str) -> float:
+    """Consulta uma unica metrica no intervalo [start, end].
+
+    Cada metrica e pedida em uma chamada separada porque `estimatedRevenue`
+    tem alguns dias de atraso de processamento no YouTube Analytics; pedir
+    receita e inscritos juntos numa mesma consulta agregada pode truncar o
+    relatorio para o ultimo dia em que AMBAS as metricas estao disponiveis,
+    subestimando `subscribersGained` (que nao tem esse atraso).
+    """
     rows = analytics.reports().query(
         ids=f'channel=={channel_id}',
         startDate=str(start), endDate=str(end),
-        metrics='estimatedRevenue,subscribersGained',
+        metrics=metrica,
     ).execute().get('rows') or []
     if not rows:
-        return 0.0, 0
-    receita = float(rows[0][0] or 0)
-    inscritos = int(rows[0][1] or 0)
-    return receita, inscritos
+        return 0.0
+    return float(rows[0][0] or 0)
 
 
 def _contar_videos(start: date) -> int:
@@ -91,13 +96,21 @@ def computar_metas_atuais(youtube, analytics, usd: float) -> dict:
     receita_q_usd, inscritos_q = (0.0, 0)
     if cid:
         try:
-            receita_ytd_usd, inscritos_ytd = _consultar_analytics(analytics, cid, y_start, hoje)
+            receita_ytd_usd = _consultar_metrica(analytics, cid, y_start, hoje, 'estimatedRevenue')
         except Exception as e:
-            print(f'  [METAS] Falha analytics YTD: {e}', file=sys.stderr)
+            print(f'  [METAS] Falha analytics receita YTD: {e}', file=sys.stderr)
         try:
-            receita_q_usd, inscritos_q = _consultar_analytics(analytics, cid, q_start, hoje)
+            inscritos_ytd = int(_consultar_metrica(analytics, cid, y_start, hoje, 'subscribersGained'))
         except Exception as e:
-            print(f'  [METAS] Falha analytics Q: {e}', file=sys.stderr)
+            print(f'  [METAS] Falha analytics inscritos YTD: {e}', file=sys.stderr)
+        try:
+            receita_q_usd = _consultar_metrica(analytics, cid, q_start, hoje, 'estimatedRevenue')
+        except Exception as e:
+            print(f'  [METAS] Falha analytics receita Q: {e}', file=sys.stderr)
+        try:
+            inscritos_q = int(_consultar_metrica(analytics, cid, q_start, hoje, 'subscribersGained'))
+        except Exception as e:
+            print(f'  [METAS] Falha analytics inscritos Q: {e}', file=sys.stderr)
 
     try:
         videos_ytd = _contar_videos(y_start)
