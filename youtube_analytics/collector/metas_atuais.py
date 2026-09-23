@@ -41,7 +41,7 @@ def _consultar_analytics(analytics, channel_id: str, start: date, end: date) -> 
 
 
 def _contar_videos(start: date) -> int:
-    """Conta videos longos (eh_short=false) publicados a partir de `start`.
+    """Conta videos longos (tipo_video=longo) publicados a partir de `start`.
 
     Usa GET direto no PostgREST com filtros gte/eq + Prefer count=exact.
     """
@@ -54,7 +54,7 @@ def _contar_videos(start: date) -> int:
     params = {
         'select': 'video_id',
         'data_publicacao': f'gte.{start.isoformat()}',
-        'eh_short': 'eq.false',
+        'tipo_video': 'eq.longo',
     }
     headers = {'Prefer': 'count=exact', 'Range-Unit': 'items', 'Range': '0-0'}
     resp = sess.get(f'{base}/videos', params=params, headers=headers, timeout=30)
