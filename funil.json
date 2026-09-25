@@ -139,6 +139,13 @@
       "rpm": 1.05,
       "views": 6580,
       "receita": 6.91
+    },
+    {
+      "video_id": "14S23Arird8",
+      "titulo": "O dilema do adulto sem tempo para jogar (e como resolver)",
+      "rpm": 1.87,
+      "views": 1683,
+      "receita": 3.15
     }
   ],
   "meio": [
@@ -444,23 +451,30 @@
       "rpm": 11.41,
       "views": 472,
       "receita": 5.39
+    },
+    {
+      "video_id": "0wyOqj5Kr7U",
+      "titulo": "Por que o Switch Lite DESBLOQUEADO é PERFEITO para o Brasileiro?",
+      "rpm": 102.59,
+      "views": 3873,
+      "receita": 397.33
     }
   ],
   "thresholds": {
     "p33": 1.99,
     "p66": 3.93
   },
-  "topo_count": 20,
-  "topo_rpm_medio": 1.2,
-  "topo_receita_total": 107.36,
+  "topo_count": 21,
+  "topo_rpm_medio": 1.3,
+  "topo_receita_total": 110.51,
   "meio_count": 21,
   "meio_rpm_medio": 3.1,
   "meio_receita_total": 115.98,
-  "fundo_count": 22,
-  "fundo_rpm_medio": 32.9,
-  "fundo_receita_total": 6710.25,
-  "gerado_em": "2026-09-24 14:37",
-  "total_videos": 63,
+  "fundo_count": 23,
+  "fundo_rpm_medio": 35.9,
+  "fundo_receita_total": 7107.58,
+  "gerado_em": "2026-09-25 14:58",
+  "total_videos": 65,
   "lacuna": "nenhuma",
   "lacuna_descricao": "Funil equilibrado"
 }
