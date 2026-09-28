@@ -843,5 +843,18 @@
     "receita_real": 3.15,
     "resultado": "retroativo",
     "atualizado_em": "2026-09-25"
+  },
+  {
+    "video_id": "d3yxAm3nfKs",
+    "titulo": "Comprei um óculos de realidade virtual em 2026 (valeu a pena?)",
+    "data_registro": "2026-09-24",
+    "origem": "retroativo",
+    "raciocinio": "Registrado automaticamente pelo sistema com dados reais do YouTube Analytics.",
+    "rpm_previsto": 0,
+    "rpm_real": 2.14,
+    "views_real": 1808,
+    "receita_real": 3.88,
+    "resultado": "retroativo",
+    "atualizado_em": "2026-09-28"
   }
 ]
