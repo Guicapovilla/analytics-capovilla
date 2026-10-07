@@ -856,5 +856,31 @@
     "receita_real": 3.88,
     "resultado": "retroativo",
     "atualizado_em": "2026-09-28"
+  },
+  {
+    "video_id": "O2so7z_LrOM",
+    "titulo": "10 jogos que são A CARA do switch lite",
+    "data_registro": "2026-10-04",
+    "origem": "retroativo",
+    "raciocinio": "Registrado automaticamente pelo sistema com dados reais do YouTube Analytics.",
+    "rpm_previsto": 0,
+    "rpm_real": 1.32,
+    "views_real": 2995,
+    "receita_real": 3.96,
+    "resultado": "retroativo",
+    "atualizado_em": "2026-10-07"
+  },
+  {
+    "video_id": "ImL04hTG_Ck",
+    "titulo": "Para quem é o SWITCH LITE DESBLOQUEADO?",
+    "data_registro": "2026-09-29",
+    "origem": "retroativo",
+    "raciocinio": "Registrado automaticamente pelo sistema com dados reais do YouTube Analytics.",
+    "rpm_previsto": 0,
+    "rpm_real": 1.0,
+    "views_real": 3590,
+    "receita_real": 3.59,
+    "resultado": "retroativo",
+    "atualizado_em": "2026-10-07"
   }
 ]
