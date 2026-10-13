@@ -255,6 +255,13 @@
       "receita": 6.1
     },
     {
+      "video_id": "wgnhf_OBEIw",
+      "titulo": "Switch OLED DESBLOQUEADO em 2026... Vale a pena?",
+      "rpm": 3.92,
+      "views": 494,
+      "receita": 1.94
+    },
+    {
       "video_id": "ZMsSYlwVOZc",
       "titulo": "Qual VIDEO GAME comprar para o seu FILHO? Guia para pais",
       "rpm": 2.92,
@@ -376,13 +383,6 @@
       "receita": 1.47
     },
     {
-      "video_id": "wgnhf_OBEIw",
-      "titulo": "Switch OLED DESBLOQUEADO em 2026... Vale a pena?",
-      "rpm": 3.92,
-      "views": 494,
-      "receita": 1.94
-    },
-    {
       "video_id": "V7qLpgE62ZY",
       "titulo": "Por Que Todo Adulto Deveria Ter um Videogame Portátil",
       "rpm": 4.51,
@@ -479,23 +479,30 @@
       "rpm": 102.59,
       "views": 3873,
       "receita": 397.33
+    },
+    {
+      "video_id": "pSCaeNj8wjg",
+      "titulo": "Comprei um LEITOR DE DISCO para o meu PS5 SLIM em 2026",
+      "rpm": 89.47,
+      "views": 869,
+      "receita": 77.75
     }
   ],
   "thresholds": {
     "p33": 1.93,
-    "p66": 3.92
+    "p66": 3.93
   },
   "topo_count": 22,
   "topo_rpm_medio": 1.2,
   "topo_receita_total": 117.44,
-  "meio_count": 22,
-  "meio_rpm_medio": 3.0,
-  "meio_receita_total": 118.54,
+  "meio_count": 23,
+  "meio_rpm_medio": 3.1,
+  "meio_receita_total": 120.48,
   "fundo_count": 24,
-  "fundo_rpm_medio": 34.6,
-  "fundo_receita_total": 7109.52,
-  "gerado_em": "2026-10-12 19:35",
-  "total_videos": 68,
+  "fundo_rpm_medio": 38.2,
+  "fundo_receita_total": 7185.33,
+  "gerado_em": "2026-10-13 17:19",
+  "total_videos": 69,
   "lacuna": "nenhuma",
   "lacuna_descricao": "Funil equilibrado"
 }
