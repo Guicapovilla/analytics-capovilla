@@ -882,5 +882,18 @@
     "receita_real": 3.59,
     "resultado": "retroativo",
     "atualizado_em": "2026-10-07"
+  },
+  {
+    "video_id": "pSCaeNj8wjg",
+    "titulo": "Comprei um LEITOR DE DISCO para o meu PS5 SLIM em 2026",
+    "data_registro": "2026-09-12",
+    "origem": "retroativo",
+    "raciocinio": "Registrado automaticamente pelo sistema com dados reais do YouTube Analytics.",
+    "rpm_previsto": 0,
+    "rpm_real": 89.47,
+    "views_real": 869,
+    "receita_real": 77.75,
+    "resultado": "retroativo",
+    "atualizado_em": "2026-10-13"
   }
 ]
