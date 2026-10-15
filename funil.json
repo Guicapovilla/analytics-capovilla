@@ -50,6 +50,13 @@
       "receita": 1.65
     },
     {
+      "video_id": "oUDUc7O5Oyw",
+      "titulo": "SILENT HILL 2 REMAKE rodando lisinho no STEAM DECK!",
+      "rpm": 1.93,
+      "views": 322,
+      "receita": 0.62
+    },
+    {
       "video_id": "fVRc1U0b79s",
       "titulo": "XBOX SERIES S: 10 motivos para VOCÊ comprar HOJE",
       "rpm": 1.59,
@@ -227,13 +234,6 @@
       "receita": 1.25
     },
     {
-      "video_id": "oUDUc7O5Oyw",
-      "titulo": "SILENT HILL 2 REMAKE rodando lisinho no STEAM DECK!",
-      "rpm": 1.93,
-      "views": 322,
-      "receita": 0.62
-    },
-    {
       "video_id": "80ec1wjgjpQ",
       "titulo": "Como eu venci a culpa de jogar videogame depois de adulto",
       "rpm": 3.66,
@@ -288,6 +288,13 @@
       "rpm": 3.33,
       "views": 132,
       "receita": 0.44
+    },
+    {
+      "video_id": "19kIGQD6DRI",
+      "titulo": "Como eu fiz para finalmente jogar os jogos parados",
+      "rpm": 3.93,
+      "views": 163,
+      "receita": 0.64
     },
     {
       "video_id": "LyHv8Kae-p4",
@@ -425,13 +432,6 @@
       "receita": 15.57
     },
     {
-      "video_id": "19kIGQD6DRI",
-      "titulo": "Como eu fiz para finalmente jogar os jogos parados",
-      "rpm": 3.93,
-      "views": 163,
-      "receita": 0.64
-    },
-    {
       "video_id": "ZhITjpoqE4o",
       "titulo": "Vou TE CONVENCER a comprar um SWITCH LITE DESBLOQUEADO.",
       "rpm": 6.11,
@@ -486,23 +486,30 @@
       "rpm": 89.47,
       "views": 869,
       "receita": 77.75
+    },
+    {
+      "video_id": "tyXQEm5YRAY",
+      "titulo": "Joguei o PS5 remotamente sem precisar de um PS Portal #steamdeck #ps5 #playstation5 #steamdeckoled",
+      "rpm": 11.44,
+      "views": 2261,
+      "receita": 25.86
     }
   ],
   "thresholds": {
-    "p33": 1.93,
-    "p66": 3.93
+    "p33": 1.99,
+    "p66": 4.15
   },
-  "topo_count": 22,
-  "topo_rpm_medio": 1.2,
-  "topo_receita_total": 117.44,
+  "topo_count": 23,
+  "topo_rpm_medio": 1.3,
+  "topo_receita_total": 118.06,
   "meio_count": 23,
   "meio_rpm_medio": 3.1,
-  "meio_receita_total": 120.48,
+  "meio_receita_total": 120.5,
   "fundo_count": 24,
-  "fundo_rpm_medio": 38.2,
-  "fundo_receita_total": 7185.33,
-  "gerado_em": "2026-10-14 14:51",
-  "total_videos": 69,
+  "fundo_rpm_medio": 38.5,
+  "fundo_receita_total": 7210.55,
+  "gerado_em": "2026-10-15 14:38",
+  "total_videos": 70,
   "lacuna": "nenhuma",
   "lacuna_descricao": "Funil equilibrado"
 }
