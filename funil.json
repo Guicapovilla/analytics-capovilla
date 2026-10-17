@@ -323,6 +323,13 @@
       "rpm": 2.14,
       "views": 1808,
       "receita": 3.88
+    },
+    {
+      "video_id": "32O2jHXzB4k",
+      "titulo": "Como É BOM ter um PS4 DESBLOQUEADO em 2026",
+      "rpm": 1.94,
+      "views": 18773,
+      "receita": 36.34
     }
   ],
   "fundo": [
@@ -493,23 +500,30 @@
       "rpm": 11.44,
       "views": 2261,
       "receita": 25.86
+    },
+    {
+      "video_id": "zAU8ya62SYA",
+      "titulo": "Ter um Switch Lite DESBLOQUEADO nunca fez tanto sentido",
+      "rpm": 5.78,
+      "views": 2684,
+      "receita": 15.51
     }
   ],
   "thresholds": {
-    "p33": 1.99,
+    "p33": 1.94,
     "p66": 4.15
   },
   "topo_count": 23,
   "topo_rpm_medio": 1.3,
   "topo_receita_total": 118.06,
-  "meio_count": 23,
+  "meio_count": 24,
   "meio_rpm_medio": 3.1,
-  "meio_receita_total": 120.5,
-  "fundo_count": 24,
-  "fundo_rpm_medio": 38.5,
-  "fundo_receita_total": 7210.55,
-  "gerado_em": "2026-10-16 14:29",
-  "total_videos": 70,
+  "meio_receita_total": 156.84,
+  "fundo_count": 25,
+  "fundo_rpm_medio": 37.2,
+  "fundo_receita_total": 7226.06,
+  "gerado_em": "2026-10-17 13:25",
+  "total_videos": 72,
   "lacuna": "nenhuma",
   "lacuna_descricao": "Funil equilibrado"
 }
