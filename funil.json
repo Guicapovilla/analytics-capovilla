@@ -160,6 +160,13 @@
       "rpm": 1.0,
       "views": 3590,
       "receita": 3.59
+    },
+    {
+      "video_id": "jfF5KEMt4Sw",
+      "titulo": "É POR ISSO QUE EU COMPRARIA UM ÓCULOS VR EM 2026",
+      "rpm": 1.81,
+      "views": 4843,
+      "receita": 8.78
     }
   ],
   "meio": [
@@ -513,17 +520,17 @@
     "p33": 1.94,
     "p66": 4.15
   },
-  "topo_count": 23,
+  "topo_count": 24,
   "topo_rpm_medio": 1.3,
-  "topo_receita_total": 118.06,
+  "topo_receita_total": 126.84,
   "meio_count": 24,
   "meio_rpm_medio": 3.1,
   "meio_receita_total": 156.84,
   "fundo_count": 25,
   "fundo_rpm_medio": 37.2,
   "fundo_receita_total": 7226.06,
-  "gerado_em": "2026-10-20 14:38",
-  "total_videos": 72,
+  "gerado_em": "2026-10-21 14:49",
+  "total_videos": 73,
   "lacuna": "nenhuma",
   "lacuna_descricao": "Funil equilibrado"
 }
