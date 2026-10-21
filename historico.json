@@ -934,5 +934,18 @@
     "receita_real": 15.51,
     "resultado": "retroativo",
     "atualizado_em": "2026-10-17"
+  },
+  {
+    "video_id": "jfF5KEMt4Sw",
+    "titulo": "É POR ISSO QUE EU COMPRARIA UM ÓCULOS VR EM 2026",
+    "data_registro": "2026-10-16",
+    "origem": "retroativo",
+    "raciocinio": "Registrado automaticamente pelo sistema com dados reais do YouTube Analytics.",
+    "rpm_previsto": 0,
+    "rpm_real": 1.81,
+    "views_real": 4843,
+    "receita_real": 8.78,
+    "resultado": "retroativo",
+    "atualizado_em": "2026-10-21"
   }
 ]
