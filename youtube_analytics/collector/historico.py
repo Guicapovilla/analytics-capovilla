@@ -128,27 +128,25 @@ def atualizar_historico_automatico(youtube, analytics, usd, receita_por_video):
     return historico
 
 
-def coletar_metricas_detalhadas_por_video(analytics, channel_id, hoje=None):
-    """
-    Complementa o views/rpm/receita já coletados com o que o painel "Controle
-    do canal" (capovilla-dashboard) precisa por vídeo: CTR, retenção,
-    impressões, likes, comentários, inscritos ganhos e duração média assistida.
+def _video_ids_recentes(youtube, maxResults=50):
+    """Os N vídeos mais recentes por data de publicação (não por performance)."""
+    try:
+        resp = youtube.search().list(
+            part='id', forMine=True, type='video', order='date', maxResults=maxResults,
+        ).execute()
+        return [i['id']['videoId'] for i in resp.get('items', [])]
+    except Exception as e:
+        print(f'  [WARN] _video_ids_recentes falhou: {e}')
+        return []
 
-    Feito em duas queries separadas (em vez de juntar tudo com estimatedRevenue
-    na query do histórico) porque impressions/impressionsClickThroughRate têm
-    regras de combinação mais restritas na YouTube Analytics API — se uma
-    combinação específica não for aceita, essa função some com warning e o
-    resto do pipeline (revenue, views) continua intacto.
 
-    Retorna dict {video_id: {ctr, retencao_media, inscritos_ganhos,
-    watch_time_min, likes, comentarios, impressoes, duracao_media_segundos}},
-    com ctr e retencao_media como FRAÇÃO (0.0523 = 5.23%), igual ao formato
-    já documentado nas colunas da tabela videos_metricas.
+def _query_detalhe_por_video(analytics, channel_id, hoje, *, video_ids=None, maxResults=50):
+    """Roda as duas queries de métricas detalhadas (retenção/engajamento e
+    impressões/CTR), escopadas por video_ids (quando dado) ou pelos
+    maxResults mais vistos de todos os tempos. Retorna {video_id: {...}}.
     """
-    if not channel_id:
-        return {}
-    hoje = hoje or datetime.now().date()
     out = {}
+    escopo = {'filters': f'video=={",".join(video_ids)}'} if video_ids else {'sort': '-views', 'maxResults': maxResults}
 
     try:
         r1 = analytics.reports().query(
@@ -157,8 +155,7 @@ def coletar_metricas_detalhadas_por_video(analytics, channel_id, hoje=None):
             endDate=str(hoje),
             metrics='views,estimatedMinutesWatched,averageViewDuration,averageViewPercentage,likes,comments,subscribersGained',
             dimensions='video',
-            sort='-views',
-            maxResults=50,
+            **escopo,
         ).execute()
         for row in (r1.get('rows') or []):
             vid = row[0]
@@ -171,7 +168,7 @@ def coletar_metricas_detalhadas_por_video(analytics, channel_id, hoje=None):
                 'inscritos_ganhos': int(row[7] or 0),
             })
     except Exception as e:
-        print(f'  [WARN] coletar_metricas_detalhadas_por_video (retenção/engajamento) falhou: {e}')
+        print(f'  [WARN] _query_detalhe_por_video (retenção/engajamento, escopo={"recentes" if video_ids else "top views"}) falhou: {e}')
 
     try:
         r2 = analytics.reports().query(
@@ -180,8 +177,7 @@ def coletar_metricas_detalhadas_por_video(analytics, channel_id, hoje=None):
             endDate=str(hoje),
             metrics='views,impressions,impressionsClickThroughRate',
             dimensions='video',
-            sort='-views',
-            maxResults=50,
+            **escopo,
         ).execute()
         for row in (r2.get('rows') or []):
             vid = row[0]
@@ -190,6 +186,44 @@ def coletar_metricas_detalhadas_por_video(analytics, channel_id, hoje=None):
                 'ctr': round(float(row[3] or 0) / 100, 4),
             })
     except Exception as e:
-        print(f'  [WARN] coletar_metricas_detalhadas_por_video (impressões/CTR) falhou: {e}')
+        print(f'  [WARN] _query_detalhe_por_video (impressões/CTR, escopo={"recentes" if video_ids else "top views"}) falhou: {e}')
+
+    return out
+
+
+def coletar_metricas_detalhadas_por_video(youtube, analytics, channel_id, hoje=None):
+    """
+    Complementa o views/rpm/receita já coletados com o que o painel "Controle
+    do canal" (capovilla-dashboard) precisa por vídeo: CTR, retenção,
+    impressões, likes, comentários, inscritos ganhos e duração média assistida.
+
+    Roda em dois escopos, porque a YouTube Analytics API só retorna até
+    maxResults linhas por query de dimensions=video — pegar só "os mais
+    vistos de todos os tempos" deixa de fora todo vídeo publicado há pouco
+    tempo (que ainda não acumulou views pra entrar no top 50), que é
+    justamente o vídeo que mais importa pro Fechamento do dia:
+      1. top 50 por views (cobre os vídeos historicamente fortes)
+      2. os 50 mais recentes por data de publicação, via filters=video==...
+         (cobre o vídeo de hoje e os últimos, não importa a performance)
+
+    Cada escopo roda em duas queries (retenção/engajamento e impressões/CTR
+    separadas) porque impressions/impressionsClickThroughRate têm regras de
+    combinação mais restritas na API — se uma falhar, as outras continuam.
+
+    Retorna dict {video_id: {ctr, retencao_media, inscritos_ganhos,
+    watch_time_min, likes, comentarios, impressoes, duracao_media_segundos}},
+    com ctr e retencao_media como FRAÇÃO (0.0523 = 5.23%), igual ao formato
+    já documentado nas colunas da tabela videos_metricas.
+    """
+    if not channel_id:
+        return {}
+    hoje = hoje or datetime.now().date()
+
+    out = _query_detalhe_por_video(analytics, channel_id, hoje, maxResults=50)
+
+    recentes = _video_ids_recentes(youtube, maxResults=50)
+    if recentes:
+        for vid, campos in _query_detalhe_por_video(analytics, channel_id, hoje, video_ids=recentes).items():
+            out.setdefault(vid, {}).update(campos)
 
     return out

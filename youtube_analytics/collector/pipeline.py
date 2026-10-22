@@ -132,7 +132,7 @@ def main():
     if channel_id:
         print('\n[DETALHE] Coletando CTR, retencao, impressoes, likes e comentarios por video...')
         try:
-            detalhes = coletar_metricas_detalhadas_por_video(analytics, channel_id)
+            detalhes = coletar_metricas_detalhadas_por_video(youtube, analytics, channel_id)
             sync_videos_metricas_detalhadas(detalhes)
         except Exception as e:
             print(f'  [WARN] Falha nao-critica em metricas detalhadas por video: {e}')
