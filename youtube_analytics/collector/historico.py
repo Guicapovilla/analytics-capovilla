@@ -126,3 +126,70 @@ def atualizar_historico_automatico(youtube, analytics, usd, receita_por_video):
 
     print(f'  ✅ Histórico: {novos} entradas retroativas criadas, {atualizados} resultados atualizados')
     return historico
+
+
+def coletar_metricas_detalhadas_por_video(analytics, channel_id, hoje=None):
+    """
+    Complementa o views/rpm/receita já coletados com o que o painel "Controle
+    do canal" (capovilla-dashboard) precisa por vídeo: CTR, retenção,
+    impressões, likes, comentários, inscritos ganhos e duração média assistida.
+
+    Feito em duas queries separadas (em vez de juntar tudo com estimatedRevenue
+    na query do histórico) porque impressions/impressionsClickThroughRate têm
+    regras de combinação mais restritas na YouTube Analytics API — se uma
+    combinação específica não for aceita, essa função some com warning e o
+    resto do pipeline (revenue, views) continua intacto.
+
+    Retorna dict {video_id: {ctr, retencao_media, inscritos_ganhos,
+    watch_time_min, likes, comentarios, impressoes, duracao_media_segundos}},
+    com ctr e retencao_media como FRAÇÃO (0.0523 = 5.23%), igual ao formato
+    já documentado nas colunas da tabela videos_metricas.
+    """
+    if not channel_id:
+        return {}
+    hoje = hoje or datetime.now().date()
+    out = {}
+
+    try:
+        r1 = analytics.reports().query(
+            ids=f'channel=={channel_id}',
+            startDate='2020-01-01',
+            endDate=str(hoje),
+            metrics='views,estimatedMinutesWatched,averageViewDuration,averageViewPercentage,likes,comments,subscribersGained',
+            dimensions='video',
+            sort='-views',
+            maxResults=50,
+        ).execute()
+        for row in (r1.get('rows') or []):
+            vid = row[0]
+            out.setdefault(vid, {}).update({
+                'watch_time_min': round(float(row[2] or 0), 2),
+                'duracao_media_segundos': int(row[3] or 0),
+                'retencao_media': round(float(row[4] or 0) / 100, 4),
+                'likes': int(row[5] or 0),
+                'comentarios': int(row[6] or 0),
+                'inscritos_ganhos': int(row[7] or 0),
+            })
+    except Exception as e:
+        print(f'  [WARN] coletar_metricas_detalhadas_por_video (retenção/engajamento) falhou: {e}')
+
+    try:
+        r2 = analytics.reports().query(
+            ids=f'channel=={channel_id}',
+            startDate='2020-01-01',
+            endDate=str(hoje),
+            metrics='views,impressions,impressionsClickThroughRate',
+            dimensions='video',
+            sort='-views',
+            maxResults=50,
+        ).execute()
+        for row in (r2.get('rows') or []):
+            vid = row[0]
+            out.setdefault(vid, {}).update({
+                'impressoes': int(row[2] or 0),
+                'ctr': round(float(row[3] or 0) / 100, 4),
+            })
+    except Exception as e:
+        print(f'  [WARN] coletar_metricas_detalhadas_por_video (impressões/CTR) falhou: {e}')
+
+    return out

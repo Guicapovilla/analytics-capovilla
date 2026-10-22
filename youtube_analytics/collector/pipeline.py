@@ -3,6 +3,7 @@
 from .sync_supabase import (
     sync_videos_do_canal,
     sync_videos_e_metricas,
+    sync_videos_metricas_detalhadas,
     sync_concorrentes,
     sync_transcricoes_proprias,
     sync_sugestoes,
@@ -28,7 +29,7 @@ from .github_sync import (
     salvar_github,
 )
 from .google_auth import autenticar
-from .historico import atualizar_historico_automatico
+from .historico import atualizar_historico_automatico, coletar_metricas_detalhadas_por_video
 from .funil import classificar_funil
 from .metas_atuais import computar_metas_atuais
 from .transcricoes import coletar_transcricoes_proprias
@@ -127,6 +128,15 @@ def main():
     # Dual-write Supabase (nao derruba a coleta em caso de falha)
     if historico:
         sync_videos_e_metricas(historico)
+
+    if channel_id:
+        print('\n[DETALHE] Coletando CTR, retencao, impressoes, likes e comentarios por video...')
+        try:
+            detalhes = coletar_metricas_detalhadas_por_video(analytics, channel_id)
+            sync_videos_metricas_detalhadas(detalhes)
+        except Exception as e:
+            print(f'  [WARN] Falha nao-critica em metricas detalhadas por video: {e}')
+
     if sugestoes_restantes is not None:
         salvar_github('sugestoes_pendentes.json', sugestoes_restantes)
         sync_sugestoes(sugestoes_restantes)

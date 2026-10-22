@@ -198,6 +198,36 @@ def sync_videos_e_metricas(historico):
 
 
 # ============================================================
+# Sync: detalhe por vídeo (CTR, retenção, impressões, likes, comentários)
+# ============================================================
+
+def sync_videos_metricas_detalhadas(detalhes: dict):
+    """Upsert parcial em videos_metricas com o que coletar_metricas_detalhadas_por_video
+    trouxe. Só envia as colunas que esse dict tem — o upsert do PostgREST só
+    atualiza as colunas presentes no payload, então isso nunca apaga
+    views/rpm/receita_estimada já gravados por sync_videos_e_metricas no
+    mesmo dia (e funciona independente de qual dos dois rodou primeiro).
+    """
+    if not detalhes:
+        return
+
+    hoje = date.today().isoformat()
+    registros = [
+        dict(video_id=vid, data_coleta=hoje, **campos)
+        for vid, campos in detalhes.items()
+        if campos
+    ]
+    if not registros:
+        return
+
+    try:
+        upsert('videos_metricas', registros, on_conflict='video_id,data_coleta')
+        print(f"  🗄️ Supabase: {len(registros)} vídeos com detalhe (CTR/retenção/impressões/likes/comentários)")
+    except Exception as e:
+        _log_erro("sync_videos_metricas_detalhadas", e)
+
+
+# ============================================================
 # Sync: concorrentes + vídeos deles
 # ============================================================
 
